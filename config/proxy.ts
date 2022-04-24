@@ -8,24 +8,21 @@
  */
 export default {
   dev: {
-    '/api/': {
-      target: 'https://demo.brandsz.cn/console',
+    '/console/': {
       changeOrigin: true,
-      pathRewrite: { '/api': '' },
-    },
+      target: 'https://demo.brandsz.cn'
+    }
   },
   pre: {
-    '/api/': {
-      target: 'https://www.brandsz.cn/console',
+    '/console/': {
       changeOrigin: true,
-      pathRewrite: { '/api': '' },
+      target: 'https://www.brandsz.cn'
     },
   },
   test: {
-    '/api/': {
-      target: 'https://test.brandsz.cn/console',
+    '/console/': {
       changeOrigin: true,
-      pathRewrite: { '/api': '' },
+      target: 'https://test.brandsz.cn'
     },
   }
 }
