@@ -30,23 +30,23 @@ declare namespace API {
   };
 
   type PageParams = {
-    current?: number;
-    pageSize?: number;
+    page?: number;
+    listRows?: number;
   };
 
   type RuleListItem = {
     key?: number;
-    disabled?: boolean;
     href?: string;
-    avatar?: string;
     name?: string;
-    owner?: string;
     desc?: string;
+    owner?: string;
+    avatar?: string;
     callNo?: number;
     status?: number;
+    progress?: number;
     updatedAt?: string;
     createdAt?: string;
-    progress?: number;
+    disabled?: boolean;
   };
 
   type RuleList = {
