@@ -30,12 +30,14 @@ declare namespace API {
   };
 
   type PageParams = {
-    page?: number;
-    listRows?: number;
+    current?: number;
+    pageSize?: number;
   };
 
   type RuleListItem = {
+    id?: number;
     key?: number;
+    msg?: string;
     href?: string;
     name?: string;
     desc?: string;
@@ -49,11 +51,18 @@ declare namespace API {
     disabled?: boolean;
   };
 
+  type RuleListResult = {
+    total?: number
+    data?: Array<any>
+  };
+
   type RuleList = {
-    data?: RuleListItem[];
-    /** 列表的内容总数 */
-    total?: number;
-    success?: boolean;
+    msg: string
+    path: string
+    status: number
+    method: string
+    success: boolean
+    result: RuleListResult;
   };
 
   type FakeCaptcha = {
