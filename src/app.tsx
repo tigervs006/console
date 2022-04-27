@@ -1,16 +1,19 @@
 import type { Settings as LayoutSettings } from '@ant-design/pro-layout';
 import { SettingDrawer } from '@ant-design/pro-layout';
 import { PageLoading } from '@ant-design/pro-layout';
-import type { RunTimeLayoutConfig } from 'umi';
+import type { RequestConfig, RunTimeLayoutConfig } from 'umi';
+import type { RequestOptionsInit } from 'umi-request';
 import { history, Link } from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
 import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 import defaultSettings from '../config/defaultSettings';
+import { notification } from 'antd';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
+const prefix = '/console';
 
 /** 获取用户信息比较慢的时候会展示一个 loading */
 export const initialStateConfig = {
@@ -105,4 +108,39 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     },
     ...initialState?.settings,
   };
+};
+
+// 请求前拦截器
+const authHeaderInterceptor = (url: string, options: RequestOptionsInit) => {
+  const token = localStorage.getItem('token');
+  const customHeader = { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' };
+  if (null !== token) Object.assign(customHeader, { Authorization: `Bearer ${token}` });
+  return {
+    url: prefix + url,
+    options: { ...options, interceptors: true, headers: customHeader, requestType: 'form' },
+  };
+};
+
+// 响应后拦截器
+const ResponseInterceptors = async (response: Response) => {
+  const result = await response.clone().json();
+  // 登录失败返回登录页
+  if (403 == result.status) history.push(loginPath);
+  return response;
+};
+
+export const request: RequestConfig = {
+  errorHandler: (error: any) => {
+    if (error.response) {
+      notification.error({
+        message: error.response.msg,
+        description: error.response.result.message,
+      });
+    } else {
+      console.log('error', error.message);
+    }
+  },
+  // @ts-ignore
+  requestInterceptors: [authHeaderInterceptor],
+  responseInterceptors: [ResponseInterceptors],
 };
