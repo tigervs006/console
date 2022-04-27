@@ -40,18 +40,19 @@ export async function getNotices(options?: { [key: string]: any }) {
   });
 }
 
-/** 获取规则列表 GET /api/rule */
-export async function rule(
-  params: {
-    // query
-    /** 当前的页码 */
-    current?: number;
-    /** 页面的容量 */
-    pageSize?: number;
-  },
+/**
+ * 获取列表
+ * @method GET
+ * @param path 路径
+ * @param params 参数
+ * @param options options
+ */
+export async function list(
+  path: string,
+  params: API.PageParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.RuleList>('/api/rule', {
+  return request<API.RuleList>(path, {
     method: 'GET',
     params: {
       ...params,
@@ -60,12 +61,23 @@ export async function rule(
   });
 }
 
-/** 新建规则 PUT /api/rule */
-export async function updateRule(options?: { [key: string]: any }) {
-  return request<API.RuleListItem>('/api/rule', {
-    method: 'PUT',
-    ...(options || {}),
-  });
+/**
+ * 更新内容
+ * @meghod POST
+ * @param path 路径
+ * @param data data
+ * @param options options
+ */
+export async function update(
+  path: string,
+  data: API.RuleListItem,
+  options?: { [key: string]: any }
+) {
+  return request<API.RuleListItem>(path, {
+    method: 'POST',
+    data: { ...data },
+    ...(options || {})
+  })
 }
 
 /** 新建规则 POST /api/rule */
