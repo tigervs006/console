@@ -404,7 +404,7 @@ const getChartData = (_: Request, res: Response) => {
 };
 
 export default {
-  'GET  /api/project/notice': getNotice,
-  'GET  /api/activities': getActivities,
-  'GET  /api/fake_workplace_chart_data': getChartData,
+  'GET  /console/api/project/notice': getNotice,
+  'GET  /console/api/activities': getActivities,
+  'GET  /console/api/fake_workplace_chart_data': getChartData,
 };

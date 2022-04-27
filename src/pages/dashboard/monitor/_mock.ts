@@ -10,5 +10,5 @@ const getTags = (_: Request, res: Response) => {
 };
 
 export default {
-  'GET  /api/tags': getTags,
+  'GET  /console/api/tags': getTags,
 };
