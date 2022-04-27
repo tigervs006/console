@@ -114,7 +114,7 @@ const handleDelete = (id: number) => {
  */
 const handleChange = async (checked: boolean, id: number) => {
   const res = await update('/article/status', { id: id, status: checked ? 1 : 0 })
-  res !== undefined && message.success(res.msg)
+  if (res !== undefined)  message.success(res.msg)
 }
 
 /**
