@@ -54,6 +54,7 @@ declare namespace API {
   type RuleListResult = {
     total?: number
     data?: Array<any>
+    authorEnum?: object
   };
 
   type RuleList = {
