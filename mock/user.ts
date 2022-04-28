@@ -9,7 +9,7 @@ const waitTime = (time: number = 100) => {
 };
 
 async function getFakeCaptcha(req: Request, res: Response) {
-  await waitTime(2000);
+  await waitTime(1000);
   return res.json('captcha-xxx');
 }
 
@@ -119,7 +119,7 @@ export default {
   ],
   'POST /console/api/login/account': async (req: Request, res: Response) => {
     const { password, username, type } = req.body;
-    await waitTime(2000);
+    await waitTime(1000);
     if (password === 'ant.design' && username === 'admin') {
       res.send({
         status: 'ok',
