@@ -1,15 +1,15 @@
-import type { Settings as LayoutSettings } from '@ant-design/pro-layout';
-import { SettingDrawer } from '@ant-design/pro-layout';
-import { PageLoading } from '@ant-design/pro-layout';
-import type { RequestConfig, RunTimeLayoutConfig } from 'umi';
-import type { RequestOptionsInit } from 'umi-request';
-import { history, Link } from 'umi';
-import RightContent from '@/components/RightContent';
-import Footer from '@/components/Footer';
-import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
-import { BookOutlined, LinkOutlined } from '@ant-design/icons';
-import defaultSettings from '../config/defaultSettings';
 import { notification } from 'antd';
+import { history, Link } from 'umi';
+import Footer from '@/components/Footer';
+import { PageLoading } from '@ant-design/pro-layout';
+import RightContent from '@/components/RightContent';
+import type { RequestOptionsInit } from 'umi-request';
+import { SettingDrawer } from '@ant-design/pro-layout';
+import defaultSettings from '../config/defaultSettings';
+import type { RequestConfig, RunTimeLayoutConfig } from 'umi';
+import { BookOutlined, LinkOutlined } from '@ant-design/icons';
+import type { Settings as LayoutSettings } from '@ant-design/pro-layout';
+import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
