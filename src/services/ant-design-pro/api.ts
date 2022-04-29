@@ -43,15 +43,11 @@ export async function getNotices(options?: { [key: string]: any }) {
 /**
  * 获取列表
  * @method GET
- * @param path 路径
- * @param params 参数
- * @param options options
+ * @param path
+ * @param params
+ * @param options
  */
-export async function list(
-  path: string,
-  params: API.PageParams,
-  options?: { [key: string]: any },
-) {
+export async function list(path: string, params?: API.PageParams, options?: Record<string, any>) {
   return request<API.RuleList>(path, {
     method: 'GET',
     params: {
@@ -63,35 +59,52 @@ export async function list(
 
 /**
  * 更新内容
- * @meghod POST
- * @param path 路径
- * @param data data
- * @param options options
+ * @method POST
+ * @param path
+ * @param data
+ * @param options
  */
-export async function update(
-  path: string,
-  data: API.RuleListItem,
-  options?: { [key: string]: any }
-) {
+export async function update(path: string, data: API.RuleListItem, options?: Record<string, any>) {
   return request<API.RuleListItem>(path, {
     method: 'POST',
     data: { ...data },
-    ...(options || {})
-  })
-}
-
-/** 新建规则 POST /api/rule */
-export async function addRule(options?: { [key: string]: any }) {
-  return request<API.RuleListItem>('/api/rule', {
-    method: 'POST',
     ...(options || {}),
   });
 }
 
-/** 删除规则 DELETE /api/rule */
-export async function removeRule(options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/rule', {
-    method: 'DELETE',
+/**
+ * 新增/编辑
+ * @method POST
+ * @param path
+ * @param data
+ * @param options
+ */
+export async function saveData(
+  path: string,
+  data: API.RuleListItem,
+  options?: Record<string, any>,
+) {
+  return request<API.RuleListItem>(path, {
+    method: 'POST',
+    data: { ...data },
+    ...(options || {}),
+  });
+}
+
+/**
+ * @method POST
+ * @param path
+ * @param data
+ * @param options
+ */
+export async function deleteData(
+  path: string,
+  data: API.RuleListItem,
+  options?: Record<string, any>,
+) {
+  return request<Record<string, any>>(path, {
+    method: 'POST',
+    data: { ...data },
     ...(options || {}),
   });
 }
