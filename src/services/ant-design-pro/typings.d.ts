@@ -41,6 +41,7 @@ declare namespace API {
     href?: string;
     name?: string;
     desc?: string;
+    cname?: string;
     owner?: string;
     avatar?: string;
     callNo?: number;
@@ -53,8 +54,7 @@ declare namespace API {
 
   type RuleListResult = {
     total?: number
-    data?: Array<any>
-    authorEnum?: object
+    list?: Array<any>
   };
 
   type RuleList = {
@@ -63,7 +63,7 @@ declare namespace API {
     status: number
     method: string
     success: boolean
-    result: RuleListResult;
+    data: RuleListResult
   };
 
   type FakeCaptcha = {
