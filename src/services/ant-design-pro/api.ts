@@ -1,5 +1,3 @@
-// @ts-ignore
-/* eslint-disable */
 import { request } from 'umi';
 
 /** 获取当前的用户 GET /api/currentUser */
@@ -41,70 +39,29 @@ export async function getNotices(options?: { [key: string]: any }) {
 }
 
 /**
- * 获取列表
- * @method GET
- * @param path
- * @param params
- * @param options
+ * POST方法提交/获取数据
+ * @param path 路径
+ * @param data 数据
+ * @param options options
  */
-export async function list(path: string, params?: API.PageParams, options?: Record<string, any>) {
-  return request<API.RuleList>(path, {
-    method: 'GET',
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
-}
-
-/**
- * 更新内容
- * @method POST
- * @param path
- * @param data
- * @param options
- */
-export async function update(path: string, data: API.RuleListItem, options?: Record<string, any>) {
-  return request<API.RuleListItem>(path, {
-    method: 'POST',
-    data: { ...data },
-    ...(options || {}),
-  });
-}
-
-/**
- * 新增/编辑
- * @method POST
- * @param path
- * @param data
- * @param options
- */
-export async function saveData(
-  path: string,
-  data: API.RuleListItem,
-  options?: Record<string, any>,
-) {
-  return request<API.RuleListItem>(path, {
-    method: 'POST',
-    data: { ...data },
-    ...(options || {}),
-  });
-}
-
-/**
- * @method POST
- * @param path
- * @param data
- * @param options
- */
-export async function deleteData(
-  path: string,
-  data: API.RuleListItem,
-  options?: Record<string, any>,
-) {
+export async function postData(path: string, data: Record<string, any>, options?: Record<string, any>) {
   return request<Record<string, any>>(path, {
     method: 'POST',
     data: { ...data },
-    ...(options || {}),
-  });
+    ...(options || {})
+  })
+}
+
+/**
+ * GET 方法提交/获取数据
+ * @param path 路径
+ * @param params 参数
+ * @param options options
+ */
+export async function getData(path: string, params?: Record<string, any>, options?: Record<string, any>) {
+  return request<Record<string, any>>(path, {
+    method: 'GET',
+    params: { ...params },
+    ...(options || {})
+  })
 }
