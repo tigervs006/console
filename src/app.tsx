@@ -113,11 +113,11 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
 // 请求前拦截器
 const authHeaderInterceptor = (url: string, options: RequestOptionsInit) => {
   const token = localStorage.getItem('token');
-  const customHeader = { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' };
+  const customHeader = { 'Content-Type': 'application/json; charset=utf-8' };
   if (null !== token) Object.assign(customHeader, { Authorization: `Bearer ${token}` });
   return {
     url: prefix + url,
-    options: { ...options, interceptors: true, headers: customHeader, requestType: 'form' },
+    options: { ...options, interceptors: true, headers: customHeader },
   };
 };
 
@@ -140,7 +140,6 @@ export const request: RequestConfig = {
       console.log('error', error.message);
     }
   },
-  // @ts-ignore
   requestInterceptors: [authHeaderInterceptor],
   responseInterceptors: [ResponseInterceptors]
-};
+}
