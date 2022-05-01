@@ -1,3 +1,7 @@
+import { DataItem } from '@antv/g2plot/esm/interface/config';
+
+export { DataItem };
+
 export type author = {
   name: string;
   cname: string
