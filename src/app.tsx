@@ -130,17 +130,17 @@ const ResponseInterceptors = async (response: Response) => {
 };
 
 export const request: RequestConfig = {
-  errorHandler: (error: any) => {
+  errorHandler: (error: Record<string, any>) => {
     if (error.response) {
       notification.error({
         message: error.response.msg,
-        description: error.response.result.message,
-      });
+        description: error.response.data.message || error.response.msg
+      })
     } else {
       console.log('error', error.message);
     }
   },
   // @ts-ignore
   requestInterceptors: [authHeaderInterceptor],
-  responseInterceptors: [ResponseInterceptors],
+  responseInterceptors: [ResponseInterceptors]
 };
