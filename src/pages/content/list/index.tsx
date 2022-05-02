@@ -5,9 +5,9 @@ import type {ProColumns} from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
 import {PageContainer} from '@ant-design/pro-layout';
 import type {DataItem, valueEnumData} from "../data";
-import {Button, message, Switch, Space, Table} from 'antd';
+import {Modal, Button, message, Switch, Space, Table} from 'antd';
 import {fetchData, getAuthor, remove, setStatus} from "../service";
-import {DeleteOutlined, EditOutlined, SearchOutlined} from '@ant-design/icons';
+import {DeleteOutlined, EditOutlined, SearchOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 
 interface ActionType {
   reload: (resetPageIndex?: boolean) => void;
@@ -19,6 +19,9 @@ interface ActionType {
 }
 
 export default () => {
+
+  const { confirm } = Modal
+
   // 重载表格
   const ref: any = useRef<ActionType>();
 
@@ -91,26 +94,46 @@ export default () => {
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         <Button key={record.id + 1} size="small" shape="round" icon={<EditOutlined />} onClick={() => handleEdit(record.id)}>编辑</Button>,
-        // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         <Button key={record.id + 2} size="small" type="primary" shape="round" icon={<SearchOutlined />} onClick={() => handlePreview(record.id)}>浏览</Button>,
-        // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        <Button key={record.id + 3} danger size="small" type="primary" shape="round" icon={<DeleteOutlined />} onClick={() =>　handleDelete(record.id)}>删除</Button>
+        <Button key={record.id + 3} danger size="small" type="primary" shape="round" icon={<DeleteOutlined />} onClick={() =>　handleDelete(record)}>删除</Button>
       ]
     }
   ];
 
   /**
    * 删除文章
-   * @param id id
+   * @param record
    */
-  const handleDelete = async (id: (string | number)[]) => {
-    const res = await remove({ id: id })
-    if (res.success) {
-      ref.current.reload()
+  const handleDelete = (record: Record<string, any>) => {
+    const ids: number[] = []
+    const titles: string[] = []
+    if (record instanceof Array) {
+      record.forEach(item => {
+        ids.push(item.id)
+        titles.push(`《${item.title}》`)
+      })
     }
-    message.success(res.msg)
+    confirm({
+      centered: true,
+      cancelText: '算了',
+      title: '确定要删除?',
+      icon: <ExclamationCircleOutlined />,
+      cancelButtonProps: {shape: 'round'},
+      okButtonProps: {danger: true, shape: 'round'},
+      content: record.title && `《${record.title}》阅读量为 （ ${record.click} ） 的文章` || (3 < titles.length
+        // @ts-ignore
+        ? `${titles.slice(0, 3)}...等总阅读量为（ ${record.reduce((pre: number, item: number) => pre + item.click, 0)} ）的【${titles.length}】篇文章`
+        // @ts-ignore
+        : `${titles}这【${titles.length}】篇总阅读量为（ ${record.reduce((pre: number, item: number) => pre + item.click, 0)} ）的文章`),
+      async onOk() {
+        const res = await remove({ id: record.id || ids })
+        ref.current.reload()
+        message.success(res.msg)
+      },
+      onCancel(){}
+    })
   }
 
   /**
@@ -189,10 +212,10 @@ export default () => {
           <span>浏览量 {selectedRows && selectedRows.reduce((pre, item) => pre + item.click, 0)} 次</span>
           </Space>
         )}
-        tableAlertOptionRender={({ selectedRowKeys }) => {
+        tableAlertOptionRender={({ selectedRows }) => {
           return (
             <Space size={16}>
-              <a onClick={() => handleDelete(selectedRowKeys)}>批量删除</a>
+              <a onClick={() => handleDelete(selectedRows)}>批量删除</a>
             </Space>
           )
         }}
