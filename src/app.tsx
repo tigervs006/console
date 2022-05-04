@@ -125,21 +125,21 @@ const authHeaderInterceptor = (url: string, options: RequestOptionsInit) => {
 const ResponseInterceptors = async (response: Response) => {
   const result = await response.clone().json();
   // 登录失败返回登录页
-  if (403 == result.status) history.push(loginPath);
+  if (403 === result.status) history.push(loginPath);
   return response;
 };
 
 export const request: RequestConfig = {
   errorHandler: (error: Record<string, any>) => {
-    if (error.response) {
+    if (error?.response) {
       notification.error({
-        message: error.response.msg,
-        description: error.response.data.message || error.response.msg
-      })
+        message: error.response?.msg ?? '未知错误',
+        description: error.response?.data?.message ?? 'Unknow Error',
+      });
     } else {
-      console.log('error', error.message);
+      console.log('error', error?.message ?? 'Server Error');
     }
   },
   requestInterceptors: [authHeaderInterceptor],
-  responseInterceptors: [ResponseInterceptors]
-}
+  responseInterceptors: [ResponseInterceptors],
+};
