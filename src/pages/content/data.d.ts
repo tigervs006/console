@@ -18,3 +18,23 @@ export type valueEnumData = {
     status: string
   }
 }
+
+export type tableDataItem = {
+  id: number
+  cid: number
+  click: number
+  title: string
+  status: number
+  author: string
+  channel: {
+    id: number
+    name: string
+    cname: string
+  }
+  is_head: number
+  is_recom: number
+  loading?: boolean
+  is_collect: number
+  create_time: string
+  update_time: string
+}
