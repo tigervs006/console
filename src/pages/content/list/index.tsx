@@ -112,9 +112,22 @@ export default () => {
       dataIndex: 'update_time'
     },
     {
-      title: '状态',
       search: false,
+      filters: true,
+      onFilter: true,
+      title: '文章状态',
+      valueType: 'select',
       dataIndex: 'status',
+      valueEnum: {
+        1: {
+          text: '显示',
+          status: 'Show'
+        },
+        0: {
+          text: '隐藏',
+          status: 'Hide'
+        }
+      },
       render: (_, record) => [
         // FIXME: 不能单独控制每个switch的loading状态
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
