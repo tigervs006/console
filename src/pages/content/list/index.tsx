@@ -358,7 +358,6 @@ export default () => {
           syncToUrl: (values) => {
             return {
               ...values,
-              created_at: [values.startTime, values.endTime],
             };
           },
         }}
