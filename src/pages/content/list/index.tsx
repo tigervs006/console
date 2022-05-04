@@ -1,42 +1,49 @@
 import '../index.less';
 import {useRequest} from 'umi';
-import {useRef, useState} from 'react';
-import type {ProColumns} from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
+import React, {useRef, useState} from 'react';
 import {PageContainer} from '@ant-design/pro-layout';
-import type {DataItem, valueEnumData} from "../data";
-import {Modal, Button, message, Switch, Space, Table} from 'antd';
-import {fetchData, getAuthor, remove, setStatus} from "../service";
+import type {ProColumns, ActionType} from '@ant-design/pro-table';
+import {fetchData, getAuthor, getChannel, remove, setStatus} from "../service";
+import {Typography, Modal, Button, message, Switch, Select, Space, Table} from 'antd';
+import type {valueEnumData, authorData, tableDataItem, channelDataItem} from "../data";
 import {DeleteOutlined, EditOutlined, SearchOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 
-interface ActionType {
-  reload: (resetPageIndex?: boolean) => void;
-  reloadAndRest: () => void;
-  reset: () => void;
-  clearSelected?: () => void;
-  startEditable: (rowKey: number) => boolean;
-  cancelEditable: (rowKey: number) => boolean;
+const ChannelSelect: React.FC<{
+  value?: string
+  onChange?: (value: string) => void
+}> = (props) => {
+  const [channelOptions, setChannelOptions] = useState<{ label: string; value: number }[]>()
+  // 获取新闻栏目
+  useRequest(getChannel, {onSuccess: (res: { list: channelDataItem[] }) => {
+      const channel = res.list.map((item: channelDataItem) => ({ label: item.cname, value: item.id }))
+      setChannelOptions(channel)
+    }})
+  return <Select showArrow allowClear mode="multiple" placeholder="请选择栏目..." maxTagCount={3} options={channelOptions} value={props.value} onChange={props.onChange} />
 }
 
 export default () => {
 
   const { confirm } = Modal
+  const { Text } = Typography
 
   // 重载表格
-  const ref: any = useRef<ActionType>();
+  const ref: any = useRef<ActionType>()
 
   // 文章作者
-  const [valueEnum , setValueEnum] = useState<valueEnumData>()
-  useRequest(getAuthor, {onSuccess: (res: { list: Record<string, any> }) => {
-    const newObj: Record<string, any> = {}
-    res.list.map((item: Record<string, any>) => {
+  const [authorEnum , setAuthorEnum] = useState<valueEnumData>()
+
+  // 获取文章作者
+  useRequest(getAuthor, {onSuccess: (res: { list: authorData[] }) => {
+    const newObj: Record<string, { text: string, status: string }> = {}
+    res.list.map((item: authorData) => {
       newObj.anonymous = {text: '佚名', status: 'anonymous'}
       newObj[item.name] = {text: item.cname, status: item.name}
     })
-    setValueEnum(newObj)
+    setAuthorEnum(newObj)
   }})
 
-  const columns: ProColumns[] = [
+  const columns: ProColumns<tableDataItem>[] = [
     {
       title: 'ID',
       dataIndex: 'id'
@@ -49,7 +56,7 @@ export default () => {
       filterMode: 'tree',
       dataIndex: 'author',
       valueType: 'select',
-      valueEnum: {...valueEnum}
+      valueEnum: {...authorEnum}
     },
     {
       copyable: true,
@@ -57,8 +64,19 @@ export default () => {
       dataIndex: 'title'
     },
     {
+      search: false,
       title: '所属栏目',
       dataIndex: ['channel', 'cname']
+    },
+    {
+      title: '所属栏目',
+      dataIndex: 'cid',
+      hideInTable: true,
+      renderFormItem: ({ ...rest }) => {
+        return (
+          <ChannelSelect {...rest} />
+        )
+      }
     },
     {
       sorter: true,
@@ -69,7 +87,23 @@ export default () => {
     {
       sorter: true,
       title: '发布时间',
+      hideInSearch: true,
+      valueType: 'dateTime',
       dataIndex: 'create_time'
+    },
+    {
+      title: '创建时间',
+      hideInTable: true,
+      valueType: 'dateRange',
+      dataIndex: 'create_time',
+      search: {
+        transform: (value) => {
+          return {
+            startTime: value !== undefined ? value[0] : null,
+            endTime: value !== undefined ? value[1] : null
+          }
+        }
+      }
     },
     {
       sorter: true,
@@ -81,7 +115,7 @@ export default () => {
       title: '状态',
       search: false,
       dataIndex: 'status',
-      render: (text, record) => [
+      render: (_, record) => [
         // FIXME: 不能单独控制每个switch的loading状态
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         <Switch key="id" loading={record.loading} checkedChildren="显示" unCheckedChildren="隐藏" defaultChecked={!!record.status} onChange={(checked) => handleChange(checked, record)} />
@@ -90,12 +124,12 @@ export default () => {
     {
       title: '操作',
       search: false,
-      render: (text, record) => [
+      render: (_, record) => [
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        <Button key={record.id + 1} size="small" shape="round" icon={<EditOutlined />} onClick={() => handleEdit(record.id)}>编辑</Button>,
+        <Button key={record.id + 1} size="small" shape="round" icon={<EditOutlined />} onClick={() => handleEdit(record)}>编辑</Button>,
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        <Button key={record.id + 2} size="small" type="primary" shape="round" icon={<SearchOutlined />} onClick={() => handlePreview(record.id)}>浏览</Button>,
+        <Button key={record.id + 2} size="small" type="primary" shape="round" icon={<SearchOutlined />} onClick={() => handlePreview(record)}>浏览</Button>,
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         <Button key={record.id + 3} danger size="small" type="primary" shape="round" icon={<DeleteOutlined />} onClick={() =>　handleDelete(record)}>删除</Button>
       ]
@@ -106,7 +140,7 @@ export default () => {
    * 删除文章
    * @param record
    */
-  const handleDelete = (record: Record<string, any>) => {
+  const handleDelete = (record: tableDataItem|tableDataItem[]) => {
     const ids: number[] = []
     const titles: string[] = []
     if (record instanceof Array) {
@@ -118,16 +152,18 @@ export default () => {
     confirm({
       centered: true,
       cancelText: '算了',
-      title: '确定要删除?',
+      title: '当真要删除?',
       icon: <ExclamationCircleOutlined />,
       cancelButtonProps: {shape: 'round'},
       okButtonProps: {danger: true, shape: 'round'},
-      content: record.title && `《${record.title}》阅读量为 （ ${record.click} ） 的文章` || (3 < titles.length
+      // @ts-ignore
+      content: record.title && `《${record.title}》` || (3 < titles.length
         // @ts-ignore
-        ? `${titles.slice(0, 3)}...等总阅读量为（ ${record.reduce((pre: number, item: number) => pre + item.click, 0)} ）的【${titles.length}】篇文章`
+        ? `${titles.slice(0, 3)}...等【${titles.length}】篇文章`
         // @ts-ignore
-        : `${titles}这【${titles.length}】篇总阅读量为（ ${record.reduce((pre: number, item: number) => pre + item.click, 0)} ）的文章`),
+        : `${titles}这【${titles.length}】篇文章`),
       async onOk() {
+        // @ts-ignore
         const res = await remove({ id: record.id || ids })
         ref.current.reload()
         message.success(res.msg)
@@ -141,25 +177,26 @@ export default () => {
    * @param checked 状态
    * @param record 单条数据
    */
-  const handleChange = async (checked: boolean, record: Record<string, any>) => {
+  const handleChange = async (checked: boolean, record: tableDataItem) => {
     const res = await setStatus({ id: record.id, status: checked ? 1 : 0 })
     message.success(res.msg)
   }
 
   /**
    * 编辑文章
-   * @param id 文章id
+   * @param record
    */
-  const handleEdit = (id: number) => {
-    console.log(`当前要编辑的文章ID为：`, id)
+  const handleEdit = (record: tableDataItem) => {
+    console.log(`当前要编辑的文章：${record}`)
   }
 
   /**
    * 浏览文章
-   * @param id 文章id
+   * @param record
    */
-  const handlePreview = (id: number) => {
-    console.log(`当前要预览的文章ID为：${id}`)
+  const handlePreview = (record: tableDataItem) => {
+    // TODO: 正式部署时需要动态获取Domain
+    window.open(`https://demo.brandsz.cn/industry/${record.channel.name}/${record.id}.html`)
   }
 
   /**
@@ -186,10 +223,10 @@ export default () => {
    * 处理request
    * @param data data
    */
-  const postDatas = (data: Record<string, any>) => {
+  const postDatas = (data: tableDataItem[]) => {
     // 添加loading元素到每条数据
     // 以单独控制每个switch按钮的loading状态
-    return data.map((item: DataItem[]) => ({
+    return data.map((item: tableDataItem) => ({
       ...item,
       'loading': false
     }))
@@ -197,19 +234,23 @@ export default () => {
 
   return (
     <PageContainer>
-      <ProTable
+      <ProTable<tableDataItem>
         rowKey="id"
         actionRef={ref}
         columns={columns}
         request={tableData}
         postData={postDatas}
+        search={{
+          labelWidth: 'auto',
+          defaultCollapsed: false
+        }}
         rowSelection={{
           selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT]
         }}
         tableAlertRender={({ selectedRowKeys, selectedRows, onCleanSelected }) => (
           <Space size={24}>
           <span>已选 {selectedRowKeys.length} 项<a style={{ marginLeft: 8 }} onClick={onCleanSelected}>取消选择</a></span>
-          <span>浏览量 {selectedRows && selectedRows.reduce((pre, item) => pre + item.click, 0)} 次</span>
+          <span>总浏览量 <Text type="danger">{selectedRows && selectedRows.reduce((pre, item) => pre + item.click, 0)}</Text> 次</span>
           </Space>
         )}
         tableAlertOptionRender={({ selectedRows }) => {
@@ -218,6 +259,14 @@ export default () => {
               <a onClick={() => handleDelete(selectedRows)}>批量删除</a>
             </Space>
           )
+        }}
+        form={{
+          syncToUrl: values => {
+            return {
+              ...values,
+              created_at: [values.startTime, values.endTime]
+            }
+          }
         }}
       />
     </PageContainer>
