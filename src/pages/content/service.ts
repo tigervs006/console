@@ -5,6 +5,10 @@ export async function getAuthor() {
   return getData('/article/author')
 }
 
+export async function getChannel() {
+  return getData('/article/channel')
+}
+
 export async function fetchData(params: API.PageParams) {
   return getData('/article/list', { ...params })
 }
