@@ -19,7 +19,7 @@ const ChannelSelect: React.FC<{ value?: string; onChange?: (value: string) => vo
   // 获取新闻栏目
   useRequest(getChannel, {
     onSuccess: (res: { list: channelDataItem[] }) => {
-      const channel = res.list.map((item: channelDataItem) => ({
+      const channel = res?.list.map((item: channelDataItem) => ({
         label: item.cname,
         value: item.id,
       }));
@@ -80,7 +80,7 @@ export default () => {
   useRequest(getAuthor, {
     onSuccess: (res: { list: authorData[] }) => {
       const newObj: Record<string, { text: string; status: string }> = {};
-      res.list.map((item: authorData) => {
+      res?.list.map((item: authorData) => {
         newObj.anonymous = { text: '佚名', status: 'anonymous' };
         newObj[item.name] = { text: item.cname, status: item.name };
       });
@@ -158,9 +158,9 @@ export default () => {
     }
     const res = await fetchData({ ...paramData });
     return {
-      data: res.data.list,
-      success: res.success,
-      total: res.data.total,
+      data: res?.data?.list ?? [],
+      total: res?.data?.total ?? 0,
+      success: res?.success ?? false,
     };
   };
 
@@ -218,8 +218,8 @@ export default () => {
       search: {
         transform: (value) => {
           return {
-            startTime: value !== undefined ? value[0] : null,
-            endTime: value !== undefined ? value[1] : null,
+            startTime: value?.[0] ?? null,
+            endTime: value?.[1] ?? null,
           };
         },
       },
@@ -267,8 +267,16 @@ export default () => {
         },
       },
       render: (_, record) => [
-        record.is_collect ? <Tag key={record.id} color="blue">采集</Tag> : <Tag key={record.id} color="magenta">原创</Tag>
-      ]
+        record.is_collect ? (
+          <Tag key={record.id} color="blue">
+            采集
+          </Tag>
+        ) : (
+          <Tag key={record.id} color="magenta">
+            原创
+          </Tag>
+        ),
+      ],
     },
     {
       title: '操作',
