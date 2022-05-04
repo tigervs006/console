@@ -12,13 +12,6 @@ export type statusData = {
   status: number
 }
 
-export type valueEnumData = {
-  [key: string]: {
-    text: string
-    status: string
-  }
-}
-
 export type tableDataItem = {
   id: number
   cid: number
@@ -38,3 +31,11 @@ export type tableDataItem = {
   create_time: string
   update_time: string
 }
+
+export type channelDataItem = {
+  id: number
+  name: string
+  cname: string
+}
+
+export type valueEnumData = Record<string, { text: string; status: string}>
