@@ -5,8 +5,8 @@ import React, { useRef, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import { fetchData, getAuthor, getChannel, remove, setStatus } from '../service';
-import { Typography, Modal, Button, message, Switch, Select, Space, Table } from 'antd';
 import type { valueEnumData, authorData, tableDataItem, channelDataItem } from '../data';
+import { Typography, Modal, Button, message, Switch, Select, Space, Table, Tag } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -248,6 +248,27 @@ export default () => {
         },
       },
       render: (_, record) => [<ArticleSwitch key={record.id} record={record} />],
+    },
+    {
+      search: false,
+      filters: true,
+      onFilter: true,
+      title: '发布方式',
+      valueType: 'select',
+      dataIndex: 'is_collect',
+      valueEnum: {
+        1: {
+          text: '采集',
+          status: 'Collect',
+        },
+        0: {
+          text: '原创',
+          status: 'Origin',
+        },
+      },
+      render: (_, record) => [
+        record.is_collect ? <Tag key={record.id} color="blue">采集</Tag> : <Tag key={record.id} color="magenta">原创</Tag>
+      ]
     },
     {
       title: '操作',
