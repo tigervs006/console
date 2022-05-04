@@ -9,10 +9,7 @@ import {Typography, Modal, Button, message, Switch, Select, Space, Table} from '
 import type {valueEnumData, authorData, tableDataItem, channelDataItem} from "../data";
 import {DeleteOutlined, EditOutlined, SearchOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 
-const ChannelSelect: React.FC<{
-  value?: string
-  onChange?: (value: string) => void
-}> = (props) => {
+const ChannelSelect: React.FC<{ value?: string; onChange?: (value: string) => void }> = (props) => {
   const [channelOptions, setChannelOptions] = useState<{ label: string; value: number }[]>()
   // 获取新闻栏目
   useRequest(getChannel, {onSuccess: (res: { list: channelDataItem[] }) => {
@@ -20,6 +17,23 @@ const ChannelSelect: React.FC<{
       setChannelOptions(channel)
     }})
   return <Select showArrow allowClear mode="multiple" placeholder="请选择栏目..." maxTagCount={3} options={channelOptions} value={props.value} onChange={props.onChange} />
+}
+
+const ArticleSwitch: React.FC<{ record: tableDataItem }> = (props) => {
+  const [loadings, setLoadings] = useState<boolean>(false)
+  /**
+   * 设置文章状态
+   * @param checked 状态
+   * @param record 当前记录
+   */
+  const handleChange = async (checked: boolean, record: tableDataItem) => {
+    setLoadings(true)
+    await setStatus({ id: record.id, status: checked ? 1 : 0 }).then(res => {
+      setLoadings(false)
+      message.success(res.msg)
+    })
+  }
+  return <Switch key="id" loading={loadings} checkedChildren="显示" unCheckedChildren="隐藏" defaultChecked={!!props.record.status} onChange={(checked) => handleChange(checked, props.record)} />
 }
 
 export default () => {
@@ -129,9 +143,8 @@ export default () => {
         }
       },
       render: (_, record) => [
-        // FIXME: 不能单独控制每个switch的loading状态
-        // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        <Switch key="id" loading={record.loading} checkedChildren="显示" unCheckedChildren="隐藏" defaultChecked={!!record.status} onChange={(checked) => handleChange(checked, record)} />
+        // @ts-ignore
+        <ArticleSwitch key={record.id} record={record} />
       ]
     },
     {
@@ -186,16 +199,6 @@ export default () => {
   }
 
   /**
-   * 设置文章状态
-   * @param checked 状态
-   * @param record 单条数据
-   */
-  const handleChange = async (checked: boolean, record: tableDataItem) => {
-    const res = await setStatus({ id: record.id, status: checked ? 1 : 0 })
-    message.success(res.msg)
-  }
-
-  /**
    * 编辑文章
    * @param record
    */
@@ -232,19 +235,6 @@ export default () => {
     }
   }
 
-  /**
-   * 处理request
-   * @param data data
-   */
-  const postDatas = (data: tableDataItem[]) => {
-    // 添加loading元素到每条数据
-    // 以单独控制每个switch按钮的loading状态
-    return data.map((item: tableDataItem) => ({
-      ...item,
-      'loading': false
-    }))
-  }
-
   return (
     <PageContainer>
       <ProTable<tableDataItem>
@@ -252,7 +242,6 @@ export default () => {
         actionRef={ref}
         columns={columns}
         request={tableData}
-        postData={postDatas}
         search={{
           labelWidth: 'auto',
           defaultCollapsed: false
