@@ -134,7 +134,11 @@ export const request: RequestConfig = {
     if (error?.response) {
       notification.error({
         message: error.response?.msg ?? '未知错误',
-        description: error.response?.data?.message ?? 'Unknow Error',
+        description:
+          error.response?.data?.message ??
+          `status code: ${error.response?.status ?? 400}，success: ${
+            error.response?.success ?? false
+          }`,
       });
     } else {
       console.log('error', error?.message ?? 'Server Error');
