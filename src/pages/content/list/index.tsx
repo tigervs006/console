@@ -93,7 +93,7 @@ export default () => {
    * @param record
    */
   const handleEdit = (record: tableDataItem) => {
-    console.log(`当前要编辑的文章：${record}`);
+    console.log('当前要编辑的文章：', record);
   };
 
   /**
@@ -235,6 +235,7 @@ export default () => {
       filters: true,
       onFilter: true,
       title: '文章状态',
+      filterMode: 'tree',
       valueType: 'select',
       dataIndex: 'status',
       valueEnum: {
@@ -254,6 +255,7 @@ export default () => {
       filters: true,
       onFilter: true,
       title: '发布方式',
+      filterMode: 'tree',
       valueType: 'select',
       dataIndex: 'is_collect',
       valueEnum: {
