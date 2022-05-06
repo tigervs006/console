@@ -1,3 +1,4 @@
+import './index.less';
 import React from 'react';
 import type { stateData, parentProps } from './data';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
