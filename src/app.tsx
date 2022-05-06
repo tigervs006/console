@@ -112,9 +112,10 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
 
 // 请求前拦截器
 const authHeaderInterceptor = (url: string, options: RequestOptionsInit) => {
-  const token = localStorage.getItem('token');
+  const ACCESS_TOKEN = localStorage.getItem('ACCESS_TOKEN');
   const customHeader = { 'Content-Type': 'application/json; charset=utf-8' };
-  if (null !== token) Object.assign(customHeader, { Authorization: `Bearer ${token}` });
+  if (null !== ACCESS_TOKEN)
+    Object.assign(customHeader, { Authorization: `Bearer ${ACCESS_TOKEN}` });
   return {
     url: prefix + url,
     options: { ...options, interceptors: true, headers: customHeader },
