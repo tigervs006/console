@@ -5,7 +5,13 @@ import React, { useRef, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import { fetchData, getAuthor, getChannel, remove, setStatus } from '../service';
-import type { valueEnumData, authorData, tableDataItem, channelDataItem } from '../data';
+import type {
+  valueEnumData,
+  authorData,
+  tableDataItem,
+  channelDataItem,
+  channelOptions,
+} from '../data';
 import { Typography, Modal, Button, message, Switch, Select, Space, Table, Tag } from 'antd';
 import {
   DeleteOutlined,
@@ -15,7 +21,7 @@ import {
 } from '@ant-design/icons';
 
 const ChannelSelect: React.FC<{ value?: string; onChange?: (value: string) => void }> = (props) => {
-  const [channelOptions, setChannelOptions] = useState<{ label: string; value: number }[]>();
+  const [channelOptions, setChannelOptions] = useState<channelOptions[]>();
   // 获取新闻栏目
   useRequest(getChannel, {
     onSuccess: (res: { list: channelDataItem[] }) => {
