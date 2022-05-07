@@ -1,28 +1,86 @@
 import './index.less';
 import React from 'react';
+import { Space, message, Typography } from 'antd';
 import type { stateData, parentProps } from './data';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { EditOutlined, LoadingOutlined } from '@ant-design/icons';
 
 export default class Ckeditor extends React.Component<parentProps, stateData> {
   constructor(props: parentProps) {
     super(props);
     this.state = {
+      saving: false,
+      defaultType: '',
+      defaultStatus: 'waiting input...',
       content: '<h3>Hello from CKEditor5</h3>',
     };
   }
   render() {
+    const { Text } = Typography;
+    // 自动保存
+    const saveData = (data: any) => {
+      console.log('自动保存成功：', data);
+      message.success('自动保存成功');
+    };
+    // 自定义配置
+    const customConfig = {
+      autosave: {
+        // TODO: 后期通过后台设置
+        waitingTime: 60000, // 每分钟自动保存
+        save(editor: any) {
+          return saveData(editor.getData());
+        },
+      },
+    };
+    // 字数统计&自动保存状态
+    const displayStatus = (editor: any) => {
+      // 字数统计
+      const wordCountPlugin = editor.plugins.get('WordCount');
+      const wordCountWrapper = document.getElementById('word-count');
+      wordCountWrapper?.appendChild(wordCountPlugin.wordCountContainer);
+      // 自动保存设置
+      const pendingActions = editor.plugins.get('PendingActions');
+      pendingActions.on('change:hasAny', (evt: any, propertyName: any, newValue: boolean) => {
+        if (newValue) {
+          this.setState({
+            saving: true,
+            defaultType: 'danger',
+            defaultStatus: 'inputing...',
+          });
+        } else {
+          this.setState({
+            saving: false,
+            defaultType: 'success',
+            defaultStatus: 'Auto save succeeded!',
+          });
+        }
+      });
+    };
     return (
-      <CKEditor
-        editor={ClassicEditor}
-        data={this.state.content}
-        // 数据改变时保存
-        onChange={(event: any, editor: any) => {
-          this.setState({ content: editor.getData() });
-        }}
-        // 失焦时保存数据
-        onBlur={(event: any) => this.props.dataContent(event, this.state.content)}
-      />
+      <>
+        <CKEditor
+          editor={ClassicEditor}
+          data={this.state.content}
+          onReady={(editor: any) => displayStatus(editor)}
+          // 数据改变时保存
+          onChange={(event: any, editor: any) => {
+            this.setState({ content: editor.getData() });
+          }}
+          config={customConfig}
+          // 失焦时保存数据
+          onBlur={(event: any) => this.props.dataContent(event, this.state.content)}
+        />
+        <div id="word-count" className="edit-footer-info" />
+        <Space>
+          <Text strong>
+            <EditOutlined /> Editor status:
+          </Text>
+          <Text type={this.state.defaultType}>
+            {this.state.saving && <LoadingOutlined />} {this.state.defaultStatus}
+          </Text>
+        </Space>
+      </>
     );
   }
 }
