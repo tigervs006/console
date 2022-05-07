@@ -10,10 +10,10 @@ export default class Ckeditor extends React.Component<parentProps, stateData> {
   constructor(props: parentProps) {
     super(props);
     this.state = {
-      content: '',
       saving: false,
       defaultType: '',
       defaultStatus: 'waiting input...',
+      content: '<p>来吧，请开始你的表演...</p>',
     };
   }
   render() {
@@ -60,6 +60,7 @@ export default class Ckeditor extends React.Component<parentProps, stateData> {
     return (
       <>
         <CKEditor
+          config={customConfig}
           editor={ClassicEditor}
           data={this.state.content}
           onReady={(editor: any) => displayStatus(editor)}
@@ -67,7 +68,6 @@ export default class Ckeditor extends React.Component<parentProps, stateData> {
           onChange={(event: any, editor: any) => {
             this.setState({ content: editor.getData() });
           }}
-          config={customConfig}
           // 失焦时保存数据
           onBlur={(event: any) => this.props.setContent(event, this.state.content)}
         />
