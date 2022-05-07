@@ -22,14 +22,14 @@ export default () => {
     },
   });
 
-  const dataCkeditor = (e: any, contents: string) => {
+  const getContent = (e: any, contents: string) => {
     setContent(contents);
     console.log('parentContent:', e.name, content);
   };
 
   return (
     <PageContainer>
-      <Ckeditor dataContent={dataCkeditor} />
+      <Ckeditor setContent={getContent} />
     </PageContainer>
   );
 };

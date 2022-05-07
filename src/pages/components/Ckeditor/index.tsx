@@ -10,10 +10,10 @@ export default class Ckeditor extends React.Component<parentProps, stateData> {
   constructor(props: parentProps) {
     super(props);
     this.state = {
+      content: '',
       saving: false,
       defaultType: '',
       defaultStatus: 'waiting input...',
-      content: '<h3>Hello from CKEditor5</h3>',
     };
   }
   render() {
@@ -69,7 +69,7 @@ export default class Ckeditor extends React.Component<parentProps, stateData> {
           }}
           config={customConfig}
           // 失焦时保存数据
-          onBlur={(event: any) => this.props.dataContent(event, this.state.content)}
+          onBlur={(event: any) => this.props.setContent(event, this.state.content)}
         />
         <div id="word-count" className="edit-footer-info" />
         <Space>

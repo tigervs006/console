@@ -5,5 +5,5 @@ export interface stateData {
   defaultStatus: string;
 }
 export interface parentProps {
-  dataContent: (event: any, contents: string) => void;
+  setContent: (event: any, contents: string) => void;
 }
