@@ -15,8 +15,10 @@ export type statusData = {
 export type articleData = {
   cid: number;
   title: string;
+  litpic: string[];
   keywords: string;
   description: string;
+  attribute: string[];
 };
 
 export type tableDataItem = {
