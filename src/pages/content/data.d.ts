@@ -12,6 +12,13 @@ export type statusData = {
   status: number;
 };
 
+export type articleData = {
+  cid: number;
+  title: string;
+  keywords: string;
+  description: string;
+};
+
 export type tableDataItem = {
   id: number;
   cid: number;
