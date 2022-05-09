@@ -51,6 +51,9 @@ const Login: React.FC = () => {
       // 登录
       const msg = await login({ ...values, type });
       if (msg.status === 'ok') {
+        const authorization = msg.data?.Authorization ?? '';
+        // 写入到localStorage
+        localStorage.setItem('Authorization', authorization);
         const defaultLoginSuccessMessage = intl.formatMessage({
           id: 'pages.login.success',
           defaultMessage: '登录成功！',
