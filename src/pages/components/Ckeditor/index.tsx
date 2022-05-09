@@ -12,7 +12,7 @@ export default class Ckeditor extends React.Component<parentProps, stateData> {
     this.state = {
       saving: false,
       defaultType: 'secondary',
-      defaultStatus: 'waiting input...',
+      defaultStatus: 'waiting for input...',
       content: '<p>来吧，请开始你的表演...</p>',
     };
   }
