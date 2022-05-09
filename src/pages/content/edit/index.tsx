@@ -1,3 +1,4 @@
+import { useModel } from 'umi';
 import { useRef, useState } from 'react';
 import { waitTime } from '@/utils/tools';
 import Ckeditor from '@/pages/components/Ckeditor';
@@ -17,6 +18,9 @@ import ProForm, {
 
 export default () => {
   const formRef = useRef<ProFormInstance>();
+  const { accessToken } = useModel('basic', (model) => ({
+    accessToken: model.accessToken,
+  }));
   // 文章内容
   // @ts-ignore
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -185,7 +189,7 @@ export default () => {
             },
             listType: 'picture-card',
             accept: '.png, .jpg, .jpeg, .gif',
-            headers: { Authorization: localStorage.getItem('ACCESS_TOKEN') || '' },
+            headers: { Authorization: accessToken },
           }}
         />
         <ProFormCheckbox.Group
