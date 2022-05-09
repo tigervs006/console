@@ -1,7 +1,15 @@
 .edit-footer-info {
   margin: 1rem 0;
 }
+.edit-footer-info #word-count {
+  margin-bottom: 0.5rem;
+}
 .ck-editor__editable {
   height: 800px;
+}
+@media screen and (max-width: 768px) {
+  .ck-editor__editable {
+    height: 400px;
+  }
 }
 /*# sourceMappingURL=index.css.map */

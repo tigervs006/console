@@ -71,15 +71,17 @@ export default class Ckeditor extends React.Component<parentProps, stateData> {
           // 失焦时保存数据
           onBlur={(event: any) => this.props.setContent(event, this.state.content)}
         />
-        <div id="word-count" className="edit-footer-info" />
-        <Space>
-          <Text strong>
-            <EditOutlined /> Editor status:
-          </Text>
-          <Text type={this.state.defaultType}>
-            {this.state.saving && <LoadingOutlined />} {this.state.defaultStatus}
-          </Text>
-        </Space>
+        <div className="edit-footer-info">
+          <div id="word-count" />
+          <Space>
+            <Text strong>
+              <EditOutlined /> Editor status:
+            </Text>
+            <Text type={this.state.defaultType}>
+              {this.state.saving && <LoadingOutlined />} {this.state.defaultStatus}
+            </Text>
+          </Space>
+        </div>
       </>
     );
   }
