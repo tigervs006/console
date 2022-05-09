@@ -125,6 +125,10 @@ export default {
         status: 'ok',
         type,
         currentAuthority: 'admin',
+        data: {
+          Authorization:
+            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImp0aSI6IjRmMWcyM2ExMmF4In0.eyJpc3MiOiJodHRwczpcL1wvd3d3LnRpZ2VydnMuY29tIiwiYXVkIjoiaHR0cHM6XC9cL3d3dy50aWdlcnZzLmNvbSIsImp0aSI6IjRmMWcyM2ExMmF4IiwiaWF0IjoxNjUyMTE0OTcwLCJuYmYiOjE2NTIxMTQ5NzAsImV4cCI6MTY1MjIwMTM3MCwidWlkIjoxLCJpcGFkZHJlc3MiOiIxMTkuMTM5LjMzLjE1OSIsInVzZXJBZ2VudCI6Ik1vemlsbGFcLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXaW42NDsgeDY0KSBBcHBsZVdlYktpdFwvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lXC8xMDEuMC40OTUxLjU0IFNhZmFyaVwvNTM3LjM2In0.yMSQCjnC5trRH2fhvs8U3bMzeWDSAXmTvGjpmM7RwTQ',
+        },
       });
       access = 'admin';
       return;

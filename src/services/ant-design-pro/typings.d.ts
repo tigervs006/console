@@ -26,6 +26,9 @@ declare namespace API {
   type LoginResult = {
     status?: string;
     type?: string;
+    data?: {
+      Authorization: string;
+    };
     currentAuthority?: string;
   };
 
@@ -53,17 +56,17 @@ declare namespace API {
   };
 
   type RuleListResult = {
-    total?: number
-    list?: Array<any>
+    total?: number;
+    list?: Array<any>;
   };
 
   type RuleList = {
-    msg: string
-    path: string
-    status: number
-    method: string
-    success: boolean
-    data: RuleListResult
+    msg: string;
+    path: string;
+    status: number;
+    method: string;
+    success: boolean;
+    data: RuleListResult;
   };
 
   type FakeCaptcha = {
