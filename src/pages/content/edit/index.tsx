@@ -183,8 +183,8 @@ export default () => {
                 };
               });
             },
-            accept: '.png, .jpg, .jpeg, .gif',
             listType: 'picture-card',
+            accept: '.png, .jpg, .jpeg, .gif',
             headers: { Authorization: localStorage.getItem('ACCESS_TOKEN') || '' },
           }}
         />
