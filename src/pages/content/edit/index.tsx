@@ -95,8 +95,8 @@ export default () => {
           rules={[{ required: true, message: '选择文章发布的栏目' }]}
         />
         <ProFormText
-          name="title"
           label="标题"
+          name="title"
           tooltip="限制32个字符"
           placeholder="请输入文章标题"
           fieldProps={{ showCount: true, maxLength: 32 }}
@@ -106,8 +106,8 @@ export default () => {
           ]}
         />
         <ProFormText
-          name="keywords"
           label="关键词"
+          name="keywords"
           tooltip="请用空格分隔"
           placeholder="请输入关键词"
           fieldProps={{ showCount: true, maxLength: 64 }}
@@ -117,8 +117,8 @@ export default () => {
           ]}
         />
         <ProFormTextArea
-          name="description"
           label="文章简述"
+          name="description"
           tooltip="SEO优化很重要"
           placeholder="请输入名称文章简述"
           fieldProps={{
@@ -134,13 +134,13 @@ export default () => {
         />
         <ProFormUploadButton
           max={1}
-          label="文档封面"
           name="litpic"
+          label="文档封面"
           title="Upload"
           action="upload.do"
           tooltip="仅支持png、jpg、jpeg"
           rules={[
-            { required: true, message: '文档封面必须得有', type: 'array' },
+            { required: true, message: '文档封面必须得有' },
             { max: 1, message: '文档封面只要一张就行了', type: 'array' },
           ]}
           fieldProps={{
@@ -189,8 +189,8 @@ export default () => {
           }}
         />
         <ProFormCheckbox.Group
-          name="attribute"
           label="文档属性"
+          name="attribute"
           tooltip="选择文档属性"
           options={[
             { label: '头条', value: 'is_head' },
