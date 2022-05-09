@@ -38,6 +38,8 @@ export default () => {
     <PageContainer>
       <ProForm<articleData>
         formRef={formRef}
+        layout="vertical"
+        wrapperCol={{ span: 8 }}
         submitter={{
           render: (_, doms) => (
             <Row>
@@ -85,15 +87,14 @@ export default () => {
         // onValuesChange={(changeValues) => console.log(changeValues)}
       >
         <ProFormSelect
-          width="sm"
+          width="xs"
           name="cid"
           label="栏目"
-          tooltip="文章发布的栏目"
           request={channel}
+          tooltip="文章发布的栏目"
           rules={[{ required: true, message: '选择文章发布的栏目' }]}
         />
         <ProFormText
-          width="xl"
           name="title"
           label="标题"
           tooltip="限制32个字符"
@@ -105,7 +106,6 @@ export default () => {
           ]}
         />
         <ProFormText
-          width="xl"
           name="keywords"
           label="关键词"
           tooltip="请用空格分隔"
@@ -117,7 +117,6 @@ export default () => {
           ]}
         />
         <ProFormTextArea
-          width="xl"
           name="description"
           label="文章简述"
           tooltip="SEO优化很重要"
@@ -135,7 +134,6 @@ export default () => {
         />
         <ProFormUploadButton
           max={1}
-          width="xl"
           label="文档封面"
           name="litpic"
           title="Upload"
@@ -191,7 +189,6 @@ export default () => {
           }}
         />
         <ProFormCheckbox.Group
-          width="xl"
           name="attribute"
           label="文档属性"
           tooltip="选择文档属性"
@@ -207,7 +204,7 @@ export default () => {
         />
         {/* ckeditor5编辑器 */}
         <Row>
-          <Col sm={24} md={12} lg={16}>
+          <Col xs={24} sm={24} md={12} lg={16}>
             <Ckeditor setContent={getContent} />
           </Col>
         </Row>
