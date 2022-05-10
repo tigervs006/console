@@ -1,4 +1,5 @@
 import '../index.less';
+import moment from 'moment';
 import { useRequest } from 'umi';
 import ProTable from '@ant-design/pro-table';
 import React, { useRef, useState } from 'react';
@@ -157,7 +158,7 @@ export default () => {
    */
   const tableData = async (params: API.PageParams, sort: any, filter: any) => {
     const paramData = Object.assign({ ...params }, sort, filter);
-    // 过滤空值对象，比后台做判断更方便
+    // 过滤参数以避免后台接收到空值参数
     for (const idx in paramData) {
       if ('' === paramData[idx] || null === paramData[idx] || undefined === paramData[idx])
         delete paramData[idx];
@@ -217,7 +218,7 @@ export default () => {
       dataIndex: 'create_time',
     },
     {
-      title: '创建时间',
+      title: '发布时间',
       hideInTable: true,
       valueType: 'dateRange',
       dataIndex: 'create_time',
@@ -227,6 +228,31 @@ export default () => {
             startTime: value?.[0] ?? null,
             endTime: value?.[1] ?? null,
           };
+        },
+      },
+      fieldProps: {
+        placeholder: ['开始时间', '结束时间'],
+        ranges: {
+          Today: [moment(), moment()],
+          Yestoday: [moment().day(1).startOf('day'), moment().day(1).endOf('day')],
+          thisWeek: [moment().startOf('week'), moment().endOf('week')],
+          lastWeek: [
+            moment()
+              .week(moment().week() - 1)
+              .startOf('week'),
+            moment()
+              .week(moment().week() - 1)
+              .endOf('week'),
+          ],
+          thisMonth: [moment().startOf('month'), moment().endOf('month')],
+          lastMonth: [
+            moment()
+              .month(moment().month() - 1)
+              .startOf('month'),
+            moment()
+              .month(moment().month() - 1)
+              .endOf('month'),
+          ],
         },
       },
     },
