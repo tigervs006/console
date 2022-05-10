@@ -39,15 +39,13 @@ export default () => {
       <ProForm<articleData>
         formRef={formRef}
         layout="vertical"
-        wrapperCol={{ span: 8 }}
+        wrapperCol={{
+          md: { span: 16 },
+          lg: { span: 16 },
+          xl: { span: 8 },
+        }}
         submitter={{
-          render: (_, doms) => (
-            <Row>
-              <Col offset={7}>
-                <Space size="middle">{doms}</Space>
-              </Col>
-            </Row>
-          ),
+          render: (_, doms) => <Space size="middle">{doms}</Space>,
           resetButtonProps: { shape: 'round', icon: <UndoOutlined /> },
           submitButtonProps: { type: 'primary', shape: 'round', icon: <FormOutlined /> },
         }}
@@ -204,7 +202,7 @@ export default () => {
         />
         {/* ckeditor5编辑器 */}
         <Row>
-          <Col xs={24} sm={24} md={12} lg={16}>
+          <Col xs={24} sm={24} md={24} lg={24} xl={16} xxl={16}>
             <Ckeditor setContent={getContent} />
           </Col>
         </Row>
