@@ -13,7 +13,6 @@ import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
-const prefix = '/console';
 
 /** 获取用户信息比较慢的时候会展示一个 loading */
 export const initialStateConfig = {
@@ -112,12 +111,11 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
 
 // 请求前拦截器
 const authHeaderInterceptor = (url: string, options: RequestOptionsInit) => {
-  const ACCESS_TOKEN = localStorage.getItem('ACCESS_TOKEN');
+  const accessToken = localStorage.getItem('Authorization');
   const customHeader = { 'Content-Type': 'application/json; charset=utf-8' };
-  if (null !== ACCESS_TOKEN)
-    Object.assign(customHeader, { Authorization: `Bearer ${ACCESS_TOKEN}` });
+  if (null !== accessToken) Object.assign(customHeader, { Authorization: accessToken });
   return {
-    url: prefix + url,
+    url: '/console' + url,
     options: { ...options, interceptors: true, headers: customHeader },
   };
 };
