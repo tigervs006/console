@@ -52,7 +52,7 @@ export default () => {
           submitButtonProps: { type: 'primary', shape: 'round', icon: <FormOutlined /> },
         }}
         onFinish={async (values) => {
-          await waitTime(2000);
+          await waitTime(1000);
           console.log(values);
           message.success('提交成功');
         }}
@@ -173,7 +173,7 @@ export default () => {
                     } else if (750 > image.width && 450 > image.height) {
                       notification.error({
                         message: '图像尺寸不符合要求',
-                        description: `当前图像尺寸为：${image.width}X${image.height}，建议尺寸应为：≥750X450`,
+                        description: `当前图像尺寸：${image.width}X${image.height}，要求的图像尺寸应为：≥750X450`,
                       });
                       reject();
                     } else {
