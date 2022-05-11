@@ -5,13 +5,14 @@ import { getChannel } from '@/pages/content/service';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { articleData, channelDataItem } from '../data';
 import type { ProFormInstance } from '@ant-design/pro-form';
-import { notification, Space, Row, Col } from 'antd';
+import { notification, Button, Space, Row, Col } from 'antd';
 import { UndoOutlined, FormOutlined } from '@ant-design/icons';
 import ProForm, {
   ProFormText,
   ProFormSelect,
   ProFormTextArea,
   ProFormCheckbox,
+  ProFormDependency,
   ProFormUploadButton,
 } from '@ant-design/pro-form';
 
@@ -32,6 +33,25 @@ export default () => {
         } ?? {}),
     );
   };
+  // 转换图像网址
+  const transLitpicUrl = (data: string[]) => {
+    const newObj: Record<string, string> = {};
+    data.map((item: string) => {
+      newObj.litpic = item;
+    });
+    return { ...newObj };
+  };
+  const getFormatValues = () => {
+    // 格式化后的数据
+    const formatData = formRef.current?.getFieldsFormatValue?.();
+    // 提取文档属性
+    const attribute: string[] = [];
+    for (const idx in formatData) {
+      // 提取属性key值
+      if (idx.match(/is_/)) attribute.push(idx);
+    }
+    console.log('提取到的文档属性：', attribute);
+  };
   // 获得编辑器内容
   const getContent = (e: any, contents: string) => setContent(contents);
   return (
@@ -45,7 +65,16 @@ export default () => {
           xl: { span: 8 },
         }}
         submitter={{
-          render: (_, doms) => <Space size="middle">{doms}</Space>,
+          render: (_, doms) => {
+            return [
+              <Space size="middle" key="spaceGroup">
+                {doms}
+                <Button danger shape="round" onClick={getFormatValues}>
+                  获取数据
+                </Button>
+              </Space>,
+            ];
+          },
           resetButtonProps: { shape: 'round', icon: <UndoOutlined /> },
           submitButtonProps: { type: 'primary', shape: 'round', icon: <FormOutlined /> },
         }}
@@ -129,69 +158,99 @@ export default () => {
             { min: 50, message: '再多几句文章简述', type: 'string' },
           ]}
         />
-        <ProFormUploadButton
-          max={1}
-          name="litpic"
-          label="文档封面"
-          title="Upload"
-          action="upload.do"
-          tooltip="仅支持png、jpg、jpeg"
-          transform={(item) => {
-            const newObj: Record<string, string> = {};
-            item.map((url: string) => {
-              newObj.litpic = url;
-            });
-            return { ...newObj };
-          }}
-          rules={[
-            { required: true, message: '文档封面必须得有' },
-            { max: 1, message: '文档封面只要一张就行了', type: 'array' },
-          ]}
-          fieldProps={{
-            beforeUpload: (file) => {
-              const MAX_FILE_SIZE = 2;
-              const UNIT = 1024 * 1024;
-              const curType = file.type;
-              const fileType = ['image/png', 'image/jpeg', 'image/pjpeg'];
-              return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file as Blob);
-                reader.onload = function (e) {
-                  const base64: string | ArrayBuffer | null | undefined = e.target?.result;
-                  const image = document.createElement('img');
-                  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-                  typeof base64 === 'string' ? (image.src = base64) : undefined;
-                  image.onload = function () {
-                    if (!fileType.includes(curType)) {
-                      notification.error({
-                        message: '上传的文件类型错误',
-                        description: `请上传格式为${fileType}的图片`,
-                      });
-                      reject();
-                    } else if (file.size > MAX_FILE_SIZE * UNIT) {
-                      notification.error({
-                        message: '图像大小不符合要求',
-                        description: `单张图像大小不得超过${MAX_FILE_SIZE}M`,
-                      });
-                      reject();
-                    } else if (750 > image.width && 450 > image.height) {
-                      notification.error({
-                        message: '图像尺寸不符合要求',
-                        description: `当前图像尺寸：${image.width}X${image.height}，要求的图像尺寸应为：≥750X450`,
-                      });
-                      reject();
-                    } else {
-                      resolve();
-                    }
-                  };
-                };
-              });
+        <ProFormSelect
+          options={[
+            {
+              value: 'upload',
+              label: '上传图像',
             },
-            listType: 'picture-card',
-            accept: '.png, .jpg, .jpeg, .gif',
-            headers: { Authorization: localStorage.getItem('Authorization') || '' },
-          }}
+            {
+              value: 'input',
+              label: '图像网址',
+            },
+          ]}
+          width="xs"
+          label="上传方式"
+          name="uploadMode"
+          initialValue={['upload']}
+          tooltip="上传图片/输入图像网址"
+          fieldProps={{ allowClear: false }}
         />
+        <ProFormDependency name={['uploadMode']}>
+          {({ uploadMode }) => {
+            if ('input' === uploadMode) {
+              return (
+                <ProFormText
+                  name="litpic"
+                  label="图像网址"
+                  tooltip="直接输入图像网址"
+                  placeholder="请输入输入图片网址"
+                  transform={(item) => transLitpicUrl(item)}
+                  rules={[{ required: true, message: '请输入图像网址或选择上传图像作为文档封面' }]}
+                />
+              );
+            }
+            return (
+              <ProFormUploadButton
+                max={1}
+                name="litpic"
+                label="上传图像"
+                title="Upload"
+                action="upload.do"
+                tooltip="仅支持png、jpg、jpeg"
+                transform={(item) => transLitpicUrl(item)}
+                rules={[
+                  { required: true, message: '请选择上传图像或输入图像网址作为文档封面' },
+                  { max: 1, message: '文档封面只要一张就行了', type: 'array' },
+                ]}
+                fieldProps={{
+                  beforeUpload: (file) => {
+                    const MAX_FILE_SIZE = 2;
+                    const UNIT = 1024 * 1024;
+                    const curType = file.type;
+                    const fileType = ['image/png', 'image/jpeg', 'image/pjpeg'];
+                    return new Promise((resolve, reject) => {
+                      const reader = new FileReader();
+                      reader.readAsDataURL(file as Blob);
+                      reader.onload = function (e) {
+                        const base64: string | ArrayBuffer | null | undefined = e.target?.result;
+                        const image = document.createElement('img');
+                        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+                        typeof base64 === 'string' ? (image.src = base64) : undefined;
+                        image.onload = function () {
+                          if (!fileType.includes(curType)) {
+                            notification.error({
+                              message: '上传的文件类型错误',
+                              description: `请上传格式为${fileType}的图片`,
+                            });
+                            reject();
+                          } else if (file.size > MAX_FILE_SIZE * UNIT) {
+                            notification.error({
+                              message: '图像大小不符合要求',
+                              description: `单张图像大小不得超过${MAX_FILE_SIZE}M`,
+                            });
+                            reject();
+                          } else if (750 > image.width && 450 > image.height) {
+                            notification.error({
+                              message: '图像尺寸不符合要求',
+                              description: `当前图像尺寸：${image.width}X${image.height}，要求的图像尺寸应为：≥750X450`,
+                            });
+                            reject();
+                          } else {
+                            resolve();
+                          }
+                        };
+                      };
+                    });
+                  },
+                  listType: 'picture-card',
+                  accept: '.png, .jpg, .jpeg, .gif',
+                  headers: { Authorization: localStorage.getItem('Authorization') || '' },
+                }}
+              />
+            );
+          }}
+        </ProFormDependency>
         <ProFormCheckbox.Group
           label="文档属性"
           name="attribute"
