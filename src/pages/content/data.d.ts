@@ -18,7 +18,7 @@ export type articleData = {
   litpic: string[];
   keywords: string;
   description: string;
-  attribute: string[];
+  attribute?: string[];
 };
 
 export type tableDataItem = {

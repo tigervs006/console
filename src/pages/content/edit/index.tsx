@@ -5,7 +5,7 @@ import { getChannel } from '@/pages/content/service';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { articleData, channelDataItem } from '../data';
 import type { ProFormInstance } from '@ant-design/pro-form';
-import { notification, message, Space, Row, Col } from 'antd';
+import { notification, Space, Row, Col } from 'antd';
 import { UndoOutlined, FormOutlined } from '@ant-design/icons';
 import ProForm, {
   ProFormText,
@@ -51,8 +51,7 @@ export default () => {
         }}
         onFinish={async (values) => {
           await waitTime(1000);
-          console.log(values);
-          message.success('提交成功');
+          console.log('onFinish', values);
         }}
         // request参数
         params={{ id: 125 }}
@@ -137,6 +136,13 @@ export default () => {
           title="Upload"
           action="upload.do"
           tooltip="仅支持png、jpg、jpeg"
+          transform={(item) => {
+            const newObj: Record<string, string> = {};
+            item.map((url: string) => {
+              newObj.litpic = url;
+            });
+            return { ...newObj };
+          }}
           rules={[
             { required: true, message: '文档封面必须得有' },
             { max: 1, message: '文档封面只要一张就行了', type: 'array' },
@@ -190,6 +196,19 @@ export default () => {
           label="文档属性"
           name="attribute"
           tooltip="选择文档属性"
+          // 提交时转化为对象
+          transform={(attribute) => {
+            const newObj = {};
+            attribute.map((item: string) => {
+              newObj[item] = 1;
+            });
+            return { ...newObj };
+          }}
+          // 前置转化对象为数组
+          // convertValue={attribute => {
+          //   console.log('convertValue', attribute)
+          //   return attribute
+          // }}
           options={[
             { label: '头条', value: 'is_head' },
             { label: '推荐', value: 'is_recom' },
