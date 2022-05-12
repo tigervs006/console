@@ -1,20 +1,20 @@
 import { useRef, useState } from 'react';
-import { waitTime } from '@/utils/tools';
 import Ckeditor from '@/pages/components/Ckeditor';
+import { waitTime, extractImg } from '@/utils/tools';
 import { getChannel } from '@/pages/content/service';
 import { PageContainer } from '@ant-design/pro-layout';
-import { notification, Button, Form, Space } from 'antd';
+import { Button, Input, notification, Space } from 'antd';
 import type { articleData, channelDataItem } from '../data';
 import type { ProFormInstance } from '@ant-design/pro-form';
-import { UndoOutlined, FormOutlined } from '@ant-design/icons';
 import ProForm, {
-  ProFormText,
-  ProFormSelect,
-  ProFormTextArea,
   ProFormCheckbox,
   ProFormDependency,
+  ProFormSelect,
+  ProFormText,
+  ProFormTextArea,
   ProFormUploadButton,
 } from '@ant-design/pro-form';
+import { FormOutlined, UndoOutlined } from '@ant-design/icons';
 
 export default () => {
   const formRef = useRef<ProFormInstance>();
@@ -32,6 +32,12 @@ export default () => {
           label: item.cname,
         } ?? {}),
     );
+  };
+  // 提取图像
+  const adstractImg = () => {
+    //从content中提取第一张图像
+    const imgArr: string[] = extractImg(content);
+    formRef.current?.setFieldsValue({ litpic: imgArr || [] });
   };
   // 转换图像网址
   const transLitpicUrl = (data: string[]) => {
@@ -53,7 +59,12 @@ export default () => {
     console.log('提取到的文档属性：', attribute);
   };
   // 获得编辑器内容
-  const getContent = (e: any, contents: string) => setContent(contents);
+  const getContent = (e: any, contents: string) => {
+    // 设置useState
+    setContent(contents);
+    // 把useState中的content设置到字段中
+    formRef.current?.setFieldsValue({ content: content });
+  };
   return (
     <PageContainer>
       <ProForm<articleData>
@@ -169,6 +180,10 @@ export default () => {
               label: '上传图像',
             },
             {
+              value: 'extract',
+              label: '提取图像',
+            },
+            {
               value: 'input',
               label: '图像网址',
             },
@@ -182,77 +197,103 @@ export default () => {
         />
         <ProFormDependency name={['uploadMode']}>
           {({ uploadMode }) => {
-            if ('input' === uploadMode) {
-              return (
-                <ProFormText
-                  name="litpic"
-                  label="图像网址"
-                  tooltip="直接输入图像网址"
-                  placeholder="请输入输入图片网址"
-                  transform={(item) => transLitpicUrl(item)}
-                  rules={[{ required: true, message: '请输入图像网址或选择上传图像作为文档封面' }]}
-                />
-              );
+            switch (uploadMode) {
+              case 'input':
+                return (
+                  <ProFormText
+                    name="litpic"
+                    label="图像网址"
+                    tooltip="直接输入图像网址"
+                    placeholder="请输入输入图片网址"
+                    transform={(item) => transLitpicUrl(item)}
+                    rules={[
+                      { required: true, message: '请输入图像网址或选择上传图像作为文档封面' },
+                    ]}
+                  />
+                );
+              case 'extract':
+                return (
+                  <ProForm.Item
+                    shouldUpdate
+                    name="litpic"
+                    label="提取图像"
+                    tooltip="从正文提取一张图像作为封面"
+                    transform={(item) => transLitpicUrl(item)}
+                    rules={[
+                      { required: true, message: '请点击按钮从正文中提取一张图像作为文档封面' },
+                    ]}
+                  >
+                    <Input
+                      placeholder="从正文提取一张图像作为封面"
+                      style={{ width: 'calc(100% - 88px)' }}
+                    />
+                    <Button type="primary" onClick={adstractImg}>
+                      提取图像
+                    </Button>
+                  </ProForm.Item>
+                );
+              default:
+                return (
+                  <ProFormUploadButton
+                    max={1}
+                    name="litpic"
+                    label="上传图像"
+                    title="Upload"
+                    action="upload.do"
+                    tooltip="仅支持png、jpg、jpeg"
+                    transform={(item) => transLitpicUrl(item)}
+                    rules={[
+                      { required: true, message: '请选择上传图像或输入图像网址作为文档封面' },
+                      { max: 1, message: '文档封面只要一张就行了', type: 'array' },
+                    ]}
+                    fieldProps={{
+                      beforeUpload: (file) => {
+                        const MAX_FILE_SIZE = 2;
+                        const UNIT = 1024 * 1024;
+                        const curType = file.type;
+                        const fileType = ['image/png', 'image/jpeg', 'image/pjpeg'];
+                        return new Promise((resolve, reject) => {
+                          const reader = new FileReader();
+                          reader.readAsDataURL(file as Blob);
+                          reader.onload = function (e) {
+                            const base64: string | ArrayBuffer | null | undefined =
+                              e.target?.result;
+                            const image = document.createElement('img');
+                            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+                            typeof base64 === 'string' ? (image.src = base64) : undefined;
+                            image.onload = function () {
+                              if (!fileType.includes(curType)) {
+                                notification.error({
+                                  message: '上传的文件类型错误',
+                                  description: `请上传格式为${fileType}的图片`,
+                                });
+                                reject();
+                              } else if (file.size > MAX_FILE_SIZE * UNIT) {
+                                notification.error({
+                                  message: '图像大小不符合要求',
+                                  description: `单张图像大小不得超过${MAX_FILE_SIZE}M`,
+                                });
+                                reject();
+                              } else if (750 > image.width && 450 > image.height) {
+                                notification.error({
+                                  message: '图像尺寸不符合要求',
+                                  description: `当前图像尺寸：${image.width}X${image.height}，要求的图像尺寸应为：≥750X450`,
+                                });
+                                reject();
+                              } else {
+                                resolve();
+                              }
+                            };
+                          };
+                        });
+                      },
+                      listType: 'picture-card',
+                      accept: '.png, .jpg, .jpeg, .gif',
+                      headers: { Authorization: localStorage.getItem('Authorization') || '' },
+                    }}
+                  />
+                );
             }
-            return (
-              <ProFormUploadButton
-                max={1}
-                name="litpic"
-                label="上传图像"
-                title="Upload"
-                action="upload.do"
-                tooltip="仅支持png、jpg、jpeg"
-                transform={(item) => transLitpicUrl(item)}
-                rules={[
-                  { required: true, message: '请选择上传图像或输入图像网址作为文档封面' },
-                  { max: 1, message: '文档封面只要一张就行了', type: 'array' },
-                ]}
-                fieldProps={{
-                  beforeUpload: (file) => {
-                    const MAX_FILE_SIZE = 2;
-                    const UNIT = 1024 * 1024;
-                    const curType = file.type;
-                    const fileType = ['image/png', 'image/jpeg', 'image/pjpeg'];
-                    return new Promise((resolve, reject) => {
-                      const reader = new FileReader();
-                      reader.readAsDataURL(file as Blob);
-                      reader.onload = function (e) {
-                        const base64: string | ArrayBuffer | null | undefined = e.target?.result;
-                        const image = document.createElement('img');
-                        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-                        typeof base64 === 'string' ? (image.src = base64) : undefined;
-                        image.onload = function () {
-                          if (!fileType.includes(curType)) {
-                            notification.error({
-                              message: '上传的文件类型错误',
-                              description: `请上传格式为${fileType}的图片`,
-                            });
-                            reject();
-                          } else if (file.size > MAX_FILE_SIZE * UNIT) {
-                            notification.error({
-                              message: '图像大小不符合要求',
-                              description: `单张图像大小不得超过${MAX_FILE_SIZE}M`,
-                            });
-                            reject();
-                          } else if (750 > image.width && 450 > image.height) {
-                            notification.error({
-                              message: '图像尺寸不符合要求',
-                              description: `当前图像尺寸：${image.width}X${image.height}，要求的图像尺寸应为：≥750X450`,
-                            });
-                            reject();
-                          } else {
-                            resolve();
-                          }
-                        };
-                      };
-                    });
-                  },
-                  listType: 'picture-card',
-                  accept: '.png, .jpg, .jpeg, .gif',
-                  headers: { Authorization: localStorage.getItem('Authorization') || '' },
-                }}
-              />
-            );
           }}
         </ProFormDependency>
         <ProFormCheckbox.Group
@@ -282,17 +323,14 @@ export default () => {
             { min: 1, message: '请至少选择一个文档属性', type: 'array' },
           ]}
         />
-        <Form.Item
+        <ProForm.Item
           name="content"
           label="文档内容"
           tooltip="文档内容"
           wrapperCol={{
             xs: { span: 24 },
             sm: { span: 24 },
-            md: { span: 24 },
-            lg: { span: 24 },
             xl: { span: 16 },
-            xxl: { span: 16 },
           }}
           rules={[
             { required: true, message: '文档内容不得为空' },
@@ -300,7 +338,7 @@ export default () => {
           ]}
         >
           <Ckeditor setContent={getContent} />
-        </Form.Item>
+        </ProForm.Item>
       </ProForm>
     </PageContainer>
   );
