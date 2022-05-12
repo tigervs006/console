@@ -3,7 +3,7 @@ import Ckeditor from '@/pages/components/Ckeditor';
 import { waitTime, extractImg } from '@/utils/tools';
 import { getChannel } from '@/pages/content/service';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Button, Input, notification, Space } from 'antd';
+import { notification, Button, Input, Space } from 'antd';
 import type { articleData, channelDataItem } from '../data';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import ProForm, {
@@ -37,7 +37,18 @@ export default () => {
   const adstractImg = () => {
     //从content中提取第一张图像
     const imgArr: string[] = extractImg(content);
-    formRef.current?.setFieldsValue({ litpic: imgArr || [] });
+    if (imgArr.length) {
+      notification.success({
+        message: '提取图像成功',
+        description: imgArr.toString(),
+      });
+    } else {
+      notification.error({
+        message: '提取图像失败',
+        description: '正文中不包含图像',
+      });
+    }
+    formRef.current?.setFieldsValue({ litpic: imgArr });
   };
   // 转换图像网址
   const transLitpicUrl = (data: string[]) => {

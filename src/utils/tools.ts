@@ -23,7 +23,7 @@ export const extractImg = (content: string) => {
   const imgArr = content.match(/<img.*?(?:>|\/>)/gi);
   for (const idx in imgArr) {
     const src = imgArr[idx].match(srcReg);
-    images.push(src?.[1] ?? undefined);
+    images.push(src?.[1]);
   }
   return images;
 };
