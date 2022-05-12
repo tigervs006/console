@@ -16,6 +16,7 @@ export default class Ckeditor extends React.Component<parentProps, stateData> {
       content: '<p>来吧，请开始你的表演...</p>',
     };
   }
+
   render() {
     const { Text } = Typography;
     // 自动保存
