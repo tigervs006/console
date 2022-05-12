@@ -295,7 +295,7 @@ export default () => {
           }}
           rules={[
             { required: true, message: '文档内容不得为空' },
-            { min: 100, message: '多说几句吧' },
+            { min: 100, message: '造句呢?再多说几句吧...' },
           ]}
         >
           <Ckeditor setContent={getContent} />
