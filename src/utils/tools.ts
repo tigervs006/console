@@ -15,6 +15,7 @@ export const waitTime = (time: number = 100) => {
  * 提取文章图片
  * @return array
  * @param content
+ * TODO: 表达式有优化空间
  */
 export const extractImg = (content: string) => {
   const images = [];
