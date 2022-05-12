@@ -15,6 +15,7 @@ export type statusData = {
 export type articleData = {
   cid: number;
   title: string;
+  content: string;
   litpic: string[];
   keywords: string;
   description: string;

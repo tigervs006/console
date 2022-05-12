@@ -3,9 +3,9 @@ import { waitTime } from '@/utils/tools';
 import Ckeditor from '@/pages/components/Ckeditor';
 import { getChannel } from '@/pages/content/service';
 import { PageContainer } from '@ant-design/pro-layout';
+import { notification, Button, Form, Space } from 'antd';
 import type { articleData, channelDataItem } from '../data';
 import type { ProFormInstance } from '@ant-design/pro-form';
-import { notification, Button, Space, Row, Col } from 'antd';
 import { UndoOutlined, FormOutlined } from '@ant-design/icons';
 import ProForm, {
   ProFormText,
@@ -18,10 +18,10 @@ import ProForm, {
 
 export default () => {
   const formRef = useRef<ProFormInstance>();
-  // 文章内容
-  // @ts-ignore
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [content, setContent] = useState<string>('');
+  // 文档内容
+  const [content, setContent] = useState<string>(() => {
+    return formRef.current?.getFieldValue('content') || '';
+  });
   // 新闻栏目
   const channel = async () => {
     const res = await getChannel();
@@ -78,13 +78,14 @@ export default () => {
           resetButtonProps: { shape: 'round', icon: <UndoOutlined /> },
           submitButtonProps: { type: 'primary', shape: 'round', icon: <FormOutlined /> },
         }}
+        // 提交文档数据
         onFinish={async (values) => {
           await waitTime(1000);
-          console.log('onFinish', values);
+          console.log('onFinish', Object.assign({ ...values }, { content: content }));
         }}
         // request参数
         params={{ id: 125 }}
-        // 编辑文章时用
+        // 编辑文档时用
         request={async (params) => {
           console.log('params', params);
           return new Promise((resolve) => {
@@ -94,6 +95,7 @@ export default () => {
                 title: 'I am title',
                 attribute: ['is_recom'],
                 keywords: 'I am keywords',
+                content: '来吧，请开始你的表演...',
                 description: 'I am description',
                 litpic: ['https://cdn.tigervs.com/images/2020-12-03/5fc863031e5c9.png'],
               });
@@ -106,7 +108,8 @@ export default () => {
           title: '我是标题',
           keywords: '我是关键词',
           attribute: ['is_recom'],
-          description: '我是文章简述',
+          description: '我是文档简述',
+          content: '来吧，请开始你的表演...',
           litpic: ['https://cdn.tigervs.com/images/2020-12-03/5fc863031e5c9.png'],
         }}
         // 监听输入变化
@@ -117,18 +120,18 @@ export default () => {
           name="cid"
           label="栏目"
           request={channel}
-          tooltip="文章发布的栏目"
-          rules={[{ required: true, message: '选择文章发布的栏目' }]}
+          tooltip="文档发布的栏目"
+          rules={[{ required: true, message: '选择文档发布的栏目' }]}
         />
         <ProFormText
           label="标题"
           name="title"
           tooltip="限制32个字符"
-          placeholder="请输入文章标题"
+          placeholder="请输入文档标题"
           fieldProps={{ showCount: true, maxLength: 32 }}
           rules={[
-            { required: true, message: '请输入文章标题' },
-            { min: 15, message: '文章标题不宜太短' },
+            { required: true, message: '请输入文档标题' },
+            { min: 15, message: '文档标题不宜太短' },
           ]}
         />
         <ProFormText
@@ -143,10 +146,10 @@ export default () => {
           ]}
         />
         <ProFormTextArea
-          label="文章简述"
+          label="文档简述"
           name="description"
           tooltip="SEO优化很重要"
-          placeholder="请输入名称文章简述"
+          placeholder="请输入名称文档简述"
           fieldProps={{
             allowClear: true,
             showCount: true,
@@ -154,8 +157,8 @@ export default () => {
             autoSize: { minRows: 5, maxRows: 8 },
           }}
           rules={[
-            { required: true, message: '请输入文章文章简述' },
-            { min: 50, message: '再多几句文章简述', type: 'string' },
+            { required: true, message: '请输入文档文档简述' },
+            { min: 50, message: '再多几句文档简述', type: 'string' },
           ]}
         />
         <ProFormSelect
@@ -278,12 +281,25 @@ export default () => {
             { min: 1, message: '请至少选择一个文档属性', type: 'array' },
           ]}
         />
-        {/* ckeditor5编辑器 */}
-        <Row>
-          <Col xs={24} sm={24} md={24} lg={24} xl={16} xxl={16}>
-            <Ckeditor setContent={getContent} />
-          </Col>
-        </Row>
+        <Form.Item
+          name="content"
+          label="文档内容"
+          tooltip="文档内容"
+          wrapperCol={{
+            xs: { span: 24 },
+            sm: { span: 24 },
+            md: { span: 24 },
+            lg: { span: 24 },
+            xl: { span: 16 },
+            xxl: { span: 16 },
+          }}
+          rules={[
+            { required: true, message: '文档内容不得为空' },
+            { min: 100, message: '多说几句吧' },
+          ]}
+        >
+          <Ckeditor setContent={getContent} />
+        </Form.Item>
       </ProForm>
     </PageContainer>
   );
