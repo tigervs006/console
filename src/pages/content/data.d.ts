@@ -16,10 +16,10 @@ export type articleData = {
   cid: number;
   title: string;
   content: string;
-  litpic: string[];
   keywords: string;
   description: string;
   attribute?: string[];
+  litpic: string | string[];
 };
 
 export type tableDataItem = {
