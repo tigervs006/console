@@ -121,6 +121,7 @@ export default () => {
           label="栏目"
           request={channel}
           tooltip="文档发布的栏目"
+          fieldProps={{ allowClear: false }}
           rules={[{ required: true, message: '选择文档发布的栏目' }]}
         />
         <ProFormText
