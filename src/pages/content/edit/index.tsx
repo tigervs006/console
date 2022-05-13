@@ -224,24 +224,24 @@ export default () => {
                 );
               case 'extract':
                 return (
-                  <ProForm.Item
-                    shouldUpdate
-                    name="litpic"
-                    label="提取图像"
-                    tooltip="从正文提取一张图像作为封面"
-                    transform={(item) => transLitpicUrl(item)}
-                    rules={[
-                      { required: true, message: '请点击按钮从正文中提取一张图像作为文档封面' },
-                    ]}
-                  >
-                    <Input
-                      placeholder="从正文提取一张图像作为封面"
-                      style={{ width: 'calc(100% - 88px)' }}
-                    />
-                    <Button type="primary" onClick={adstractImg}>
-                      提取图像
-                    </Button>
-                  </ProForm.Item>
+                  <>
+                    <ProForm.Item
+                      name="litpic"
+                      label="提取图像"
+                      tooltip="从正文提取一张图像作为封面"
+                      transform={(item) => transLitpicUrl(item)}
+                      rules={[
+                        { required: true, message: '请点击按钮从正文中提取一张图像作为文档封面' },
+                      ]}
+                    >
+                      <Input placeholder="从正文提取一张图像作为封面" />
+                    </ProForm.Item>
+                    <ProForm.Item>
+                      <Button type="primary" onClick={adstractImg}>
+                        提取图像
+                      </Button>
+                    </ProForm.Item>
+                  </>
                 );
               default:
                 return (
