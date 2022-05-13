@@ -237,7 +237,7 @@ export default () => {
                       <Input placeholder="从正文提取一张图像作为封面" />
                     </ProForm.Item>
                     <ProForm.Item>
-                      <Button type="primary" onClick={adstractImg}>
+                      <Button shape="round" type="primary" onClick={adstractImg}>
                         提取图像
                       </Button>
                     </ProForm.Item>
