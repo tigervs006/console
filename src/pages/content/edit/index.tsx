@@ -301,11 +301,8 @@ export default () => {
                     fieldProps={{
                       listType: 'picture-card',
                       accept: '.png, .jpg, .jpeg, .gif',
-                      headers: { Authorization: localStorage.getItem('Authorization') || '' },
-                      beforeUpload: (file: RcFile) =>
-                        handleBeforeUpload(file)
-                          .then(() => true)
-                          .catch(() => false),
+                      headers: {Authorization: localStorage.getItem('Authorization') || ''},
+                      beforeUpload: (file: RcFile) => handleBeforeUpload(file).then(() => true).catch(() => false),
                     }}
                   />
                 );
