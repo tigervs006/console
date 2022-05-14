@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import type { RcFile } from 'antd/es/upload';
 import Ckeditor from '@/pages/components/Ckeditor';
 import { waitTime, extractImg } from '@/utils/tools';
 import { getChannel } from '@/pages/content/service';
@@ -75,6 +76,46 @@ export default () => {
     setContent(contents);
     // 把useState中的content设置到字段中
     formRef.current?.setFieldsValue({ content: content });
+  };
+  // 处理上传前的文件
+  const handleBeforeUpload = (file: RcFile) => {
+    const MAX_FILE_SIZE = 2;
+    const UNIT = 1024 * 1024;
+    const curType = file.type;
+    const fileType = ['image/png', 'image/jpeg', 'image/pjpeg'];
+    return new Promise<void>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file as Blob);
+      reader.onload = function (e) {
+        const base64: string | ArrayBuffer | null | undefined = e.target?.result;
+        const image = document.createElement('img');
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        typeof base64 === 'string' ? (image.src = base64) : undefined;
+        image.onload = function () {
+          if (!fileType.includes(curType)) {
+            notification.error({
+              message: '上传的文件类型错误',
+              description: `请上传格式为${fileType}的图片`,
+            });
+            reject();
+          } else if (file.size > MAX_FILE_SIZE * UNIT) {
+            notification.error({
+              message: '图像大小不符合要求',
+              description: `单张图像大小不得超过${MAX_FILE_SIZE}M`,
+            });
+            reject();
+          } else if (750 > image.width && 450 > image.height) {
+            notification.error({
+              message: '图像尺寸不符合要求',
+              description: `当前图像尺寸：${image.width}X${image.height}，要求的图像尺寸应为：≥750X450`,
+            });
+            reject();
+          } else {
+            resolve();
+          }
+        };
+      };
+    });
   };
   return (
     <PageContainer>
@@ -203,7 +244,7 @@ export default () => {
           label="上传方式"
           name="uploadMode"
           initialValue={['upload']}
-          tooltip="上传图片/输入图像网址"
+          tooltip="上传/提取/输入图像网址"
           fieldProps={{ allowClear: false }}
         />
         <ProFormDependency name={['uploadMode']}>
@@ -258,49 +299,13 @@ export default () => {
                       { max: 1, message: '文档封面只要一张就行了', type: 'array' },
                     ]}
                     fieldProps={{
-                      beforeUpload: (file) => {
-                        const MAX_FILE_SIZE = 2;
-                        const UNIT = 1024 * 1024;
-                        const curType = file.type;
-                        const fileType = ['image/png', 'image/jpeg', 'image/pjpeg'];
-                        return new Promise((resolve, reject) => {
-                          const reader = new FileReader();
-                          reader.readAsDataURL(file as Blob);
-                          reader.onload = function (e) {
-                            const base64: string | ArrayBuffer | null | undefined =
-                              e.target?.result;
-                            const image = document.createElement('img');
-                            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-                            typeof base64 === 'string' ? (image.src = base64) : undefined;
-                            image.onload = function () {
-                              if (!fileType.includes(curType)) {
-                                notification.error({
-                                  message: '上传的文件类型错误',
-                                  description: `请上传格式为${fileType}的图片`,
-                                });
-                                reject();
-                              } else if (file.size > MAX_FILE_SIZE * UNIT) {
-                                notification.error({
-                                  message: '图像大小不符合要求',
-                                  description: `单张图像大小不得超过${MAX_FILE_SIZE}M`,
-                                });
-                                reject();
-                              } else if (750 > image.width && 450 > image.height) {
-                                notification.error({
-                                  message: '图像尺寸不符合要求',
-                                  description: `当前图像尺寸：${image.width}X${image.height}，要求的图像尺寸应为：≥750X450`,
-                                });
-                                reject();
-                              } else {
-                                resolve();
-                              }
-                            };
-                          };
-                        });
-                      },
                       listType: 'picture-card',
                       accept: '.png, .jpg, .jpeg, .gif',
                       headers: { Authorization: localStorage.getItem('Authorization') || '' },
+                      beforeUpload: (file: RcFile) =>
+                        handleBeforeUpload(file)
+                          .then(() => true)
+                          .catch(() => false),
                     }}
                   />
                 );
