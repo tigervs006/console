@@ -275,7 +275,7 @@ export default () => {
                         { required: true, message: '请点击按钮从正文中提取一张图像作为文档封面' },
                       ]}
                     >
-                      <Input placeholder="从正文提取一张图像作为封面" />
+                      <Input readOnly placeholder="从正文提取一张图像作为封面" />
                     </ProForm.Item>
                     <ProForm.Item>
                       <Button shape="round" type="primary" onClick={adstractImg}>
@@ -301,8 +301,11 @@ export default () => {
                     fieldProps={{
                       listType: 'picture-card',
                       accept: '.png, .jpg, .jpeg, .gif',
-                      headers: {Authorization: localStorage.getItem('Authorization') || ''},
-                      beforeUpload: (file: RcFile) => handleBeforeUpload(file).then(() => true).catch(() => Upload.LIST_IGNORE),
+                      headers: { Authorization: localStorage.getItem('Authorization') || '' },
+                      beforeUpload: (file: RcFile) =>
+                        handleBeforeUpload(file)
+                          .then(() => true)
+                          .catch(() => Upload.LIST_IGNORE),
                     }}
                   />
                 );
