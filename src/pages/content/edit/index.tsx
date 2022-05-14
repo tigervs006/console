@@ -4,7 +4,6 @@ import Ckeditor from '@/pages/components/Ckeditor';
 import { waitTime, extractImg } from '@/utils/tools';
 import { getChannel } from '@/pages/content/service';
 import { PageContainer } from '@ant-design/pro-layout';
-import { notification, Button, Input, Space } from 'antd';
 import type { articleData, channelDataItem } from '../data';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import ProForm, {
@@ -16,6 +15,7 @@ import ProForm, {
   ProFormUploadButton,
 } from '@ant-design/pro-form';
 import { FormOutlined, UndoOutlined } from '@ant-design/icons';
+import { notification, Upload, Button, Input, Space } from 'antd';
 
 export default () => {
   const formRef = useRef<ProFormInstance>();
@@ -302,7 +302,7 @@ export default () => {
                       listType: 'picture-card',
                       accept: '.png, .jpg, .jpeg, .gif',
                       headers: {Authorization: localStorage.getItem('Authorization') || ''},
-                      beforeUpload: (file: RcFile) => handleBeforeUpload(file).then(() => true).catch(() => false),
+                      beforeUpload: (file: RcFile) => handleBeforeUpload(file).then(() => true).catch(() => Upload.LIST_IGNORE),
                     }}
                   />
                 );
