@@ -13,10 +13,14 @@ export type statusData = {
 };
 
 export type articleData = {
+  id?: number;
   cid: number;
   title: string;
   content: string;
+  is_head?: number;
   keywords: string;
+  is_recom?: number;
+  is_litpic?: number;
   description: string;
   attribute?: string[];
   litpic: string | string[];
