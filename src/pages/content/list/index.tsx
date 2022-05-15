@@ -1,6 +1,6 @@
 import '../index.less';
 import moment from 'moment';
-import { useRequest } from 'umi';
+import { useRequest, history } from 'umi';
 import ProTable from '@ant-design/pro-table';
 import React, { useRef, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -100,7 +100,7 @@ export default () => {
    * @param record
    */
   const handleEdit = (record: tableDataItem) => {
-    console.log('当前要编辑的文章：', record);
+    history.push({ pathname: '/content/edit', query: { id: record.id.toString() } });
   };
 
   /**
