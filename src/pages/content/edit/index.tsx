@@ -1,8 +1,8 @@
+import { history } from 'umi';
 import { useRef, useState } from 'react';
 import type { RcFile } from 'antd/es/upload';
 import Ckeditor from '@/pages/components/Ckeditor';
 import { waitTime, extractImg } from '@/utils/tools';
-import { getChannel } from '@/pages/content/service';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { articleData, channelDataItem } from '../data';
 import type { ProFormInstance } from '@ant-design/pro-form';
@@ -16,12 +16,13 @@ import ProForm, {
 } from '@ant-design/pro-form';
 import { FormOutlined, UndoOutlined } from '@ant-design/icons';
 import { notification, Upload, Button, Input, Space } from 'antd';
+import { getChannel, getContent as getContents } from '@/pages/content/service';
 
 export default () => {
   const formRef = useRef<ProFormInstance>();
   // 文档内容
   const [content, setContent] = useState<string>(() => {
-    return formRef.current?.getFieldValue('content') || '';
+    return formRef.current?.getFieldValue('content') || null;
   });
   // 新闻栏目
   const channel = async () => {
@@ -77,6 +78,7 @@ export default () => {
     // 把useState中的content设置到字段中
     formRef.current?.setFieldsValue({ content: content });
   };
+
   // 处理上传前的文件
   const handleBeforeUpload = (file: RcFile) => {
     const MAX_FILE_SIZE = 2;
@@ -147,36 +149,26 @@ export default () => {
           console.log('onFinish', Object.assign({ ...values }, { content: content }));
         }}
         // request参数
-        params={{ id: 125 }}
+        params={{ id: history.location.query?.id }}
         // 编辑文档时用
         request={async (params) => {
-          console.log('params', params);
-          return new Promise((resolve) => {
-            setTimeout(() => {
-              resolve({
-                cid: 4,
-                title: 'I am title',
-                attribute: ['is_recom'],
-                keywords: 'I am keywords',
-                content: '来吧，请开始你的表演...',
-                description: 'I am description',
-                litpic: ['https://cdn.tigervs.com/images/2020-12-03/5fc863031e5c9.png'],
-              });
-            }, 1000);
-          });
+          if (params?.id) {
+            // 只有在编辑文档时请求网络
+            const res = await getContents({ ...params });
+            const info = res?.data?.info ?? {};
+            setContent(info?.content?.content ?? null);
+            return res?.data
+              ? Object.assign({ ...info }, { content: content }, { litpic: [info?.litpic] })
+              : {};
+          } else {
+            return {};
+          }
         }}
         // 表单默认值
         initialValues={{
           cid: 4,
-          title: '我是标题',
-          keywords: '我是关键词',
           attribute: ['is_recom'],
-          description: '我是文档简述',
-          content: '来吧，请开始你的表演...',
-          litpic: ['https://cdn.tigervs.com/images/2020-12-03/5fc863031e5c9.png'],
         }}
-        // 监听输入变化
-        // onValuesChange={(changeValues) => console.log(changeValues)}
       >
         <ProFormSelect
           width="xs"
@@ -257,7 +249,7 @@ export default () => {
                     label="图像网址"
                     tooltip="直接输入图像网址"
                     placeholder="请输入输入图片网址"
-                    transform={(item) => transLitpicUrl(item)}
+                    transform={(litpic) => transLitpicUrl(litpic)}
                     rules={[
                       { required: true, message: '请输入图像网址或选择上传图像作为文档封面' },
                     ]}
@@ -270,7 +262,7 @@ export default () => {
                       name="litpic"
                       label="提取图像"
                       tooltip="从正文提取一张图像作为封面"
-                      transform={(item) => transLitpicUrl(item)}
+                      transform={(litpic) => transLitpicUrl(litpic)}
                       rules={[
                         { required: true, message: '请点击按钮从正文中提取一张图像作为文档封面' },
                       ]}
@@ -293,7 +285,7 @@ export default () => {
                     title="Upload"
                     action="upload.do"
                     tooltip="仅支持png、jpg、jpeg"
-                    transform={(item) => transLitpicUrl(item)}
+                    transform={(litpic) => transLitpicUrl(litpic)}
                     rules={[
                       { required: true, message: '请选择上传图像或输入图像网址作为文档封面' },
                       { max: 1, message: '文档封面只要一张就行了', type: 'array' },
@@ -334,10 +326,7 @@ export default () => {
             { label: '推荐', value: 'is_recom' },
             { label: '图文', value: 'is_litpic' },
           ]}
-          rules={[
-            { required: true, message: '请您你设置文档属性', type: 'array' },
-            { min: 1, message: '请至少选择一个文档属性', type: 'array' },
-          ]}
+          rules={[{ required: true, message: '请至少设置一个文档属性' }]}
         />
         <ProForm.Item
           name="content"
@@ -353,7 +342,7 @@ export default () => {
             { min: 100, message: '造句呢?再多说几句吧...' },
           ]}
         >
-          <Ckeditor setContent={getContent} />
+          <Ckeditor content={content} setContent={getContent} />
         </ProForm.Item>
       </ProForm>
     </PageContainer>
