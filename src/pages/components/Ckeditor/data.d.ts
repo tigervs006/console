@@ -7,5 +7,6 @@ export interface stateData {
   defaultStatus: string;
 }
 export interface parentProps {
+  content?: string;
   setContent: (event: any, contents: string) => void;
 }
