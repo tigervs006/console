@@ -72,11 +72,10 @@ export default () => {
     console.log('提取到的文档属性：', attribute);
   };
   // 获得编辑器内容
-  const getContent = (e: any, contents: string) => {
+  const getContent = (e: any, CKcontent: string) => {
     // 设置useState
-    setContent(contents);
-    // 把useState中的content设置到字段中
-    formRef.current?.setFieldsValue({ content: content });
+    setContent(CKcontent);
+    formRef.current?.setFieldsValue({ content: CKcontent });
   };
 
   // 处理上传前的文件
@@ -144,9 +143,9 @@ export default () => {
           submitButtonProps: { type: 'primary', shape: 'round', icon: <FormOutlined /> },
         }}
         // 提交文档数据
-        onFinish={async (values) => {
+        onFinish={async (data) => {
           await waitTime(1000);
-          console.log('onFinish', Object.assign({ ...values }, { content: content }));
+          console.log('onFinish', Object.assign({ ...data }, { content: content }));
         }}
         // request参数
         params={{ id: history.location.query?.id }}
@@ -158,7 +157,11 @@ export default () => {
             const info = res?.data?.info ?? {};
             setContent(info?.content?.content ?? null);
             return res?.data
-              ? Object.assign({ ...info }, { content: content }, { litpic: [info?.litpic] })
+              ? Object.assign(
+                  { ...info },
+                  { litpic: [info?.litpic] },
+                  { content: info?.content?.content ?? null },
+                )
               : {};
           } else {
             return {};
@@ -169,6 +172,7 @@ export default () => {
           cid: 4,
           attribute: ['is_recom'],
         }}
+        onValuesChange={(changeValues) => console.log('change', changeValues)}
       >
         <ProFormSelect
           width="xs"
@@ -249,7 +253,7 @@ export default () => {
                     label="图像网址"
                     tooltip="直接输入图像网址"
                     placeholder="请输入输入图片网址"
-                    transform={(litpic) => transLitpicUrl(litpic)}
+                    transform={(litpic) => transLitpicUrl([litpic])}
                     rules={[
                       { required: true, message: '请输入图像网址或选择上传图像作为文档封面' },
                     ]}
@@ -262,7 +266,7 @@ export default () => {
                       name="litpic"
                       label="提取图像"
                       tooltip="从正文提取一张图像作为封面"
-                      transform={(litpic) => transLitpicUrl(litpic)}
+                      transform={(litpic) => transLitpicUrl([litpic])}
                       rules={[
                         { required: true, message: '请点击按钮从正文中提取一张图像作为文档封面' },
                       ]}
