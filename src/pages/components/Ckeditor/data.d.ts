@@ -8,5 +8,5 @@ export interface stateData {
 }
 export interface parentProps {
   content?: string;
-  setContent: (event: any, contents: string) => void;
+  setContent: (contents: string) => void;
 }
