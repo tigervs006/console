@@ -173,7 +173,6 @@ export default () => {
           cid: 4,
           attribute: ['is_recom'],
         }}
-        onValuesChange={(changeValues) => console.log('changeValues', changeValues)}
       >
         <ProFormSelect
           width="xs"
@@ -242,7 +241,12 @@ export default () => {
           name="uploadMode"
           initialValue={['upload']}
           tooltip="上传/提取/输入图像网址"
-          fieldProps={{ allowClear: false }}
+          fieldProps={{
+            allowClear: false,
+            // 只在新增文档时改变上传方式清空litpic，否则ProFormUploadButton组件会报错
+            onChange: () =>
+              !history.location.query?.id && formRef.current?.setFieldsValue({ litpic: [] }),
+          }}
         />
         <ProFormDependency name={['uploadMode']}>
           {({ uploadMode }) => {
