@@ -67,10 +67,10 @@ export default class Ckeditor extends React.Component<parentProps, stateData> {
           onReady={(editor: any) => displayStatus(editor)}
           // 数据改变时保存
           onChange={(event: any, editor: any) => {
-            this.setState({ content: editor.getData() });
+            this.setState({ content: editor.getData() }, () =>
+              this.props.setContent(editor.getData()),
+            );
           }}
-          // 失焦时保存数据
-          onBlur={(event: any) => this.props.setContent(event, this.state.content)}
         />
         <div className="edit-footer-info">
           <div id="word-count" />
