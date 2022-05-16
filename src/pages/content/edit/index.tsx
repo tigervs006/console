@@ -72,9 +72,10 @@ export default () => {
     console.log('提取到的文档属性：', attribute);
   };
   // 获得编辑器内容
-  const getContent = (e: any, CKcontent: string) => {
+  const getContent = (CKcontent: string) => {
     // 设置useState
     setContent(CKcontent);
+    // 设置到字段中只是为了rules规则验证
     formRef.current?.setFieldsValue({ content: CKcontent });
   };
 
@@ -172,7 +173,7 @@ export default () => {
           cid: 4,
           attribute: ['is_recom'],
         }}
-        onValuesChange={(changeValues) => console.log('change', changeValues)}
+        onValuesChange={(changeValues) => console.log('changeValues', changeValues)}
       >
         <ProFormSelect
           width="xs"
