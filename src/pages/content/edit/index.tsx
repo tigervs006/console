@@ -60,7 +60,7 @@ export default () => {
     });
     return { ...newObj };
   };
-  // 获得编辑器内容
+  // 获取编辑器内容
   const getContent = (CKcontent: string) => {
     // 设置useState
     setContent(CKcontent);
@@ -329,7 +329,6 @@ export default () => {
             { label: '图文', value: 'is_litpic' },
           ]}
           rules={[{ required: true, message: '请至少设置一个文档属性' }]}
-          // fieldProps={{onChange: checkedValue => console.log('checkedValue', checkedValue)}}
         />
         <ProForm.Item
           name="content"
