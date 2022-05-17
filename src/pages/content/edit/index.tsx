@@ -60,17 +60,6 @@ export default () => {
     });
     return { ...newObj };
   };
-  const getFormatValues = () => {
-    // 格式化后的数据
-    const formatData = formRef.current?.getFieldsFormatValue?.();
-    // 提取文档属性
-    const attributes: string[] = [];
-    for (const idx in formatData) {
-      // 提取属性key值
-      if (idx.match(/is_/)) attributes.push(idx);
-    }
-    console.log('提取到的文档属性：', attributes);
-  };
   // 获得编辑器内容
   const getContent = (CKcontent: string) => {
     // 设置useState
@@ -131,14 +120,11 @@ export default () => {
         }}
         submitter={{
           render: (_, doms) => {
-            return [
+            return (
               <Space size="middle" key="spaceGroup">
                 {doms}
-                <Button danger shape="round" onClick={getFormatValues}>
-                  获取数据
-                </Button>
-              </Space>,
-            ];
+              </Space>
+            );
           },
           resetButtonProps: { shape: 'round', icon: <UndoOutlined /> },
           submitButtonProps: { type: 'primary', shape: 'round', icon: <FormOutlined /> },
