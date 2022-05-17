@@ -55,7 +55,7 @@
     "@ant-design/pro-layout": "^6.38.2",
     "@ant-design/pro-table": "^2.74.3",
     "@antv/l7-react": "2.1.9",
-    "@ckeditor/ckeditor5-build-classic": "34.0.0",
+    "@ckeditor/ckeditor5-build-classic": "^34.0.0",
     "@ckeditor/ckeditor5-react": "^5.0.0",
     "@umijs/route-utils": "^2.1.1",
     "antd": "^4.20.5",
