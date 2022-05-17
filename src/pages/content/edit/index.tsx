@@ -64,12 +64,12 @@ export default () => {
     // 格式化后的数据
     const formatData = formRef.current?.getFieldsFormatValue?.();
     // 提取文档属性
-    const attribute: string[] = [];
+    const attributes: string[] = [];
     for (const idx in formatData) {
       // 提取属性key值
-      if (idx.match(/is_/)) attribute.push(idx);
+      if (idx.match(/is_/)) attributes.push(idx);
     }
-    console.log('提取到的文档属性：', attribute);
+    console.log('提取到的文档属性：', attributes);
   };
   // 获得编辑器内容
   const getContent = (CKcontent: string) => {
@@ -157,10 +157,22 @@ export default () => {
             const res = await getContents({ ...params });
             const info = res?.data?.info ?? {};
             setContent(info?.content?.content ?? null);
+            const attribute = [];
+            // 提取值为1的属性名
+            for (const idx in info) {
+              if (
+                (idx === 'is_head' && 1 === info[idx]) ||
+                (idx === 'is_recom' && 1 === info[idx]) ||
+                (idx === 'is_litpic' && 1 === info[idx])
+              ) {
+                attribute.push(idx);
+              }
+            }
             return res?.data
               ? Object.assign(
                   { ...info },
                   { litpic: [info?.litpic] },
+                  { attribute: attribute || [] },
                   { content: info?.content?.content ?? null },
                 )
               : {};
@@ -243,8 +255,8 @@ export default () => {
           tooltip="上传/提取/输入图像网址"
           fieldProps={{
             allowClear: false,
-            // 只在新增文档时改变上传方式清空litpic，否则ProFormUploadButton组件会报错
             onChange: () =>
+              // 只在新增文档时改变上传方式清空litpic，否则ProFormUploadButton组件会报错
               !history.location.query?.id && formRef.current?.setFieldsValue({ litpic: [] }),
           }}
         />
@@ -318,24 +330,20 @@ export default () => {
           name="attribute"
           tooltip="选择文档属性"
           // 提交时转化为对象
-          transform={(attribute) => {
+          transform={(attributes) => {
             const newObj = {};
-            attribute.map((item: string) => {
+            attributes.map((item: string) => {
               newObj[item] = 1;
             });
             return { ...newObj };
           }}
-          // 前置转化对象为数组
-          // convertValue={attribute => {
-          //   console.log('convertValue', attribute)
-          //   return attribute
-          // }}
           options={[
             { label: '头条', value: 'is_head' },
             { label: '推荐', value: 'is_recom' },
             { label: '图文', value: 'is_litpic' },
           ]}
           rules={[{ required: true, message: '请至少设置一个文档属性' }]}
+          // fieldProps={{onChange: checkedValue => console.log('checkedValue', checkedValue)}}
         />
         <ProForm.Item
           name="content"
