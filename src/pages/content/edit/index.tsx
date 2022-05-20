@@ -290,8 +290,8 @@ export default () => {
                     name="litpic"
                     label="上传图像"
                     title="Upload"
-                    action="upload.do"
                     tooltip="仅支持png、jpg、jpeg"
+                    action="/console/public/upload"
                     transform={(litpic) => transLitpicUrl(litpic)}
                     rules={[
                       { required: true, message: '请选择上传图像或输入图像网址作为文档封面' },
