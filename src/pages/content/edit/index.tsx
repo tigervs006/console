@@ -95,10 +95,10 @@ export default () => {
               description: `单张图像大小不得超过${MAX_FILE_SIZE}M`,
             });
             reject();
-          } else if (750 > image.width && 450 > image.height) {
+          } else if (750 > image.width && 422 > image.height) {
             notification.error({
               message: '图像尺寸不符合要求',
-              description: `当前图像尺寸：${image.width}X${image.height}，要求的图像尺寸应为：≥750X450`,
+              description: `当前图像尺寸：${image.width}X${image.height}，要求的图像尺寸应为：≥750X422`,
             });
             reject();
           } else {
