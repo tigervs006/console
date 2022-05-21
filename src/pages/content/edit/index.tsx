@@ -298,6 +298,7 @@ export default () => {
                       { max: 1, message: '文档封面只要一张就行了', type: 'array' },
                     ]}
                     fieldProps={{
+                      data: { field: 'litpic' },
                       listType: 'picture-card',
                       accept: '.png, .jpg, .jpeg, .gif',
                       headers: { Authorization: localStorage.getItem('Authorization') || '' },
