@@ -52,14 +52,6 @@ export default () => {
     }
     formRef.current?.setFieldsValue({ litpic: imgArr });
   };
-  // 转换图像网址
-  const transLitpicUrl = (data: string[]) => {
-    const newObj: Record<string, string> = {};
-    data.map((item: string) => {
-      newObj.litpic = item;
-    });
-    return { ...newObj };
-  };
   // 获取编辑器内容
   const getContent = (CKcontent: string) => {
     // 设置useState
@@ -157,7 +149,6 @@ export default () => {
             return res?.data
               ? Object.assign(
                   { ...info },
-                  { litpic: [info?.litpic] },
                   { attribute: attribute || [] },
                   { content: info?.content?.content ?? null },
                 )
@@ -256,7 +247,6 @@ export default () => {
                     label="图像网址"
                     tooltip="直接输入图像网址"
                     placeholder="请输入输入图片网址"
-                    transform={(litpic) => transLitpicUrl([litpic])}
                     rules={[
                       { required: true, message: '请输入图像网址或选择上传图像作为文档封面' },
                     ]}
@@ -269,7 +259,6 @@ export default () => {
                       name="litpic"
                       label="提取图像"
                       tooltip="从正文提取一张图像作为封面"
-                      transform={(litpic) => transLitpicUrl([litpic])}
                       rules={[
                         { required: true, message: '请点击按钮从正文中提取一张图像作为文档封面' },
                       ]}
@@ -292,14 +281,28 @@ export default () => {
                     title="Upload"
                     tooltip="仅支持png、jpg、jpeg"
                     action="/console/public/upload"
-                    transform={(litpic) => transLitpicUrl(litpic)}
+                    convertValue={(litpic) => {
+                      if (litpic) {
+                        return [
+                          {
+                            url: litpic,
+                            status: 'done',
+                            // 随机生成uid
+                            uid: Math.random() * 100,
+                            // 从网址中提取文件名
+                            name: litpic.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)[1],
+                          },
+                        ];
+                      } else {
+                        return [];
+                      }
+                    }}
                     rules={[
                       { required: true, message: '请选择上传图像或输入图像网址作为文档封面' },
-                      { max: 1, message: '文档封面只要一张就行了', type: 'array' },
                     ]}
                     fieldProps={{
-                      data: { field: 'litpic' },
                       listType: 'picture-card',
+                      data: { field: 'litpic' },
                       accept: '.png, .jpg, .jpeg, .gif',
                       headers: { Authorization: localStorage.getItem('Authorization') || '' },
                       beforeUpload: (file: RcFile) =>
