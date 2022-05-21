@@ -1,6 +1,5 @@
 import { history } from 'umi';
 import { useRef, useState } from 'react';
-import type { RcFile } from 'antd/es/upload';
 import Ckeditor from '@/pages/components/Ckeditor';
 import { waitTime, extractImg } from '@/utils/tools';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -15,6 +14,7 @@ import ProForm, {
   ProFormTextArea,
   ProFormUploadButton,
 } from '@ant-design/pro-form';
+import type { RcFile, UploadChangeParam } from 'antd/es/upload';
 import { FormOutlined, UndoOutlined } from '@ant-design/icons';
 import { notification, Upload, Button, Input, Space } from 'antd';
 import { getChannel, getContent as getContents } from '@/pages/content/service';
@@ -101,6 +101,20 @@ export default () => {
       };
     });
   };
+
+  // 处理文件上传
+  const handleOnChange = (fileObject: UploadChangeParam) => {
+    const { file } = fileObject;
+    const uploadRes = file?.response;
+    if (uploadRes?.success && uploadRes?.data) {
+      formRef.current?.setFieldsValue({
+        litpic: [
+          Object.assign({ ...uploadRes.data }, { status: uploadRes.success ? 'done' : 'error' }),
+        ],
+      });
+    }
+  };
+
   return (
     <PageContainer>
       <ProForm<articleData>
@@ -288,7 +302,7 @@ export default () => {
                           {
                             url: litpic,
                             status: 'done',
-                            uid: Math.random() * 100,
+                            uid: Math.floor(Math.random() * 100),
                             // @ts-ignore
                             name: litpic.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)[1],
                           },
@@ -299,9 +313,7 @@ export default () => {
                     transform={(litpic) => {
                       if ('string' === typeof litpic) return { litpic: litpic };
                       return {
-                        litpic: litpic
-                          .map((item: UploadFile) => item?.response?.url ?? '')
-                          .toString(),
+                        litpic: litpic.map((item: UploadFile) => item?.url ?? '').toString(),
                       };
                     }}
                     rules={[
@@ -309,6 +321,7 @@ export default () => {
                     ]}
                     fieldProps={{
                       listType: 'picture-card',
+                      onChange: handleOnChange,
                       data: { field: 'litpic' },
                       accept: '.png, .jpg, .jpeg, .gif',
                       headers: { Authorization: localStorage.getItem('Authorization') || '' },
