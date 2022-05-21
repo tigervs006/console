@@ -300,7 +300,7 @@ export default () => {
                       if ('string' === typeof litpic) return { litpic: litpic };
                       return {
                         litpic: litpic
-                          ?.map((item: UploadFile) => item?.response?.url ?? '')
+                          .map((item: UploadFile) => item?.response?.url ?? '')
                           .toString(),
                       };
                     }}
