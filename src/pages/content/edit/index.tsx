@@ -4,6 +4,7 @@ import type { RcFile } from 'antd/es/upload';
 import Ckeditor from '@/pages/components/Ckeditor';
 import { waitTime, extractImg } from '@/utils/tools';
 import { PageContainer } from '@ant-design/pro-layout';
+import type { UploadFile } from 'antd/es/upload/interface';
 import type { articleData, channelDataItem } from '../data';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import ProForm, {
@@ -282,20 +283,26 @@ export default () => {
                     tooltip="仅支持png、jpg、jpeg"
                     action="/console/public/upload"
                     convertValue={(litpic) => {
-                      if (litpic) {
+                      if ('string' === typeof litpic) {
                         return [
                           {
                             url: litpic,
                             status: 'done',
-                            // 随机生成uid
                             uid: Math.random() * 100,
-                            // 从网址中提取文件名
+                            // @ts-ignore
                             name: litpic.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)[1],
                           },
                         ];
-                      } else {
-                        return [];
                       }
+                      return litpic;
+                    }}
+                    transform={(litpic) => {
+                      if ('string' === typeof litpic) return { litpic: litpic };
+                      return {
+                        litpic: litpic
+                          ?.map((item: UploadFile) => item?.response?.url ?? '')
+                          .toString(),
+                      };
                     }}
                     rules={[
                       { required: true, message: '请选择上传图像或输入图像网址作为文档封面' },
