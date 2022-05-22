@@ -16,7 +16,7 @@ import ProForm, {
 } from '@ant-design/pro-form';
 import type { RcFile, UploadChangeParam } from 'antd/es/upload';
 import { FormOutlined, UndoOutlined } from '@ant-design/icons';
-import { notification, Upload, Button, Input, Space } from 'antd';
+import { notification, Upload, Button, Input, Space, message } from 'antd';
 import { getChannel, getContent as getContents } from '@/pages/content/service';
 
 export default () => {
@@ -25,6 +25,8 @@ export default () => {
   const [content, setContent] = useState<string>(() => {
     return formRef.current?.getFieldValue('content') || null;
   });
+  // 文件列表
+  const [fileLists, setFileLists] = useState<UploadFile[]>([]);
   // 新闻栏目
   const channel = async () => {
     const res = await getChannel();
@@ -38,8 +40,14 @@ export default () => {
   };
   // 提取图像
   const adstractImg = () => {
-    //从content中提取第一张图像
-    const imgArr: string[] = extractImg(content);
+    // 从正文提取图像
+    if (null === content) {
+      return notification.error({
+        message: '正文内容为空',
+        description: '请先完善正文内容并插入图像',
+      });
+    }
+    const imgArr = extractImg(content);
     if (imgArr.length) {
       notification.success({
         message: '提取图像成功',
@@ -51,7 +59,7 @@ export default () => {
         description: '正文中不包含图像',
       });
     }
-    formRef.current?.setFieldsValue({ litpic: imgArr });
+    formRef.current?.setFieldsValue({ litpic: imgArr.toString() });
   };
   // 获取编辑器内容
   const getContent = (CKcontent: string) => {
@@ -102,16 +110,45 @@ export default () => {
     });
   };
 
-  // 处理文件上传
-  const handleOnChange = (fileObject: UploadChangeParam) => {
-    const { file } = fileObject;
-    const uploadRes = file?.response;
-    if (uploadRes?.success && uploadRes?.data) {
-      formRef.current?.setFieldsValue({
-        litpic: [
-          Object.assign({ ...uploadRes.data }, { status: uploadRes.success ? 'done' : 'error' }),
-        ],
-      });
+  // 处理文件上传状态
+  const handleOnChange = (info: UploadChangeParam) => {
+    const { fileList } = info;
+    /**
+     * FIXME: Ant design遗留bug
+     * 此处一定要先setState，否则状态
+     * 一直显示uploading并且无法读取
+     * response属性，antd历史遗留bug
+     * https://github.com/ant-design/ant-design/issues/2423
+     */
+    setFileLists(fileList.slice());
+    const status = info.file.status;
+    switch (status) {
+      case 'done':
+        message.success(info.file.response.msg);
+        setFileLists([
+          Object.assign(
+            { ...info.file.response.data },
+            { status: info.file.response.success ? 'done' : 'error' },
+          ),
+        ]);
+        break;
+      case 'error':
+        notification.error({
+          message: 'Error',
+          description: info.file?.response?.msg ?? '上传失败',
+        });
+        break;
+      case 'success':
+        message.success(info.file?.response?.msg ?? '上传成功');
+        break;
+      case 'removed':
+        message.success('删除成功');
+        break;
+      case 'uploading':
+        message.info('正在上传中...');
+        break;
+      default:
+        throw new Error('Not implemented yet: undefined case');
     }
   };
 
@@ -149,7 +186,17 @@ export default () => {
             // 只有在编辑文档时请求网络
             const res = await getContents({ ...params });
             const info = res?.data?.info ?? {};
+            // 设置编辑器内容
             setContent(info?.content?.content ?? null);
+            // 设置FileList
+            setFileLists([
+              {
+                status: 'done',
+                url: info.litpic,
+                uid: Math.floor(Math.random() * 100).toString(),
+                name: info.litpic.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)[1],
+              },
+            ]);
             const attribute = [];
             // 提取值为1的属性名
             for (const idx in info) {
@@ -247,9 +294,13 @@ export default () => {
           tooltip="上传/提取/输入图像网址"
           fieldProps={{
             allowClear: false,
-            onChange: () =>
-              // 只在新增文档时改变上传方式清空litpic，否则ProFormUploadButton组件会报错
-              !history.location.query?.id && formRef.current?.setFieldsValue({ litpic: [] }),
+            onChange: () => {
+              // 只在编辑文件时清空fileList及litpic
+              if (!history.location.query?.id) {
+                setFileLists([]);
+                formRef.current?.setFieldsValue({ litpic: [] });
+              }
+            },
           }}
         />
         <ProFormDependency name={['uploadMode']}>
@@ -294,26 +345,15 @@ export default () => {
                     name="litpic"
                     label="上传图像"
                     title="Upload"
+                    fileList={fileLists}
                     tooltip="仅支持png、jpg、jpeg"
                     action="/console/public/upload"
-                    convertValue={(litpic) => {
-                      if ('string' === typeof litpic) {
-                        return [
-                          {
-                            url: litpic,
-                            status: 'done',
-                            uid: Math.floor(Math.random() * 100),
-                            // @ts-ignore
-                            name: litpic.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)[1],
-                          },
-                        ];
-                      }
-                      return litpic;
-                    }}
                     transform={(litpic) => {
                       if ('string' === typeof litpic) return { litpic: litpic };
                       return {
-                        litpic: litpic.map((item: UploadFile) => item?.url ?? '').toString(),
+                        litpic: litpic
+                          .map((item: UploadFile) => item?.response.data.url ?? '')
+                          .toString(),
                       };
                     }}
                     rules={[
