@@ -15,11 +15,12 @@ import ProForm, {
   ProFormUploadButton,
 } from '@ant-design/pro-form';
 import type { RcFile, UploadChangeParam } from 'antd/es/upload';
-import { FormOutlined, UndoOutlined } from '@ant-design/icons';
-import { notification, Upload, Button, Input, Space, message } from 'antd';
-import { getChannel, getContent as getContents } from '@/pages/content/service';
+import { QuestionCircleOutlined, FormOutlined, UndoOutlined } from '@ant-design/icons';
+import { notification, Upload, Modal, Button, Input, Space, message } from 'antd';
+import { removeFile, getChannel, getContent as getContents } from '@/pages/content/service';
 
 export default () => {
+  const { confirm } = Modal;
   const formRef = useRef<ProFormInstance>();
   // 文档内容
   const [content, setContent] = useState<string>(() => {
@@ -111,7 +112,7 @@ export default () => {
   };
 
   // 处理文件上传状态
-  const handleOnChange = (info: UploadChangeParam) => {
+  const handleChange = (info: UploadChangeParam) => {
     const { fileList } = info;
     /**
      * FIXME: Ant design遗留bug
@@ -150,6 +151,36 @@ export default () => {
       default:
         throw new Error('Not implemented yet: undefined case');
     }
+  };
+
+  // 处理文件删除状态
+  const handleRemove = (file: UploadFile) => {
+    return new Promise<void>((resolve, reject) => {
+      const url = file?.url ?? '';
+      // 从网址中截取文件的相对路径
+      const idx = url.lastIndexOf('.cn/');
+      const filePath = url.substring(idx + 4, url.length);
+      confirm({
+        content: url,
+        centered: true,
+        cancelText: '算了',
+        title: '当真要删除?',
+        icon: <QuestionCircleOutlined />,
+        cancelButtonProps: { shape: 'round' },
+        okButtonProps: { danger: true, shape: 'round' },
+        async onOk() {
+          const res = await removeFile({ filePath: filePath });
+          if (res.success) {
+            resolve();
+          } else {
+            reject();
+          }
+        },
+        onCancel() {
+          reject();
+        },
+      });
+    });
   };
 
   return (
@@ -295,7 +326,7 @@ export default () => {
           fieldProps={{
             allowClear: false,
             onChange: () => {
-              // 只在编辑文件时清空fileList及litpic
+              // 只在编辑文档时清空fileList及litpic
               if (!history.location.query?.id) {
                 setFileLists([]);
                 formRef.current?.setFieldsValue({ litpic: [] });
@@ -360,8 +391,9 @@ export default () => {
                       { required: true, message: '请选择上传图像或输入图像网址作为文档封面' },
                     ]}
                     fieldProps={{
+                      onChange: handleChange,
+                      onRemove: handleRemove,
                       listType: 'picture-card',
-                      onChange: handleOnChange,
                       data: { field: 'litpic' },
                       accept: '.png, .jpg, .jpeg, .gif',
                       headers: { Authorization: localStorage.getItem('Authorization') || '' },
