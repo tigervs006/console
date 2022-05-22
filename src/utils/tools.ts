@@ -18,7 +18,7 @@ export const waitTime = (time: number = 100) => {
  * TODO: 表达式有优化空间
  */
 export const extractImg = (content: string) => {
-  const images = [];
+  const images: string[] = [];
   const srcReg = /src=[\'\"]?([^\'\"]*)[\'\"]?/i;
   const imgArr = content.match(/<img.*?(?:>|\/>)/gi);
   for (const idx in imgArr) {
