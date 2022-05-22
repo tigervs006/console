@@ -15,8 +15,8 @@ import ProForm, {
   ProFormUploadButton,
 } from '@ant-design/pro-form';
 import type { RcFile, UploadChangeParam } from 'antd/es/upload';
-import { QuestionCircleOutlined, FormOutlined, UndoOutlined } from '@ant-design/icons';
 import { notification, Upload, Modal, Button, Input, Space, message } from 'antd';
+import { QuestionCircleOutlined, FormOutlined, UndoOutlined } from '@ant-design/icons';
 import { removeFile, getChannel, getContent as getContents } from '@/pages/content/service';
 
 export default () => {
@@ -70,6 +70,117 @@ export default () => {
     formRef.current?.setFieldsValue({ content: CKcontent });
   };
 
+  // 处理文件删除状态
+  const handleRemove = (file: UploadFile) => {
+    return new Promise<void>((resolve, reject) => {
+      const url = file?.url ?? '';
+      // 从网址中截取文件的相对路径
+      const idx = url.lastIndexOf('.cn/');
+      const filePath = url.substring(idx + 4, url.length);
+      confirm({
+        content: url,
+        centered: true,
+        cancelText: '算了',
+        title: '当真要删除?',
+        icon: <QuestionCircleOutlined />,
+        cancelButtonProps: { shape: 'round' },
+        okButtonProps: { danger: true, shape: 'round' },
+        async onOk() {
+          const res = await removeFile({ filePath: filePath });
+          if (res.success) {
+            resolve();
+          } else {
+            reject();
+          }
+        },
+        onCancel() {
+          reject();
+        },
+      });
+    });
+  };
+
+  // 处理文件上传状态
+  const handleChange = (info: UploadChangeParam) => {
+    const { fileList } = info;
+    /**
+     * 此处一定要先setState，否则状态
+     * 一直显示uploading并且无法读取
+     * response属性，antd历史遗留bug
+     * https://github.com/ant-design/ant-design/issues/2423
+     */
+    setFileLists(fileList.slice());
+    const status = info.file.status;
+    switch (status) {
+      case 'done':
+        message.success(info.file.response.msg);
+        setFileLists([
+          Object.assign(
+            { ...info.file.response.data },
+            { status: info.file.response.success ? 'done' : 'error' },
+          ),
+        ]);
+        break;
+      case 'error':
+        notification.error({
+          message: 'Error',
+          description: info.file?.response?.msg ?? '上传失败',
+        });
+        break;
+      case 'success':
+        message.success(info.file?.response?.msg ?? '上传成功');
+        break;
+      case 'removed':
+        message.success('删除成功');
+        break;
+      case 'uploading':
+        message.info('正在上传中...');
+        break;
+      default:
+        throw new Error('Not implemented yet: undefined case');
+    }
+  };
+
+  // 处理request请求
+  const handleRequest = async (params: Record<string, any>) => {
+    if (params?.id) {
+      // 只有在编辑文档时请求网络
+      const res = await getContents({ ...params });
+      const info = res?.data?.info ?? {};
+      // 设置编辑器内容
+      setContent(info?.content?.content ?? null);
+      // 设置fileList
+      setFileLists([
+        {
+          status: 'done',
+          url: info.litpic,
+          uid: Math.floor(Math.random() * 100).toString(),
+          name: info.litpic.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)[1],
+        },
+      ]);
+      const attribute = [];
+      // 提取值为1的属性名
+      for (const idx in info) {
+        if (
+          (idx === 'is_head' && 1 === info[idx]) ||
+          (idx === 'is_recom' && 1 === info[idx]) ||
+          (idx === 'is_litpic' && 1 === info[idx])
+        ) {
+          attribute.push(idx);
+        }
+      }
+      return res?.data
+        ? Object.assign(
+            { ...info },
+            { attribute: attribute || [] },
+            { content: info?.content?.content ?? null },
+          )
+        : {};
+    } else {
+      return {};
+    }
+  };
+
   // 处理上传前的文件
   const handleBeforeUpload = (file: RcFile) => {
     const MAX_FILE_SIZE = 2;
@@ -111,78 +222,6 @@ export default () => {
     });
   };
 
-  // 处理文件上传状态
-  const handleChange = (info: UploadChangeParam) => {
-    const { fileList } = info;
-    /**
-     * FIXME: Ant design遗留bug
-     * 此处一定要先setState，否则状态
-     * 一直显示uploading并且无法读取
-     * response属性，antd历史遗留bug
-     * https://github.com/ant-design/ant-design/issues/2423
-     */
-    setFileLists(fileList.slice());
-    const status = info.file.status;
-    switch (status) {
-      case 'done':
-        message.success(info.file.response.msg);
-        setFileLists([
-          Object.assign(
-            { ...info.file.response.data },
-            { status: info.file.response.success ? 'done' : 'error' },
-          ),
-        ]);
-        break;
-      case 'error':
-        notification.error({
-          message: 'Error',
-          description: info.file?.response?.msg ?? '上传失败',
-        });
-        break;
-      case 'success':
-        message.success(info.file?.response?.msg ?? '上传成功');
-        break;
-      case 'removed':
-        message.success('删除成功');
-        break;
-      case 'uploading':
-        message.info('正在上传中...');
-        break;
-      default:
-        throw new Error('Not implemented yet: undefined case');
-    }
-  };
-
-  // 处理文件删除状态
-  const handleRemove = (file: UploadFile) => {
-    return new Promise<void>((resolve, reject) => {
-      const url = file?.url ?? '';
-      // 从网址中截取文件的相对路径
-      const idx = url.lastIndexOf('.cn/');
-      const filePath = url.substring(idx + 4, url.length);
-      confirm({
-        content: url,
-        centered: true,
-        cancelText: '算了',
-        title: '当真要删除?',
-        icon: <QuestionCircleOutlined />,
-        cancelButtonProps: { shape: 'round' },
-        okButtonProps: { danger: true, shape: 'round' },
-        async onOk() {
-          const res = await removeFile({ filePath: filePath });
-          if (res.success) {
-            resolve();
-          } else {
-            reject();
-          }
-        },
-        onCancel() {
-          reject();
-        },
-      });
-    });
-  };
-
   return (
     <PageContainer>
       <ProForm<articleData>
@@ -192,6 +231,11 @@ export default () => {
           md: { span: 16 },
           lg: { span: 16 },
           xl: { span: 8 },
+        }}
+        // 表单默认值
+        initialValues={{
+          cid: 4,
+          attribute: ['is_recom'],
         }}
         submitter={{
           render: (_, doms) => {
@@ -211,50 +255,8 @@ export default () => {
         }}
         // request参数
         params={{ id: history.location.query?.id }}
-        // 编辑文档时用
-        request={async (params) => {
-          if (params?.id) {
-            // 只有在编辑文档时请求网络
-            const res = await getContents({ ...params });
-            const info = res?.data?.info ?? {};
-            // 设置编辑器内容
-            setContent(info?.content?.content ?? null);
-            // 设置FileList
-            setFileLists([
-              {
-                status: 'done',
-                url: info.litpic,
-                uid: Math.floor(Math.random() * 100).toString(),
-                name: info.litpic.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)[1],
-              },
-            ]);
-            const attribute = [];
-            // 提取值为1的属性名
-            for (const idx in info) {
-              if (
-                (idx === 'is_head' && 1 === info[idx]) ||
-                (idx === 'is_recom' && 1 === info[idx]) ||
-                (idx === 'is_litpic' && 1 === info[idx])
-              ) {
-                attribute.push(idx);
-              }
-            }
-            return res?.data
-              ? Object.assign(
-                  { ...info },
-                  { attribute: attribute || [] },
-                  { content: info?.content?.content ?? null },
-                )
-              : {};
-          } else {
-            return {};
-          }
-        }}
-        // 表单默认值
-        initialValues={{
-          cid: 4,
-          attribute: ['is_recom'],
-        }}
+        // request请求
+        request={(params) => handleRequest(params)}
       >
         <ProFormSelect
           width="xs"
