@@ -18,7 +18,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   SearchOutlined,
-  ExclamationCircleOutlined,
+  QuestionCircleOutlined,
 } from '@ant-design/icons';
 
 const ChannelSelect: React.FC<{ value?: string; onChange?: (value: string) => void }> = (props) => {
@@ -129,7 +129,7 @@ export default () => {
       centered: true,
       cancelText: '算了',
       title: '当真要删除?',
-      icon: <ExclamationCircleOutlined />,
+      icon: <QuestionCircleOutlined />,
       cancelButtonProps: { shape: 'round' },
       okButtonProps: { danger: true, shape: 'round' },
       content:
