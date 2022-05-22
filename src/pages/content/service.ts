@@ -26,6 +26,11 @@ export async function setStatus(data: statusData) {
   return postData('/article/status', { ...data });
 }
 
+// 文件删除接口
+export async function removeFile(data: { filePath: string }) {
+  return postData('/public/remove', { ...data });
+}
+
 // 获取文章内容
 export async function getContent(params: Record<string, any>) {
   return getData('/article', { ...params });
