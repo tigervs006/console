@@ -14,7 +14,7 @@ import ProForm, {
   ProFormTextArea,
   ProFormUploadButton,
 } from '@ant-design/pro-form';
-import type { RcFile, UploadChangeParam } from 'antd/es/upload';
+import type { RcFile, UploadProps, UploadChangeParam } from 'antd/es/upload';
 import { notification, Upload, Modal, Button, Input, Space, message } from 'antd';
 import { QuestionCircleOutlined, FormOutlined, UndoOutlined } from '@ant-design/icons';
 import { removeFile, getChannel, getContent as getContents } from '@/pages/content/service';
@@ -71,7 +71,7 @@ export default () => {
   };
 
   // 处理文件删除状态
-  const handleRemove = (file: UploadFile) => {
+  const handleRemove: UploadProps['onRemove'] = (file: UploadFile) => {
     return new Promise<void>((resolve, reject) => {
       const url = file?.url ?? '';
       // 从网址中截取文件的相对路径
@@ -102,7 +102,7 @@ export default () => {
   };
 
   // 处理文件上传状态
-  const handleChange = (info: UploadChangeParam) => {
+  const handleChange: UploadProps['onChange'] = (info: UploadChangeParam) => {
     const { fileList } = info;
     /**
      * 此处一定要先setState，否则状态
