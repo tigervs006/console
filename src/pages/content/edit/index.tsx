@@ -78,13 +78,14 @@ export default () => {
       const idx = url.lastIndexOf('.cn/');
       const filePath = url.substring(idx + 4, url.length);
       confirm({
-        content: url,
         centered: true,
         cancelText: '算了',
         title: '当真要删除?',
         icon: <QuestionCircleOutlined />,
         cancelButtonProps: { shape: 'round' },
         okButtonProps: { danger: true, shape: 'round' },
+        // @ts-ignore
+        content: url.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)[1],
         async onOk() {
           const res = await removeFile({ filePath: filePath });
           if (res.success) {
@@ -395,6 +396,14 @@ export default () => {
                     fieldProps={{
                       onChange: handleChange,
                       onRemove: handleRemove,
+                      progress: {
+                        strokeColor: {
+                          '0%': '#108ee9',
+                          '100%': '#87d068',
+                        },
+                        strokeWidth: 3,
+                        showInfo: false,
+                      },
                       listType: 'picture-card',
                       data: { field: 'litpic' },
                       accept: '.png, .jpg, .jpeg, .gif',
