@@ -188,7 +188,7 @@ export default () => {
     const UNIT = 1024 * 1024;
     const curType = file.type;
     const fileType = ['image/png', 'image/jpeg', 'image/pjpeg'];
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<boolean>((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file as Blob);
       reader.onload = function (e) {
@@ -216,7 +216,7 @@ export default () => {
             });
             reject();
           } else {
-            resolve();
+            resolve(true);
           }
         };
       };
@@ -410,7 +410,7 @@ export default () => {
                       headers: { Authorization: localStorage.getItem('Authorization') || '' },
                       beforeUpload: (file: RcFile) =>
                         handleBeforeUpload(file)
-                          .then(() => true)
+                          .then((check) => check)
                           .catch(() => Upload.LIST_IGNORE),
                     }}
                   />
