@@ -16,6 +16,7 @@ export type articleData = {
   id?: number;
   cid: number;
   title: string;
+  litpic: string;
   content: string;
   is_head?: number;
   keywords: string;
@@ -23,7 +24,6 @@ export type articleData = {
   is_litpic?: number;
   description: string;
   attribute?: string[];
-  litpic: string | string[];
 };
 
 export type tableDataItem = {
