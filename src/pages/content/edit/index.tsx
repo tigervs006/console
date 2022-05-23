@@ -302,7 +302,7 @@ export default () => {
             autoSize: { minRows: 5, maxRows: 8 },
           }}
           rules={[
-            { required: true, message: '请输入文档文档简述' },
+            { required: true, message: '请输入文档简述' },
             { min: 50, message: '再多几句文档简述', type: 'string' },
           ]}
         />
