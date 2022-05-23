@@ -33,6 +33,10 @@ export default class Ckeditor extends React.Component<parentProps, stateData> {
           return saveData(editor.getData());
         },
       },
+      simpleUpload: {
+        uploadUrl: '/console/public/upload',
+        headers: { Authorization: localStorage.getItem('Authorization') || '' },
+      },
     };
     // 字数统计&自动保存状态
     const displayStatus = (editor: any) => {
