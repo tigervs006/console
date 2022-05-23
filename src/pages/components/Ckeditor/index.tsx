@@ -38,8 +38,8 @@ export default class Ckeditor extends React.Component<parentProps, stateData> {
         headers: { Authorization: localStorage.getItem('Authorization') || '' },
       },
     };
-    // 字数统计&自动保存状态
-    const displayStatus = (editor: any) => {
+    // 编辑器初始化
+    const handleOnReady = (editor: any) => {
       // 字数统计
       const wordCountPlugin = editor.plugins.get('WordCount');
       const wordCountWrapper = document.getElementById('word-count');
@@ -68,7 +68,7 @@ export default class Ckeditor extends React.Component<parentProps, stateData> {
           config={customConfig}
           editor={ClassicEditor}
           data={this.state.content}
-          onReady={(editor: any) => displayStatus(editor)}
+          onReady={(editor: any) => handleOnReady(editor)}
           // 数据改变时保存
           onChange={(event: any, editor: any) => {
             this.setState({ content: editor.getData() }, () =>
