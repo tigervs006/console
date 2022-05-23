@@ -72,7 +72,7 @@ export default () => {
 
   // 处理文件删除状态
   const handleRemove: UploadProps['onRemove'] = (file: UploadFile) => {
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<boolean>((resolve, reject) => {
       const url = file?.url ?? '';
       // 从网址中截取文件的相对路径
       const idx = url.lastIndexOf('.cn/');
@@ -89,13 +89,13 @@ export default () => {
         async onOk() {
           const res = await removeFile({ filePath: filePath });
           if (res.success) {
-            resolve();
+            resolve(true);
           } else {
-            reject();
+            reject('Failed');
           }
         },
         onCancel() {
-          reject();
+          reject('onCancel');
         },
       });
     });
@@ -125,17 +125,17 @@ export default () => {
       case 'error':
         notification.error({
           message: 'Error',
-          description: info.file?.response?.msg ?? '上传失败',
+          description: info.file?.response?.msg ?? 'Upload failed',
         });
         break;
       case 'success':
-        message.success(info.file?.response?.msg ?? '上传成功');
+        message.success(info.file?.response?.msg ?? 'Upload successful');
         break;
       case 'removed':
-        message.success('删除成功');
+        message.success('Removed successfully');
         break;
       case 'uploading':
-        message.info('正在上传中...');
+        message.info('uploading...');
         break;
       default:
         throw new Error('Not implemented yet: undefined case');
