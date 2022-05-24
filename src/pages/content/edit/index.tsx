@@ -31,12 +31,11 @@ export default () => {
   // 新闻栏目
   const channel = async () => {
     const res = await getChannel();
-    return res?.data?.list.map(
-      (item: channelDataItem) =>
-        ({
-          value: item.id,
-          label: item.cname,
-        } ?? {}),
+    return (
+      res?.data?.list.map((item: channelDataItem) => ({
+        value: item.id,
+        label: item.cname,
+      })) ?? {}
     );
   };
   // 提取图像
