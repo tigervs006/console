@@ -143,7 +143,7 @@ export default () => {
   };
 
   // 处理request请求
-  const handleRequest = async (params: Record<string, any>) => {
+  const handleRequest = async (params: Record<'id', string>) => {
     if (params?.id) {
       // 只有在编辑文档时请求网络
       const res = await getContents({ ...params });
@@ -257,7 +257,7 @@ export default () => {
         // request参数
         params={{ id: history.location.query?.id }}
         // request请求
-        request={(params) => handleRequest(params)}
+        request={(params: Record<'id', string>) => handleRequest(params)}
       >
         <ProFormSelect
           width="xs"
