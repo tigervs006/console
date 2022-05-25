@@ -7,21 +7,21 @@ import { PageContainer } from '@ant-design/pro-layout';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import { fetchData, getAuthor, getChannel, remove, setStatus } from '../service';
 import type {
-  valueEnumData,
   authorData,
+  valueEnumData,
   tableDataItem,
-  channelDataItem,
   channelOptions,
+  channelDataItem,
 } from '../data';
-import { Typography, Modal, Button, message, Switch, Select, Space, Table, Tag } from 'antd';
+import { Typography, Input, Modal, Button, message, Switch, Select, Space, Table, Tag } from 'antd';
 import {
-  DeleteOutlined,
   EditOutlined,
   SearchOutlined,
+  DeleteOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
 
-const ChannelSelect: React.FC<{ value?: string; onChange?: (value: string) => void }> = (props) => {
+const SelectChannel: React.FC<Record<string, any>> = (props) => {
   const [channelOptions, setChannelOptions] = useState<channelOptions[]>();
   // 获取新闻栏目
   useRequest(getChannel, {
@@ -37,17 +37,16 @@ const ChannelSelect: React.FC<{ value?: string; onChange?: (value: string) => vo
     <Select
       showArrow
       allowClear
+      {...props}
       mode="multiple"
-      placeholder="请选择栏目..."
       maxTagCount={3}
       options={channelOptions}
-      value={props.value}
-      onChange={props.onChange}
+      placeholder="请选择栏目..."
     />
   );
 };
 
-const ArticleSwitch: React.FC<{ record: tableDataItem }> = (props) => {
+const RecordSwitch: React.FC<{ record: tableDataItem }> = (props) => {
   const [loadings, setLoadings] = useState<boolean>(false);
   /**
    * 设置文章状态
@@ -69,6 +68,22 @@ const ArticleSwitch: React.FC<{ record: tableDataItem }> = (props) => {
       unCheckedChildren="隐藏"
       defaultChecked={!!props.record.status}
       onChange={(checked) => handleChange(checked, props.record)}
+    />
+  );
+};
+
+const InputSearch: React.FC<Record<string, any>> = (props) => {
+  return (
+    <Input
+      showCount
+      allowClear
+      {...props}
+      maxLength={30}
+      placeholder="请输入文章标题"
+      // 失焦时清除字符串首尾的空格
+      onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
+        props.onChange(e.target.value.trim());
+      }}
     />
   );
 };
@@ -187,9 +202,18 @@ export default () => {
       valueEnum: { ...authorEnum },
     },
     {
+      search: false,
       copyable: true,
       title: '文章标题',
       dataIndex: 'title',
+    },
+    {
+      title: '文章标题',
+      dataIndex: 'title',
+      hideInTable: true,
+      renderFormItem: (_, { defaultRender, ...rest }) => {
+        return <InputSearch {...rest} />;
+      },
     },
     {
       search: false,
@@ -200,8 +224,8 @@ export default () => {
       title: '所属栏目',
       dataIndex: 'cid',
       hideInTable: true,
-      renderFormItem: ({ ...rest }) => {
-        return <ChannelSelect {...rest} />;
+      renderFormItem: (_, { defaultRender, ...rest }) => {
+        return <SelectChannel {...rest} />;
       },
     },
     {
@@ -280,7 +304,7 @@ export default () => {
           status: 'Hide',
         },
       },
-      render: (_, record) => [<ArticleSwitch key={record.id} record={record} />],
+      render: (_, record) => <RecordSwitch key={record.id} record={record} />,
     },
     {
       search: false,
