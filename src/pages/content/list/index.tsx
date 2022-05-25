@@ -173,7 +173,9 @@ export default () => {
         ref.current.reload();
         message.success(res.msg);
       },
-      onCancel() {},
+      onCancel() {
+        console.log('取消删除文档');
+      },
     });
   };
 
