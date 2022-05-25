@@ -197,7 +197,7 @@ export default () => {
       dataIndex: 'id',
       hideInTable: true,
       renderFormItem: (_, { defaultRender, ...rest }) => {
-        return <Input {...rest} type="number" placeholder="请输入文章ID" />;
+        return <Input {...rest} type="number" allowClear placeholder="请输入文章ID" />;
       },
     },
     {
