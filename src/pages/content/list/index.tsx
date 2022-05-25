@@ -13,7 +13,19 @@ import type {
   channelOptions,
   channelDataItem,
 } from '../data';
-import { Typography, Input, Modal, Button, message, Switch, Select, Space, Table, Tag } from 'antd';
+import {
+  Typography,
+  InputNumber,
+  Input,
+  Modal,
+  Button,
+  message,
+  Switch,
+  Select,
+  Space,
+  Table,
+  Tag,
+} from 'antd';
 import {
   EditOutlined,
   SearchOutlined,
@@ -49,7 +61,7 @@ const SelectChannel: React.FC<Record<string, any>> = (props) => {
 const RecordSwitch: React.FC<{ record: tableDataItem }> = (props) => {
   const [loadings, setLoadings] = useState<boolean>(false);
   /**
-   * 设置文章状态
+   * 设置文档状态
    * @param checked 状态
    * @param record 当前记录
    */
@@ -79,7 +91,7 @@ const InputSearch: React.FC<Record<string, any>> = (props) => {
       allowClear
       {...props}
       maxLength={30}
-      placeholder="请输入文章标题"
+      placeholder="请输入文档标题"
       // 失焦时清除字符串首尾的空格
       onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
         props.onChange(e.target.value.trim());
@@ -95,10 +107,10 @@ export default () => {
   // 重载表格
   const ref: any = useRef<ActionType>();
 
-  // 文章作者
+  // 文档作者
   const [authorEnum, setAuthorEnum] = useState<valueEnumData>();
 
-  // 获取文章作者
+  // 获取文档作者
   useRequest(getAuthor, {
     onSuccess: (res: { list: authorData[] }) => {
       const newObj: Record<string, { text: string; status: string }> = {};
@@ -111,7 +123,7 @@ export default () => {
   });
 
   /**
-   * 编辑文章
+   * 编辑文档
    * @param record
    */
   const handleEdit = (record: tableDataItem) => {
@@ -119,7 +131,7 @@ export default () => {
   };
 
   /**
-   * 浏览文章
+   * 浏览文档
    * @param record
    */
   const handlePreview = (record: tableDataItem) => {
@@ -128,7 +140,7 @@ export default () => {
   };
 
   /**
-   * 删除文章
+   * 删除文档
    * @param record
    */
   const handleDelete = (record: tableDataItem | tableDataItem[]) => {
@@ -152,9 +164,9 @@ export default () => {
         (record.title && `《${record.title}》`) ||
         (3 < titles.length
           ? // @ts-ignore
-            `${titles.slice(0, 3)}...等【${titles.length}】篇文章`
+            `${titles.slice(0, 3)}...等【${titles.length}】篇文档`
           : // @ts-ignore
-            `${titles}这【${titles.length}】篇文章`),
+            `${titles}这【${titles.length}】篇文档`),
       async onOk() {
         // @ts-ignore
         const res = await remove({ id: record.id || ids });
@@ -166,7 +178,7 @@ export default () => {
   };
 
   /**
-   * 获取文章列表
+   * 获取文档列表
    * @param params 参数
    * @param sort   排序
    * @param filter 筛选
@@ -197,7 +209,13 @@ export default () => {
       dataIndex: 'id',
       hideInTable: true,
       renderFormItem: (_, { defaultRender, ...rest }) => {
-        return <Input {...rest} type="number" allowClear placeholder="请输入文章ID" />;
+        return (
+          <InputNumber
+            {...rest}
+            placeholder="请输入文档ID"
+            formatter={(value) => value.replace(/^(0+)|\D+/g, '')}
+          />
+        );
       },
     },
     {
@@ -213,11 +231,11 @@ export default () => {
     {
       search: false,
       copyable: true,
-      title: '文章标题',
+      title: '文档标题',
       dataIndex: 'title',
     },
     {
-      title: '文章标题',
+      title: '文档标题',
       dataIndex: 'title',
       hideInTable: true,
       renderFormItem: (_, { defaultRender, ...rest }) => {
@@ -299,7 +317,7 @@ export default () => {
       search: false,
       filters: true,
       onFilter: true,
-      title: '文章状态',
+      title: '文档状态',
       filterMode: 'tree',
       valueType: 'select',
       dataIndex: 'status',
