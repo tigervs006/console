@@ -1,4 +1,4 @@
-import { history } from 'umi';
+import { useModel, history } from 'umi';
 import { useRef, useState } from 'react';
 import Ckeditor from '@/pages/components/Ckeditor';
 import { waitTime, extractImg } from '@/utils/tools';
@@ -17,11 +17,17 @@ import ProForm, {
 import type { RcFile, UploadProps, UploadChangeParam } from 'antd/es/upload';
 import { notification, Upload, Modal, Button, Input, Space, message } from 'antd';
 import { QuestionCircleOutlined, FormOutlined, UndoOutlined } from '@ant-design/icons';
-import { removeFile, getChannel, getContent as getContents } from '@/pages/content/service';
+import {
+  removeFile,
+  getChannel,
+  getContent as getContents,
+  saveContent,
+} from '@/pages/content/service';
 
 export default () => {
   const { confirm } = Modal;
   const formRef = useRef<ProFormInstance>();
+  const { initialState } = useModel('@@initialState');
   // 文档内容
   const [content, setContent] = useState<string>(() => {
     return formRef.current?.getFieldValue('content') || null;
@@ -141,6 +147,22 @@ export default () => {
     }
   };
 
+  // 处理onFinsh提交
+  const handleFinsh = async (data: articleData) => {
+    await saveContent(
+      Object.assign(
+        { ...data },
+        { content: content },
+        { id: history.location.query?.id ?? null },
+        { author: initialState?.currentUser?.name ?? 'anonymous' },
+      ),
+    ).then((res) => {
+      message.success(res.msg);
+      // 延时跳转到列表页
+      waitTime(2500).then(() => history.push({ pathname: '/content/list' }));
+    });
+  };
+
   // 处理request请求
   const handleRequest = async (params: Record<'id', string>) => {
     if (params?.id) {
@@ -249,10 +271,7 @@ export default () => {
           submitButtonProps: { type: 'primary', shape: 'round', icon: <FormOutlined /> },
         }}
         // 提交文档数据
-        onFinish={async (data) => {
-          await waitTime(1000);
-          console.log('onFinish', Object.assign({ ...data }, { content: content }));
-        }}
+        onFinish={(data: articleData) => handleFinsh(data)}
         // request参数
         params={{ id: history.location.query?.id }}
         // request请求
@@ -272,7 +291,9 @@ export default () => {
           name="title"
           tooltip="限制32个字符"
           placeholder="请输入文档标题"
-          fieldProps={{ showCount: true, maxLength: 32 }}
+          // 输入时去除首尾空格
+          getValueFromEvent={(e) => e.target.value.trim()}
+          fieldProps={{ maxLength: 32, showCount: true }}
           rules={[
             { required: true, message: '请输入文档标题' },
             { min: 15, message: '文档标题不宜太短' },
@@ -294,6 +315,8 @@ export default () => {
           name="description"
           tooltip="SEO优化很重要"
           placeholder="请输入名称文档简述"
+          // 输入时去除首尾空格
+          getValueFromEvent={(e) => e.target.value.trim()}
           fieldProps={{
             allowClear: true,
             showCount: true,
@@ -346,6 +369,8 @@ export default () => {
                     label="图像网址"
                     tooltip="直接输入图像网址"
                     placeholder="请输入输入图片网址"
+                    // 输入时去除首尾空格
+                    getValueFromEvent={(e) => e.target.value.trim()}
                     rules={[
                       { required: true, message: '请输入图像网址或选择上传图像作为文档封面' },
                     ]}
