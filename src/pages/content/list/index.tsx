@@ -189,7 +189,16 @@ export default () => {
   const columns: ProColumns<tableDataItem>[] = [
     {
       title: 'ID',
+      search: false,
       dataIndex: 'id',
+    },
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      hideInTable: true,
+      renderFormItem: (_, { defaultRender, ...rest }) => {
+        return <Input {...rest} type="number" placeholder="请输入文章ID" />;
+      },
     },
     {
       title: '作者',
