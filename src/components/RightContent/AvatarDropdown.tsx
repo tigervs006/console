@@ -23,7 +23,9 @@ const menuItems = [
  * 退出登录，并且将当前的 url 保存
  */
 const loginOut = async () => {
-  await outLogin({ name: localStorage.getItem('user') || 'anonymous' });
+  await outLogin({ name: localStorage.getItem('user') || 'anonymous' }).then(() =>
+    localStorage.clear(),
+  );
   const { query = {}, search, pathname } = history.location;
   const { redirect } = query;
   // Note: There may be security issues, please note
@@ -46,20 +48,18 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
       switch (key) {
         case 'logout':
           setInitialState((s) => ({ ...s, currentUser: undefined }));
-          loginOut().then(() => localStorage.clear());
-          history.push(`/account/${key}`);
+          loginOut();
           break;
         case 'center':
           console.log('进入个人中心');
-          // history.push(`/account/${key}`);
           break;
         case 'settings':
           console.log('进入个人设置');
-          // history.push(`/account/${key}`);
           break;
         default:
           return;
       }
+      history.push(`/account/${key}`);
     },
     [setInitialState],
   );
