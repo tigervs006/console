@@ -1,13 +1,15 @@
+import md5 from 'md5';
 import {
   AlipayCircleOutlined,
-  LockOutlined,
-  MobileOutlined,
   TaobaoCircleOutlined,
-  UserOutlined,
   WeiboCircleOutlined,
+  MobileOutlined,
+  LockOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
-import { Alert, message, Tabs } from 'antd';
 import React, { useState } from 'react';
+import { waitTime } from '@/utils/tools';
+import { Alert, message, Tabs } from 'antd';
 import { ProFormCaptcha, ProFormCheckbox, ProFormText, LoginForm } from '@ant-design/pro-form';
 import { useIntl, history, FormattedMessage, SelectLang, useModel } from 'umi';
 import Footer from '@/components/Footer';
@@ -30,14 +32,17 @@ const LoginMessage: React.FC<{
 );
 
 const Login: React.FC = () => {
-  const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
+  const [userLoginState, setUserLoginState] = useState<API.LoginResult>({
+    status: 200,
+    type: 'account',
+  });
   const [type, setType] = useState<string>('account');
   const { initialState, setInitialState } = useModel('@@initialState');
 
   const intl = useIntl();
 
-  const fetchUserInfo = async () => {
-    const userInfo = await initialState?.fetchUserInfo?.();
+  const fetchUserInfo = async (params: { id: string }) => {
+    const userInfo = await initialState?.fetchUserInfo?.(params);
     if (userInfo) {
       await setInitialState((s) => ({
         ...s,
@@ -49,17 +54,24 @@ const Login: React.FC = () => {
   const handleSubmit = async (values: API.LoginParams) => {
     try {
       // 登录
-      const msg = await login({ ...values, type });
-      if (msg.status === 'ok') {
-        const authorization = msg.data?.Authorization ?? '';
+      const res = await login({ ...values, type });
+      if (res.success) {
+        const uid = res.data?.info?.uid ?? '0';
+        const avatar = res.data?.info?.avatar ?? '';
+        const userName = res.data?.info?.name ?? 'anonymous';
+        const authorization = res.data?.info?.authorization ?? '';
         // 写入到localStorage
+        localStorage.setItem('uid', uid);
+        localStorage.setItem('user', userName);
+        localStorage.setItem('avatar', avatar);
         localStorage.setItem('Authorization', authorization);
         const defaultLoginSuccessMessage = intl.formatMessage({
           id: 'pages.login.success',
           defaultMessage: '登录成功！',
         });
         message.success(defaultLoginSuccessMessage);
-        await fetchUserInfo();
+        await waitTime(2000); // 延时2秒等待Token生效
+        await fetchUserInfo({ id: res?.data?.info?.uid ?? '0' });
         /** 此方法会跳转到 redirect 参数所在的位置 */
         if (!history) return;
         const { query } = history.location;
@@ -68,13 +80,13 @@ const Login: React.FC = () => {
         return;
       }
       // 如果失败去设置用户错误信息
-      setUserLoginState(msg);
+      setUserLoginState(res);
     } catch (error) {
       const defaultLoginFailureMessage = intl.formatMessage({
         id: 'pages.login.failure',
         defaultMessage: '登录失败，请重试！',
       });
-      message.error(defaultLoginFailureMessage);
+      console.log(defaultLoginFailureMessage);
     }
   };
   const { status, type: loginType } = userLoginState;
@@ -122,33 +134,32 @@ const Login: React.FC = () => {
               })}
             />
           </Tabs>
-
-          {status === 'error' && loginType === 'account' && (
+          {400 === status && loginType === 'account' && (
             <LoginMessage
               content={intl.formatMessage({
                 id: 'pages.login.accountLogin.errorMessage',
-                defaultMessage: '账户或密码错误(admin/ant.design)',
+                defaultMessage: '账户或密码错误',
               })}
             />
           )}
           {type === 'account' && (
             <>
               <ProFormText
-                name="username"
+                name="name"
                 fieldProps={{
                   size: 'large',
                   prefix: <UserOutlined className={styles.prefixIcon} />,
                 }}
                 placeholder={intl.formatMessage({
-                  id: 'pages.login.username.placeholder',
-                  defaultMessage: '用户名: admin or user',
+                  id: 'pages.login.name.placeholder',
+                  defaultMessage: '请输入用户名',
                 })}
                 rules={[
                   {
                     required: true,
                     message: (
                       <FormattedMessage
-                        id="pages.login.username.required"
+                        id="pages.login.name.required"
                         defaultMessage="请输入用户名!"
                       />
                     ),
@@ -161,9 +172,11 @@ const Login: React.FC = () => {
                   size: 'large',
                   prefix: <LockOutlined className={styles.prefixIcon} />,
                 }}
+                // 提交时md5加密password
+                transform={(password) => ({ password: md5(password) })}
                 placeholder={intl.formatMessage({
                   id: 'pages.login.password.placeholder',
-                  defaultMessage: '密码: ant.design',
+                  defaultMessage: '请输入密码',
                 })}
                 rules={[
                   {
@@ -180,7 +193,7 @@ const Login: React.FC = () => {
             </>
           )}
 
-          {status === 'error' && loginType === 'mobile' && <LoginMessage content="验证码错误" />}
+          {400 === status && loginType === 'mobile' && <LoginMessage content="验证码错误" />}
           {type === 'mobile' && (
             <>
               <ProFormText
