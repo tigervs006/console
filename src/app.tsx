@@ -26,12 +26,12 @@ export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>;
   currentUser?: API.CurrentUser;
   loading?: boolean;
-  fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
+  fetchUserInfo?: (params: { id: string }) => Promise<API.CurrentUser | undefined>;
 }> {
-  const fetchUserInfo = async () => {
+  const fetchUserInfo = async (params: { id: string }) => {
     try {
-      const msg = await queryCurrentUser();
-      return msg.data;
+      const res = await queryCurrentUser(params);
+      return res.data.info;
     } catch (error) {
       history.push(loginPath);
     }
@@ -39,7 +39,7 @@ export async function getInitialState(): Promise<{
   };
   // 如果不是登录页面，执行
   if (history.location.pathname !== loginPath) {
-    const currentUser = await fetchUserInfo();
+    const currentUser = await fetchUserInfo({ id: localStorage.getItem('uid') || '0' });
     return {
       fetchUserInfo,
       currentUser,
@@ -123,25 +123,20 @@ const authHeaderInterceptor = (url: string, options: RequestOptionsInit) => {
 // 响应后拦截器
 const ResponseInterceptors = async (response: Response) => {
   const result = await response.clone().json();
-  // 登录失败返回登录页
-  if (403 === result.status) history.push(loginPath);
+  // 验证失败返回登录页
+  if (401 === result.status) {
+    localStorage.clear();
+    history.push(loginPath);
+  }
   return response;
 };
 
 export const request: RequestConfig = {
   errorHandler: (error: Record<string, any>) => {
-    if (error?.response) {
-      notification.error({
-        message: error.response?.msg ?? '未知错误',
-        description:
-          error.response?.data?.message ??
-          `status code: ${error.response?.status ?? 400}，success: ${
-            error.response?.success ?? false
-          }`,
-      });
-    } else {
-      console.log('error', error?.message ?? 'Server Error');
-    }
+    notification.error({
+      message: 'Request Error',
+      description: error.response?.msg ?? 'Unknow Error, Please check your internet configuration',
+    });
   },
   requestInterceptors: [authHeaderInterceptor],
   responseInterceptors: [ResponseInterceptors],
