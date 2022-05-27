@@ -51,15 +51,14 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
           loginOut();
           break;
         case 'center':
-          console.log('进入个人中心');
+          history.push(`/account/${key}`);
           break;
         case 'settings':
-          console.log('进入个人设置');
+          history.push(`/account/${key}`);
           break;
         default:
           return;
       }
-      history.push(`/account/${key}`);
     },
     [setInitialState],
   );
