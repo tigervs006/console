@@ -1,3 +1,4 @@
+declare module 'md5';
 declare module 'slash2';
 declare module '*.css';
 declare module '*.less';
@@ -12,9 +13,9 @@ declare module '*.bmp';
 declare module '*.tiff';
 declare module 'omit.js';
 declare module 'numeral';
-declare module '@antv/data-set';
 declare module 'mockjs';
 declare module 'react-fittext';
+declare module '@antv/data-set';
 declare module 'bizcharts-plugin-slider';
 declare module '@ckeditor/ckeditor5-react';
 declare module '@ckeditor/ckeditor5-build-classic';
