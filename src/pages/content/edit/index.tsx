@@ -1,4 +1,4 @@
-import { useModel, history } from 'umi';
+import { history } from 'umi';
 import { useRef, useState } from 'react';
 import Ckeditor from '@/pages/components/Ckeditor';
 import { waitTime, extractImg } from '@/utils/tools';
@@ -27,7 +27,6 @@ import {
 export default () => {
   const { confirm } = Modal;
   const formRef = useRef<ProFormInstance>();
-  const { initialState } = useModel('@@initialState');
   // 文档内容
   const [content, setContent] = useState<string>(() => {
     return formRef.current?.getFieldValue('content') || null;
@@ -154,7 +153,7 @@ export default () => {
         { ...data },
         { content: content },
         { id: history.location.query?.id ?? null },
-        { author: initialState?.currentUser?.name ?? 'anonymous' },
+        { author: localStorage.getItem('user') || 'anonymous' },
       ),
     ).then((res) => {
       message.success(res.msg);
