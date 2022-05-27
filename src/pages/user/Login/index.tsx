@@ -32,10 +32,7 @@ const LoginMessage: React.FC<{
 );
 
 const Login: React.FC = () => {
-  const [userLoginState, setUserLoginState] = useState<API.LoginResult>({
-    status: 200,
-    type: 'account',
-  });
+  const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
   const [type, setType] = useState<string>('account');
   const { initialState, setInitialState } = useModel('@@initialState');
 
@@ -55,7 +52,7 @@ const Login: React.FC = () => {
     try {
       // 登录
       const res = await login({ ...values, type });
-      if (res.success) {
+      if (200 === res.status) {
         const uid = res.data?.info?.uid ?? '0';
         const avatar = res.data?.info?.avatar ?? '';
         const userName = res.data?.info?.name ?? 'anonymous';
@@ -80,7 +77,8 @@ const Login: React.FC = () => {
         return;
       }
       // 如果失败去设置用户错误信息
-      setUserLoginState(res);
+      // TODO: 接口直接返回对应数据res
+      setUserLoginState({ status: 401, type: 'account' });
     } catch (error) {
       const defaultLoginFailureMessage = intl.formatMessage({
         id: 'pages.login.failure',
@@ -134,7 +132,7 @@ const Login: React.FC = () => {
               })}
             />
           </Tabs>
-          {400 === status && loginType === 'account' && (
+          {401 === status && loginType === 'account' && (
             <LoginMessage
               content={intl.formatMessage({
                 id: 'pages.login.accountLogin.errorMessage',
@@ -192,8 +190,7 @@ const Login: React.FC = () => {
               />
             </>
           )}
-
-          {400 === status && loginType === 'mobile' && <LoginMessage content="验证码错误" />}
+          {401 === status && loginType === 'mobile' && <LoginMessage content="验证码错误" />}
           {type === 'mobile' && (
             <>
               <ProFormText
