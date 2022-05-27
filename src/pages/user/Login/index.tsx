@@ -7,16 +7,15 @@ import {
   LockOutlined,
   UserOutlined,
 } from '@ant-design/icons';
+import styles from './index.less';
 import React, { useState } from 'react';
 import { waitTime } from '@/utils/tools';
-import { Alert, message, Tabs } from 'antd';
-import { ProFormCaptcha, ProFormCheckbox, ProFormText, LoginForm } from '@ant-design/pro-form';
-import { useIntl, history, FormattedMessage, SelectLang, useModel } from 'umi';
 import Footer from '@/components/Footer';
+import { Alert, message, Tabs } from 'antd';
 import { login } from '@/services/ant-design-pro/api';
 import { getFakeCaptcha } from '@/services/ant-design-pro/login';
-
-import styles from './index.less';
+import { useIntl, history, FormattedMessage, SelectLang, useModel } from 'umi';
+import { ProFormCaptcha, ProFormCheckbox, ProFormText, LoginForm } from '@ant-design/pro-form';
 
 const LoginMessage: React.FC<{
   content: string;
@@ -32,11 +31,10 @@ const LoginMessage: React.FC<{
 );
 
 const Login: React.FC = () => {
-  const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
+  const intl = useIntl();
   const [type, setType] = useState<string>('account');
   const { initialState, setInitialState } = useModel('@@initialState');
-
-  const intl = useIntl();
+  const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
 
   const fetchUserInfo = async (params: { id: string }) => {
     const userInfo = await initialState?.fetchUserInfo?.(params);
@@ -96,8 +94,8 @@ const Login: React.FC = () => {
       </div>
       <div className={styles.content}>
         <LoginForm
-          logo={<img alt="logo" src="/logo.svg" />}
           title="Ant Design"
+          logo={<img alt="logo" src="/manage/logo.svg" />}
           subTitle={intl.formatMessage({ id: 'pages.layouts.userLayout.title' })}
           initialValues={{
             autoLogin: true,
