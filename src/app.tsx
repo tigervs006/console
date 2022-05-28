@@ -123,7 +123,7 @@ const authHeaderInterceptor = (url: string, options: RequestOptionsInit) => {
 // 响应后拦截器
 const ResponseInterceptors = async (response: Response) => {
   const result = await response.clone().json();
-  // 验证失败返回登录页
+  // 如果是Token验证失败则退出
   if (401 === result.status) {
     localStorage.clear();
     history.push(loginPath);
