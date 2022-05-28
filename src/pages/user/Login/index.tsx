@@ -74,19 +74,12 @@ const Login: React.FC = () => {
         history.push(redirect || '/dashboard');
         return;
       }
-      // 如果失败去设置用户错误信息
-      // TODO: 接口直接返回对应数据res
-      setUserLoginState({ status: 401, type: 'account' });
     } catch (error) {
-      const defaultLoginFailureMessage = intl.formatMessage({
-        id: 'pages.login.failure',
-        defaultMessage: '登录失败，请重试！',
-      });
-      console.log(defaultLoginFailureMessage);
+      // 设置登录错误信息
+      setUserLoginState({ status: 400, type: 'account' });
     }
   };
   const { status, type: loginType } = userLoginState;
-
   return (
     <div className={styles.container}>
       <div className={styles.lang} data-lang>
@@ -130,7 +123,7 @@ const Login: React.FC = () => {
               })}
             />
           </Tabs>
-          {401 === status && loginType === 'account' && (
+          {400 === status && loginType === 'account' && (
             <LoginMessage
               content={intl.formatMessage({
                 id: 'pages.login.accountLogin.errorMessage',
@@ -188,7 +181,7 @@ const Login: React.FC = () => {
               />
             </>
           )}
-          {401 === status && loginType === 'mobile' && <LoginMessage content="验证码错误" />}
+          {400 === status && loginType === 'mobile' && <LoginMessage content="验证码错误" />}
           {type === 'mobile' && (
             <>
               <ProFormText
