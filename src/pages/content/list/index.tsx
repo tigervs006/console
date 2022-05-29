@@ -1,4 +1,3 @@
-import '../index.less';
 import moment from 'moment';
 import { useRequest, history } from 'umi';
 import ProTable from '@ant-design/pro-table';
@@ -369,36 +368,35 @@ export default () => {
       title: '操作',
       search: false,
       render: (_, record) => [
-        <Button
-          key={record.id + 1}
-          size="small"
-          shape="round"
-          icon={<EditOutlined />}
-          onClick={() => handleEdit(record)}
-        >
-          编辑
-        </Button>,
-        <Button
-          key={record.id + 2}
-          size="small"
-          type="primary"
-          shape="round"
-          icon={<SearchOutlined />}
-          onClick={() => handlePreview(record)}
-        >
-          浏览
-        </Button>,
-        <Button
-          key={record.id + 3}
-          danger
-          size="small"
-          type="primary"
-          shape="round"
-          icon={<DeleteOutlined />}
-          onClick={() => handleDelete(record)}
-        >
-          删除
-        </Button>,
+        <Space size={4} key="operation">
+          <Button
+            size="small"
+            shape="round"
+            icon={<EditOutlined />}
+            onClick={() => handleEdit(record)}
+          >
+            编辑
+          </Button>
+          <Button
+            size="small"
+            type="primary"
+            shape="round"
+            icon={<SearchOutlined />}
+            onClick={() => handlePreview(record)}
+          >
+            浏览
+          </Button>
+          <Button
+            danger
+            size="small"
+            type="primary"
+            shape="round"
+            icon={<DeleteOutlined />}
+            onClick={() => handleDelete(record)}
+          >
+            删除
+          </Button>
+        </Space>,
       ],
     },
   ];
