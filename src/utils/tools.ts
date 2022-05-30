@@ -27,3 +27,19 @@ export const extractImg = (content: string) => {
   }
   return images;
 };
+
+/**
+ * @return string
+ * int数据解析为ip地址
+ * @param intIp ip地址
+ */
+export const _int2ip = (intIp: number) => {
+  let str = '';
+  const tt = [];
+  tt[0] = (intIp >>> 24) >>> 0;
+  tt[1] = ((intIp << 8) >>> 24) >>> 0;
+  tt[2] = (intIp << 16) >>> 24;
+  tt[3] = (intIp << 24) >>> 24;
+  str = String(tt[0]) + '.' + String(tt[1]) + '.' + String(tt[2]) + '.' + String(tt[3]);
+  return str;
+};
