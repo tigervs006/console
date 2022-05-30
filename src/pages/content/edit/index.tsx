@@ -277,6 +277,7 @@ export default () => {
         request={(params: Record<'id', string>) => handleRequest(params)}
       >
         <ProFormSelect
+          hasFeedback
           width="xs"
           name="cid"
           label="栏目"
@@ -286,6 +287,7 @@ export default () => {
           rules={[{ required: true, message: '选择文档发布的栏目' }]}
         />
         <ProFormText
+          hasFeedback
           label="标题"
           name="title"
           tooltip="限制32个字符"
@@ -299,6 +301,7 @@ export default () => {
           ]}
         />
         <ProFormText
+          hasFeedback
           label="关键词"
           name="keywords"
           tooltip="请用空格分隔"
@@ -310,6 +313,7 @@ export default () => {
           ]}
         />
         <ProFormTextArea
+          hasFeedback
           label="文档简述"
           name="description"
           tooltip="SEO优化很重要"
@@ -364,6 +368,7 @@ export default () => {
               case 'input':
                 return (
                   <ProFormText
+                    hasFeedback
                     name="litpic"
                     label="图像网址"
                     tooltip="直接输入图像网址"
@@ -372,6 +377,7 @@ export default () => {
                     getValueFromEvent={(e) => e.target.value.trim()}
                     rules={[
                       { required: true, message: '请输入图像网址或选择上传图像作为文档封面' },
+                      { type: 'url', message: '请输入有效的url地址' },
                     ]}
                   />
                 );
@@ -379,11 +385,13 @@ export default () => {
                 return (
                   <>
                     <ProForm.Item
+                      hasFeedback
                       name="litpic"
                       label="提取图像"
                       tooltip="从正文提取一张图像作为封面"
                       rules={[
                         { required: true, message: '请点击按钮从正文中提取一张图像作为文档封面' },
+                        { type: 'url', message: '请输入有效的url地址' },
                       ]}
                     >
                       <Input readOnly placeholder="从正文提取一张图像作为封面" />
