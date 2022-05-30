@@ -165,12 +165,13 @@ export default () => {
           ? // @ts-ignore
             `${titles.slice(0, 3)}...等【${titles.length}】篇文档`
           : // @ts-ignore
-            `${titles}这【${titles.length}】篇文档`),
+            `${titles} 这【${titles.length}】篇文档`),
       async onOk() {
         // @ts-ignore
-        const res = await remove({ id: record.id || ids });
-        ref.current.reload();
-        message.success(res.msg);
+        await remove({ id: record.id || ids }).then((res) => {
+          ref.current.reload();
+          message.success(res.msg);
+        });
       },
       onCancel() {
         console.log('取消删除文档');
