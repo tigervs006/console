@@ -36,12 +36,12 @@
       {
         name: 'list',
         path: '/content/list',
-        component: './content/list'
+        component: './content/list',
       },
       {
         name: 'edit',
         path: '/content/edit',
-        component: './content/edit'
+        component: './content/edit',
       },
       {
         component: '404',
@@ -56,25 +56,48 @@
       {
         name: 'login',
         layout: false,
-        hideInMenu:true,
+        hideInMenu: true,
         path: '/user/login',
         component: './user/Login',
       },
       {
         name: 'list',
         path: '/user/list',
-        component: './user/list'
+        component: './user/list',
       },
       {
         name: 'auth-list',
         path: '/user/authlist',
-        component: './user/auth-list'
+        component: './user/auth-list',
       },
       {
         name: 'group-list',
         path: '/user/grouplist',
-        component: './user/group-list'
-      }
+        component: './user/group-list',
+      },
+    ],
+  },
+  {
+    name: 'account',
+    icon: 'user',
+    path: '/account',
+    routes: [
+      {
+        path: '/account',
+        redirect: '/account/center',
+      },
+      {
+        name: 'center',
+        icon: 'smile',
+        path: '/account/center',
+        component: './account/center',
+      },
+      {
+        name: 'settings',
+        icon: 'smile',
+        path: '/account/settings',
+        component: './account/settings',
+      },
     ],
   },
   {
