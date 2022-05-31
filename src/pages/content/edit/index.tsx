@@ -269,6 +269,8 @@ export default () => {
           resetButtonProps: { shape: 'round', icon: <UndoOutlined /> },
           submitButtonProps: { type: 'primary', shape: 'round', icon: <FormOutlined /> },
         }}
+        // 失焦校验数据
+        validateTrigger={['onBlur']}
         // 提交文档数据
         onFinish={(data: articleData) => handleFinsh(data)}
         // request参数
