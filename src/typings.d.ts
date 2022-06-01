@@ -1,4 +1,5 @@
 declare module 'md5';
+declare module '*.map';
 declare module 'slash2';
 declare module '*.css';
 declare module '*.less';
