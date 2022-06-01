@@ -151,9 +151,11 @@ export default () => {
     await saveContent(
       Object.assign(
         { ...data },
-        { content: content },
-        { id: history.location.query?.id ?? null },
-        { author: localStorage.getItem('user') || 'anonymous' },
+        {
+          content: content,
+          id: history.location.query?.id ?? null,
+          author: localStorage?.getItem('user') ?? 'anonymous',
+        },
       ),
     ).then((res) => {
       message.success(res.msg);
@@ -193,8 +195,7 @@ export default () => {
       return res?.data
         ? Object.assign(
             { ...info },
-            { attribute: attribute || [] },
-            { content: info?.content?.content ?? null },
+            { attribute: attribute || [], content: info?.content?.content ?? null },
           )
         : {};
     } else {
