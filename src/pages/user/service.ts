@@ -1,9 +1,15 @@
 import { getData, postData } from '@/services/ant-design-pro/api';
 import type { statusData } from '@/pages/content/data';
+import type { tableDataItem } from '@/pages/user/data';
 
 // 获取用户列表
 export async function fetchData(params: API.PageParams) {
   return getData('/user/list', { ...params });
+}
+
+// 新增/编辑用户
+export async function saveUser(data: tableDataItem) {
+  return postData('/user/save', { ...data });
 }
 
 // 设置用户状态
