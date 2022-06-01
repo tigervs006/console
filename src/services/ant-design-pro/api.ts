@@ -41,6 +41,11 @@ export async function getNotices(options?: Record<string, any>) {
   });
 }
 
+/** 文件删除 POST /public/remove */
+export async function removeFile(data: { filePath: string }) {
+  return postData('/public/remove', { ...data });
+}
+
 /**
  * GET 方法提交/获取数据
  * @param path 路径
