@@ -1,18 +1,25 @@
+import md5 from 'md5';
+import '../index.less';
 import moment from 'moment';
-import { _int2ip } from '@/utils/tools';
+import type { ForwardedRef } from 'react';
 import ProTable from '@ant-design/pro-table';
-import React, { useRef, useState } from 'react';
+import { _int2ip, waitTime } from '@/utils/tools';
 import type { tableDataItem } from '@/pages/user/data';
 import { PageContainer } from '@ant-design/pro-layout';
+import type { UploadFile } from 'antd/es/upload/interface';
+import { removeFile } from '@/services/ant-design-pro/api';
 import type { ProFormInstance } from '@ant-design/pro-form';
-import { ModalForm, ProFormText } from '@ant-design/pro-form';
-import { Button, message, Modal, Space, Switch, Table } from 'antd';
-import { fetchData, setStatus, remove } from '@/pages/user/service';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
+import type { UploadChangeParam, UploadProps, RcFile } from 'antd/es/upload';
+import { fetchData, setStatus, remove, saveUser } from '@/pages/user/service';
+import React, { useImperativeHandle, forwardRef, useState, useRef } from 'react';
+import { ModalForm, ProFormText, ProFormUploadButton } from '@ant-design/pro-form';
+import { Button, message, Modal, Space, Switch, Table, notification, Upload } from 'antd';
 import {
-  DeleteOutlined,
   EditOutlined,
   PlusOutlined,
+  DeleteOutlined,
+  CloudUploadOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
 
@@ -27,7 +34,7 @@ const RecordSwitch: React.FC<{
    */
   const handleChange = async (checked: boolean, record: tableDataItem) => {
     setLoadings(true);
-    await setStatus({ id: record.id, status: checked ? 1 : 0 }).then((res) => {
+    await setStatus({ id: Number(record.id), status: checked ? 1 : 0 }).then((res) => {
       setLoadings(false);
       message.success(res.msg);
     });
@@ -47,17 +54,146 @@ const RecordSwitch: React.FC<{
 const CreateUser: React.FC<{
   modalVisit: boolean;
   isCreateUser: boolean;
+  record: tableDataItem;
+  ref: ForwardedRef<any>;
+  reloadTable: () => void;
   handleSetModalVisit: (status: boolean) => void;
-}> = (props) => {
+}> = forwardRef((props, ref) => {
+  const { confirm } = Modal;
   const formRef = useRef<ProFormInstance>();
   const modalTitle = props.isCreateUser ? '新增用户' : '编辑用户';
+  const uploadTitle = props.isCreateUser ? '上传头像' : '更换头像';
+  const [avatarList, setAvatarList] = useState<UploadFile[]>([]);
+  useImperativeHandle(ref, () => ({
+    setAvatarLists: (fileList: UploadFile[]) => setAvatarList(fileList),
+  }));
+  // 处理上传事件
+  const handleChange: UploadProps['onChange'] = (info: UploadChangeParam) => {
+    const { fileList } = info;
+    setAvatarList(fileList.slice());
+    const status = info.file.status;
+    switch (status) {
+      case 'uploading':
+        message.info('Avatar is uploading...');
+        break;
+      case 'done':
+        message.success(info.file.response.msg);
+        setAvatarList([
+          Object.assign(
+            { ...info.file.response.data },
+            { status: info.file.response.success ? 'done' : 'error' },
+          ),
+        ]);
+        break;
+      case 'success':
+        message.success('Avatar uploaded successfully');
+        break;
+      case 'removed':
+        message.success('Avatar removed successfully');
+        break;
+      case 'error':
+        notification.error({
+          message: 'Error',
+          description: info.file?.response?.msg ?? 'Avatar upload failed',
+        });
+        break;
+      default: {
+        throw new Error('Not implemented yet: undefined case');
+      }
+    }
+  };
+  // 处理文件删除状态
+  const handleRemove: UploadProps['onRemove'] = (file: UploadFile) => {
+    return new Promise<boolean>((resolve, reject) => {
+      const url = file?.url ?? '';
+      // 从网址中截取文件的相对路径
+      const idx = url.lastIndexOf('.cn/');
+      const filePath = url.substring(idx + 4, url.length);
+      confirm({
+        centered: true,
+        cancelText: '算了',
+        title: '当真要删除?',
+        icon: <QuestionCircleOutlined />,
+        cancelButtonProps: { shape: 'round' },
+        okButtonProps: { danger: true, shape: 'round' },
+        // @ts-ignore
+        content: url.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)[1],
+        async onOk() {
+          const res = await removeFile({ filePath: filePath });
+          if (res.success) {
+            resolve(true);
+          } else {
+            reject('Failed');
+          }
+        },
+        onCancel() {
+          reject('onCancel');
+        },
+      });
+    });
+  };
+  // 处理上传前的文件
+  const handleBeforeUpload = (file: RcFile) => {
+    const MAX_FILE_SIZE = 2;
+    const UNIT = 1024 * 1024;
+    const curType = file.type;
+    const fileType = ['image/png', 'image/jpeg', 'image/gif'];
+    return new Promise<boolean>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file as Blob);
+      reader.onload = function (e) {
+        const base64: string | ArrayBuffer | null | undefined = e.target?.result;
+        const image = document.createElement('img');
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        typeof base64 === 'string' ? (image.src = base64) : undefined;
+        image.onload = function () {
+          if (!fileType.includes(curType)) {
+            notification.error({
+              message: '上传的文件类型错误',
+              description: `请上传格式为${fileType}的图片`,
+            });
+            reject();
+          } else if (file.size > MAX_FILE_SIZE * UNIT) {
+            notification.error({
+              message: '图像大小不符合要求',
+              description: `单张图像不得超过${MAX_FILE_SIZE}M`,
+            });
+            reject();
+          } else if (1 !== image.width / image.height) {
+            notification.error({
+              message: '图像尺寸比例不符合要求',
+              description: `请上传宽高比例为1的图片作为用户头像`,
+            });
+            reject();
+          } else if (200 > image.width || 200 > image.height) {
+            notification.error({
+              message: '图像尺寸宽高不符合要求',
+              description: `请上传宽高大于200的图片作为用户头像`,
+            });
+            reject();
+          } else {
+            resolve(true);
+          }
+        };
+      };
+    });
+  };
+  // 处理onFinish事件
+  const handleFinish = async (data: tableDataItem) => {
+    await saveUser(Object.assign({ ...data }, { id: props?.record?.id ?? null, gid: 1 })).then(
+      (res) => {
+        message.success(res.msg);
+        // 延时重载表格数据
+        waitTime(1500).then(() => props.reloadTable());
+      },
+    );
+  };
   return (
     <ModalForm<tableDataItem>
       modalProps={{
         centered: true,
         maskClosable: false,
         destroyOnClose: true,
-        onCancel: () => console.log('onCancel'),
       }}
       submitter={{
         searchConfig: {
@@ -78,12 +214,47 @@ const CreateUser: React.FC<{
       title={modalTitle}
       submitTimeout={2000}
       visible={props.modalVisit}
+      initialValues={props.record}
+      validateTrigger={['onBlur']}
       onVisibleChange={props.handleSetModalVisit}
-      onFinish={async (values) => {
-        console.log('modalForm', values);
-        return true;
-      }}
+      onFinish={(values) => handleFinish(values).then(() => true)}
     >
+      <ProFormUploadButton
+        max={1}
+        name="avatar"
+        title={uploadTitle}
+        fileList={avatarList}
+        listType="picture-card"
+        className="avatar-uploader"
+        icon={<CloudUploadOutlined />}
+        action="/console/public/upload"
+        rules={[{ required: true, message: '请上传用户头像' }]}
+        transform={(avatar) => {
+          if ('string' === typeof avatar) return { avatar: avatar };
+          return {
+            avatar: avatar.map((item: UploadFile) => item?.response?.data?.url ?? '').toString(),
+          };
+        }}
+        fieldProps={{
+          onChange: handleChange,
+          onRemove: handleRemove,
+          progress: {
+            strokeColor: {
+              '0%': '#108ee9',
+              '100%': '#87d068',
+            },
+            strokeWidth: 3,
+            showInfo: false,
+          },
+          data: { field: 'avatar' },
+          accept: '.png, .jpg, .jpeg, .gif',
+          beforeUpload: (file: RcFile) =>
+            handleBeforeUpload(file)
+              .then((isCheck) => isCheck)
+              .catch(() => Upload.LIST_IGNORE),
+          headers: { Authorization: localStorage.getItem('Authorization') || '' },
+        }}
+      />
       <ProFormText
         hasFeedback
         name="name"
@@ -99,7 +270,7 @@ const CreateUser: React.FC<{
       <ProFormText
         hasFeedback
         name="cname"
-        label="用户姓名"
+        label="中文名"
         tooltip="你的真实姓名"
         placeholder="请输入用户姓名"
         fieldProps={{ maxLength: 8, showCount: true }}
@@ -107,8 +278,8 @@ const CreateUser: React.FC<{
           { required: true, message: '请输入用户姓名' },
           {
             type: 'string',
-            pattern: /^[\u4e00-\u9fa5A-Za-z]+$/,
-            message: '用户姓名只能是中文或英文字母组合',
+            pattern: /^[\u4e00-\u9fa5]+$/,
+            message: '用户姓名只能是中文',
           },
         ]}
       />
@@ -128,27 +299,31 @@ const CreateUser: React.FC<{
         hasFeedback
         name="password"
         label="用户密码"
+        tooltip="6~18位的密码"
+        transform={(value) => ({ password: md5(value) })}
         fieldProps={{ minLength: 6, maxLength: 18, showCount: true }}
         rules={[
-          { required: true, message: '请为用户设置密码' },
+          { required: !!props.isCreateUser, message: '请为用户设置密码' },
           {
             type: 'string',
             pattern: /^[^\u4e00-\u9fa5\s]{6,18}$/,
-            message: '密码应为6~18位英文、数字及特殊符号组成且不含制表符',
+            message: '密码应为6~18位英文、数字及特殊符号且不含制表符的组合',
           },
         ]}
       />
       <ProFormText.Password
         hasFeedback
         label="确认密码"
+        tooltip="再次输入密码"
         name="confirmPassword"
         dependencies={['password']}
+        transform={(value) => ({ confirmPassword: md5(value) })}
         fieldProps={{ minLength: 6, maxLength: 18, showCount: true }}
         rules={[
-          { required: true, message: '请再次输入以确认用户密码' },
+          { required: !!props.isCreateUser, message: '请再次输入以确认用户密码' },
           ({ getFieldValue }) => ({
             validator(_, value) {
-              if (!value || getFieldValue('password') === value) {
+              if (!value || value === getFieldValue('password')) {
                 return Promise.resolve();
               }
               return Promise.reject(new Error('验证错误，两次输入的密码不一致'));
@@ -158,19 +333,22 @@ const CreateUser: React.FC<{
       />
     </ModalForm>
   );
-};
+});
 
 export default () => {
   const { confirm } = Modal;
+  const childRef = useRef();
   // 表格重载
   const ref: any = useRef<ActionType>();
   // ModalForm 状态
   const [modalVisit, setModalVisit] = useState<boolean>(false);
   // ModalForm 标题
   const [isCreateUser, setIsCreateUser] = useState<boolean>(false);
+  // ModalForm 默认值
+  const [userValues, setUserValues] = useState<tableDataItem>({});
 
   /**
-   * 获取文档列表
+   * 获取用户列表
    * @param params 参数
    * @param sort   排序
    * @param filter 筛选
@@ -191,14 +369,28 @@ export default () => {
   };
 
   const handleCreate = () => {
+    // 新建用户时清空默认值
+    setUserValues({});
     setModalVisit(true);
     setIsCreateUser(true);
+    // @ts-ignore 清除avatarList
+    childRef.current?.setAvatarLists([]);
   };
 
   const handleEdit = (record: tableDataItem) => {
+    setUserValues(record);
     setModalVisit(true);
     setIsCreateUser(false);
-    console.log(`编辑用户：${record.cname}`);
+    // @ts-ignore
+    childRef.current?.setAvatarLists([
+      {
+        status: 'done',
+        url: record.avatar,
+        uid: Math.floor(Math.random() * 100).toString(),
+        // @ts-ignore
+        name: record.avatar.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)[1],
+      },
+    ]);
   };
 
   const handleDelete = (record: tableDataItem | tableDataItem[]) => {
@@ -206,8 +398,8 @@ export default () => {
     const titles: string[] = [];
     if (record instanceof Array) {
       record.forEach((item) => {
-        ids.push(item.id);
-        titles.push(item.cname);
+        ids.push(Number(item.id));
+        titles.push(item?.cname ?? '');
       });
     }
     confirm({
@@ -285,14 +477,18 @@ export default () => {
     {
       title: 'ip地址',
       dataIndex: 'ipaddress',
-      render: (_, record) => _int2ip(record.ipaddress),
+      render: (_, record) => _int2ip(Number(record.ipaddress)),
     },
     {
       sorter: true,
       title: '上次登录',
       dataIndex: 'last_login',
       render: (_, record) =>
-        moment(parseInt(record.last_login) * 1000).format('YYYY-MM-DD hh:mm:ss'),
+        null === record.last_login
+          ? '未曾登录'
+          : moment(parseInt(record?.last_login ?? '1654092601') * 1000).format(
+              'YYYY-MM-DD hh:mm:ss',
+            ),
     },
     {
       sorter: true,
@@ -374,8 +570,11 @@ export default () => {
         }}
       />
       <CreateUser
+        ref={childRef}
+        record={userValues}
         modalVisit={modalVisit}
         isCreateUser={isCreateUser}
+        reloadTable={() => ref.current.reload()}
         handleSetModalVisit={(status: boolean) => setModalVisit(status)}
       />
     </PageContainer>
