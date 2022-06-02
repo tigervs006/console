@@ -228,7 +228,7 @@ const CreateUser: React.FC<{
         className="avatar-uploader"
         icon={<CloudUploadOutlined />}
         action="/console/public/upload"
-        rules={[{ required: true, message: '请上传用户头像' }]}
+        rules={[{ required: true, message: '请上传头像' }]}
         transform={(avatar) => {
           if ('string' === typeof avatar) return { avatar: avatar };
           return {
@@ -252,10 +252,9 @@ const CreateUser: React.FC<{
               .then((isCheck) => isCheck)
               .catch(() => Upload.LIST_IGNORE),
           headers: { Authorization: localStorage.getItem('Authorization') || '' },
-          // fixme: 要想在新增用户时获取到name，就必须在上传头像前必须先输入用户名才能上传头像
           data: {
             field: 'avatar',
-            path: `images/avatar/${props.record?.name ?? formRef.current?.getFieldValue('name')}`,
+            path: `images/avatar/${formRef.current?.getFieldValue('name') ?? null}`,
           },
         }}
       />
