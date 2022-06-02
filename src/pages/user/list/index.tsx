@@ -246,7 +246,7 @@ const CreateUser: React.FC<{
             strokeWidth: 3,
             showInfo: false,
           },
-          data: { field: 'avatar' },
+          data: { field: 'avatar', path: `images/avatar/${localStorage?.getItem('user')}` },
           accept: '.png, .jpg, .jpeg, .gif',
           beforeUpload: (file: RcFile) =>
             handleBeforeUpload(file)
