@@ -14,7 +14,7 @@ import type { UploadChangeParam, UploadProps, RcFile } from 'antd/es/upload';
 import { fetchData, setStatus, remove, saveUser } from '@/pages/user/service';
 import React, { useImperativeHandle, forwardRef, useState, useRef } from 'react';
 import { ModalForm, ProFormText, ProFormUploadButton } from '@ant-design/pro-form';
-import { Button, message, Modal, Space, Switch, Table, notification, Upload } from 'antd';
+import { notification, Button, message, Modal, Space, Switch, Table, Upload } from 'antd';
 import {
   EditOutlined,
   PlusOutlined,
@@ -246,13 +246,17 @@ const CreateUser: React.FC<{
             strokeWidth: 3,
             showInfo: false,
           },
-          data: { field: 'avatar', path: `images/avatar/${props.record?.name ?? null}` },
           accept: '.png, .jpg, .jpeg, .gif',
           beforeUpload: (file: RcFile) =>
             handleBeforeUpload(file)
               .then((isCheck) => isCheck)
               .catch(() => Upload.LIST_IGNORE),
           headers: { Authorization: localStorage.getItem('Authorization') || '' },
+          // fixme: 要想在新增用户时获取到name，就必须在上传头像前必须先输入用户名才能上传头像
+          data: {
+            field: 'avatar',
+            path: `images/avatar/${props.record?.name ?? formRef.current?.getFieldValue('name')}`,
+          },
         }}
       />
       <ProFormText
