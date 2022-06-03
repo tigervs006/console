@@ -192,12 +192,11 @@ export default () => {
       if ('' === paramData[idx] || null === paramData[idx] || undefined === paramData[idx])
         delete paramData[idx];
     }
-    const res = await fetchData({ ...paramData });
-    return {
+    return await fetchData({ ...paramData }).then((res) => ({
       data: res?.data?.list ?? [],
       total: res?.data?.total ?? 0,
       success: res?.success ?? true,
-    };
+    }));
   };
 
   const columns: ProColumns<tableDataItem>[] = [
