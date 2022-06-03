@@ -287,7 +287,7 @@ export default () => {
         placeholder: ['开始时间', '结束时间'],
         ranges: {
           Today: [moment(), moment()],
-          Yestoday: [moment().day(1).startOf('day'), moment().day(1).endOf('day')],
+          Yestoday: [moment().day(moment().day() - 1), moment().day(moment().day() - 1)],
           thisWeek: [moment().startOf('week'), moment().endOf('week')],
           lastWeek: [
             moment()
