@@ -183,7 +183,7 @@ const CreateUser: React.FC<{
     await saveUser(Object.assign({ ...data }, { id: props?.record?.id ?? null, gid: 1 })).then(
       (res) => {
         message.success(res.msg);
-        // 延时重载表格数据
+        // 延时重载列表数据
         waitTime(1500).then(() => props.reloadTable());
       },
     );
