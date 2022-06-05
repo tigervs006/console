@@ -1,20 +1,24 @@
-@circle: 50% !important;
-@unset: unset !important;
-@width: 128px !important;
+@circle: 50%;
+@unset: unset;
+@width: 128px;
 @height: @width;
-.ant-upload-list-picture-card-container {
-  width: @width;
-  height: @height;
-  .ant-upload-list-item {
-    padding: @unset;
-    overflow: hidden !important;
-    border: @unset;
-    border-radius: @circle;
+.avatarupload {
+  :global {
+    .ant-upload-list-picture-card-container {
+      width: @width;
+      height: @height;
+      .ant-upload-list-item {
+        border: @unset;
+        padding: @unset;
+        overflow: hidden;
+        border-radius: @circle;
+      }
+    }
+    .ant-upload.ant-upload-select-picture-card {
+      width: @width;
+      border: @unset;
+      height: @height;
+      border-radius: @circle;
+    }
   }
-}
-.ant-upload.ant-upload-select-picture-card {
-  width: @width;
-  height: @height;
-  border: @unset;
-  border-radius: @circle;
 }
