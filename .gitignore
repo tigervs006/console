@@ -21,6 +21,10 @@ package-lock.json
 pnpm-lock.yaml
 *bak
 
+#style sheet
+*.css
+*.map
+
 # visual studio code
 .history
 *.log
