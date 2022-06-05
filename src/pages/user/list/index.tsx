@@ -1,5 +1,5 @@
 import md5 from 'md5';
-import '../index.less';
+import styles from '../index.less';
 import moment from 'moment';
 import type { ForwardedRef } from 'react';
 import ProTable from '@ant-design/pro-table';
@@ -225,7 +225,6 @@ const CreateUser: React.FC<{
         title={uploadTitle}
         fileList={avatarList}
         listType="picture-card"
-        className="avatar-uploader"
         icon={<CloudUploadOutlined />}
         action="/console/public/upload"
         rules={[{ required: true, message: '请上传头像' }]}
@@ -246,6 +245,7 @@ const CreateUser: React.FC<{
             strokeWidth: 3,
             showInfo: false,
           },
+          className: styles.avatarUpload,
           accept: '.png, .jpg, .jpeg, .gif',
           beforeUpload: (file: RcFile) =>
             handleBeforeUpload(file)
