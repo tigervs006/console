@@ -216,12 +216,12 @@ export default () => {
         const base64: string | ArrayBuffer | null | undefined = e.target?.result;
         const image = document.createElement('img');
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        typeof base64 === 'string' ? (image.src = base64) : undefined;
+        'string' === typeof base64 ? (image.src = base64) : undefined;
         image.onload = function () {
           if (!fileType.includes(curType)) {
             notification.error({
               message: '上传的文件类型错误',
-              description: `请上传格式为${fileType}的图片`,
+              description: `请上传格式为${fileType}的图像`,
             });
             reject();
           } else if (file.size > MAX_FILE_SIZE * UNIT) {
