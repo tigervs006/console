@@ -267,7 +267,7 @@ const CreateUser: React.FC<{
         fieldProps={{ maxLength: 20, showCount: true }}
         rules={[
           { required: true, message: '请输入用户名' },
-          { type: 'string', pattern: /^\w+$/, message: '用户名只能是英文或数字加下横线组合' },
+          { type: 'string', pattern: /^\w+$/, message: '用户名只能是英文或数字与下横线组合' },
         ]}
       />
       <ProFormText
