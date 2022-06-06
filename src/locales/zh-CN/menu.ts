@@ -52,6 +52,7 @@ export default {
   'menu.content': '内容管理',
   'menu.content.edit': '文档编辑',
   'menu.content.list': '文档列表',
+  'menu.channel': '网站栏目',
   'menu.product': '商品管理',
   'menu.product.edit': '商品编辑',
   'menu.product.list': '商品列表',

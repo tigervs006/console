@@ -52,6 +52,7 @@ export default {
   'menu.content': 'Content',
   'menu.content.edit': 'Article Edit',
   'menu.content.list': 'Article List',
+  'menu.channel': 'Channel',
   'menu.product': 'Product',
   'menu.product.edit': 'Product Edit',
   'menu.product.list': 'Product List',

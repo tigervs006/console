@@ -31,7 +31,7 @@
   {
     name: 'content',
     path: '/content',
-    icon: 'unordered-list',
+    icon: 'align-left',
     routes: [
       {
         name: 'list',
@@ -49,8 +49,14 @@
     ],
   },
   {
+    name: 'channel',
+    path: '/channel',
+    icon: 'unordered-list',
+    component: './channel',
+  },
+  {
     name: 'user',
-    icon: 'user',
+    icon: 'team',
     path: '/user',
     routes: [
       {
