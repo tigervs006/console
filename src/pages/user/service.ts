@@ -1,6 +1,5 @@
-import { getData, postData } from '@/services/ant-design-pro/api';
-import type { statusData } from '@/pages/content/data';
 import type { tableDataItem } from '@/pages/user/data';
+import { getData, postData } from '@/services/ant-design-pro/api';
 
 // 获取用户列表
 export async function fetchData(params: API.PageParams) {
@@ -13,7 +12,7 @@ export async function saveUser(data: tableDataItem) {
 }
 
 // 设置用户状态
-export async function setStatus(data: statusData) {
+export async function setStatus(data: API.setStatus) {
   return postData('/user/status', { ...data });
 }
 
