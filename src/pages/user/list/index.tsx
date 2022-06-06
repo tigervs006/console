@@ -356,14 +356,14 @@ export default () => {
    * @param sort   排序
    * @param filter 筛选
    */
-  const tableData = async (params: API.PageParams, sort: any, filter: any) => {
-    const paramData = Object.assign({ ...params }, sort, filter);
+  const tableData = async (params: Record<string, any>, sort: any, filter: any) => {
+    const paramData = Object.assign(params, sort, filter);
     // 过滤参数以避免后台接收到空值参数
     for (const idx in paramData) {
       if ('' === paramData[idx] || null === paramData[idx] || undefined === paramData[idx])
         delete paramData[idx];
     }
-    return await fetchData({ ...paramData }).then((res) => ({
+    return await fetchData(paramData).then((res) => ({
       data: res?.data?.list ?? [],
       total: res?.data?.total ?? 0,
       success: res?.success ?? true,
