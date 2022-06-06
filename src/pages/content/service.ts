@@ -1,4 +1,4 @@
-import type { articleData, statusData } from './data';
+import type { articleData } from './data';
 import { getData, postData } from '@/services/ant-design-pro/api';
 
 // 获取文档作者
@@ -22,7 +22,7 @@ export async function fetchData(params: API.PageParams) {
 }
 
 // 修改文档状态
-export async function setStatus(data: statusData) {
+export async function setStatus(data: API.setStatus) {
   return postData('/article/status', { ...data });
 }
 
