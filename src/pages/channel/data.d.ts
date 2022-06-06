@@ -11,5 +11,5 @@ export type tableDataItem = {
   description: string;
   banner?: string;
   ceraet_time: string;
-  children?: string[];
+  children?: tableDataItem[];
 };
