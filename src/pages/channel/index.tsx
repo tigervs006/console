@@ -47,15 +47,21 @@ export default () => {
   // 当前展开的行
   const [expandedRowKey, setExpandedRowKey] = useState<number[]>([]);
 
-  const handleEdit = (record: tableDataItem) => {
+  const handleEdit = (e: React.MouseEvent<HTMLElement>, record: tableDataItem) => {
+    e.stopPropagation();
     console.log('编辑栏目', record.cname);
   };
 
-  const handlePreview = (record: tableDataItem) => {
+  const handlePreview = (e: React.MouseEvent<HTMLElement>, record: tableDataItem) => {
+    e.stopPropagation();
     console.log('预览栏目', record.cname);
   };
   // 处理单个/批量删除栏目
-  const handleDelete = (record: tableDataItem | tableDataItem[]) => {
+  const handleDelete = (
+    e: React.MouseEvent<HTMLElement>,
+    record: tableDataItem | tableDataItem[],
+  ) => {
+    e.stopPropagation();
     const ids: number[] = [];
     const titles: string[] = [];
     if (record instanceof Array) {
@@ -118,10 +124,25 @@ export default () => {
     {
       title: '栏目英文',
       dataIndex: 'name',
+      tooltip: '作为网站伪静态URL',
     },
     {
       title: '栏目中文',
       dataIndex: 'cname',
+      tooltip: '作为网站导航栏显示',
+    },
+    {
+      title: '栏目排序',
+      dataIndex: 'sort',
+      tooltip: '数值越大越靠前',
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'create_time',
+    },
+    {
+      title: '更新时间',
+      dataIndex: 'update_time',
     },
     {
       filters: true,
@@ -143,10 +164,6 @@ export default () => {
       render: (_, record) => <RecordSwitch key={record.id} record={record} />,
     },
     {
-      title: '创建时间',
-      dataIndex: 'create_time',
-    },
-    {
       title: '操作',
       render: (_, record) => [
         <Space size={4} key="operation">
@@ -154,7 +171,7 @@ export default () => {
             size="small"
             shape="round"
             icon={<EditOutlined />}
-            onClick={() => handleEdit(record)}
+            onClick={(e) => handleEdit(e, record)}
           >
             编辑
           </Button>
@@ -163,7 +180,7 @@ export default () => {
             type="primary"
             shape="round"
             icon={<SearchOutlined />}
-            onClick={() => handlePreview(record)}
+            onClick={(e) => handlePreview(e, record)}
           >
             浏览
           </Button>
@@ -173,7 +190,7 @@ export default () => {
             type="primary"
             shape="round"
             icon={<DeleteOutlined />}
-            onClick={() => handleDelete(record)}
+            onClick={(e) => handleDelete(e, record)}
           >
             删除
           </Button>
@@ -196,7 +213,8 @@ export default () => {
           onExpand: (expanded, record) => handleExpand(expanded, record),
         }}
         rowSelection={{
-          selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
+          checkStrictly: false,
+          selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT, Table.SELECTION_NONE],
         }}
         rowKey={(record) => Number(record.id)}
         toolbar={{
@@ -223,7 +241,7 @@ export default () => {
         }}
         tableAlertRender={({ selectedRowKeys, onCleanSelected }) => (
           <span>
-            已选 {selectedRowKeys.length} 项
+            已选 {selectedRowKeys.length} 个栏目
             <a style={{ marginLeft: 8 }} onClick={onCleanSelected}>
               取消选择
             </a>
@@ -232,7 +250,7 @@ export default () => {
         tableAlertOptionRender={({ selectedRows }) => {
           return (
             <Space size={16}>
-              <a onClick={() => handleDelete(selectedRows)}>批量删除</a>
+              <a onClick={(e) => handleDelete(e, selectedRows)}>批量删除</a>
             </Space>
           );
         }}
