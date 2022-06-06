@@ -111,4 +111,9 @@ declare namespace API {
     description?: string;
     type?: NoticeIconItemType;
   };
+
+  type setStatus = {
+    id: number;
+    status: number;
+  };
 }
