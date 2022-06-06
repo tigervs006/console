@@ -7,11 +7,6 @@ export type authorData = {
   cname: string;
 };
 
-export type statusData = {
-  id: number;
-  status: number;
-};
-
 export type articleData = {
   id?: number;
   cid: number;
