@@ -34,7 +34,7 @@ const RecordSwitch: React.FC<{
    */
   const handleChange = async (checked: boolean, record: tableDataItem) => {
     setLoadings(true);
-    await setStatus({ id: Number(record.id), status: checked ? 1 : 0 }).then((res) => {
+    await setStatus({ id: record.id as number, status: checked ? 1 : 0 }).then((res) => {
       setLoadings(false);
       message.success(res.msg);
     });
@@ -400,7 +400,7 @@ export default () => {
     const titles: string[] = [];
     if (record instanceof Array) {
       record.forEach((item) => {
-        ids.push(Number(item.id));
+        ids.push(item.id as number);
         titles.push(item?.cname ?? '');
       });
     }
@@ -420,9 +420,9 @@ export default () => {
           : // @ts-ignore
             `${titles} 这【${titles.length}】个用户`),
       async onOk() {
-        const lcoalStorageId = Number(localStorage.getItem('uid'));
+        const lcoalStorageId = localStorage.getItem('uid');
         // @ts-ignore
-        if (record.id === lcoalStorageId || ids.includes(lcoalStorageId))
+        if (record.id === lcoalStorageId || ids.includes(lcoalStorageId as number))
           return message.error('亲，请不要自残');
         // @ts-ignore
         await remove({ id: record.id || ids }).then((res) => {
@@ -460,7 +460,7 @@ export default () => {
     {
       title: 'ip地址',
       dataIndex: 'ipaddress',
-      render: (_, record) => _int2ip(Number(record.ipaddress)),
+      render: (_, record) => _int2ip(record.ipaddress as number),
     },
     {
       sorter: true,
