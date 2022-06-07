@@ -318,26 +318,6 @@ export default () => {
       search: false,
       filters: true,
       onFilter: true,
-      title: '文档状态',
-      filterMode: 'tree',
-      valueType: 'select',
-      dataIndex: 'status',
-      valueEnum: {
-        1: {
-          text: '显示',
-          status: 'Show',
-        },
-        0: {
-          text: '隐藏',
-          status: 'Hide',
-        },
-      },
-      render: (_, record) => <RecordSwitch key={record.id} record={record} />,
-    },
-    {
-      search: false,
-      filters: true,
-      onFilter: true,
       title: '发布方式',
       filterMode: 'tree',
       valueType: 'select',
@@ -363,6 +343,26 @@ export default () => {
           </Tag>
         ),
       ],
+    },
+    {
+      search: false,
+      filters: true,
+      onFilter: true,
+      title: '文档状态',
+      filterMode: 'tree',
+      valueType: 'select',
+      dataIndex: 'status',
+      valueEnum: {
+        1: {
+          text: '显示',
+          status: 'Show',
+        },
+        0: {
+          text: '隐藏',
+          status: 'Hide',
+        },
+      },
+      render: (_, record) => <RecordSwitch key={record.id} record={record} />,
     },
     {
       title: '操作',

@@ -454,25 +454,6 @@ export default () => {
       dataIndex: 'gid',
     },
     {
-      filters: true,
-      onFilter: true,
-      title: '用户状态',
-      filterMode: 'tree',
-      valueType: 'select',
-      dataIndex: 'status',
-      valueEnum: {
-        1: {
-          text: '启用',
-          status: 'Show',
-        },
-        0: {
-          text: '禁用',
-          status: 'Hide',
-        },
-      },
-      render: (_, record) => <RecordSwitch key={record.id} record={record} />,
-    },
-    {
       title: 'Email',
       dataIndex: 'email',
     },
@@ -496,6 +477,25 @@ export default () => {
       sorter: true,
       title: '创建时间',
       dataIndex: 'create_time',
+    },
+    {
+      filters: true,
+      onFilter: true,
+      title: '用户状态',
+      filterMode: 'tree',
+      valueType: 'select',
+      dataIndex: 'status',
+      valueEnum: {
+        1: {
+          text: '启用',
+          status: 'Show',
+        },
+        0: {
+          text: '禁用',
+          status: 'Hide',
+        },
+      },
+      render: (_, record) => <RecordSwitch key={record.id} record={record} />,
     },
     {
       title: '操作',
