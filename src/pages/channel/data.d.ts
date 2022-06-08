@@ -1,15 +1,15 @@
 export type tableDataItem = {
-  id?: number;
   pid: number;
   sort: number;
-  level: number;
-  status: number;
   name: string;
   cname: string;
-  title: string;
-  keywords: string;
-  description: string;
+  level?: number;
+  title?: string;
   banner?: string;
-  ceraet_time: string;
+  keywords?: string;
+  id?: number | string;
+  description?: string;
+  ceraet_time?: string;
+  status: number | string;
   children?: tableDataItem[];
 };
