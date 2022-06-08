@@ -29,11 +29,11 @@ export const extractImg = (content: string) => {
 };
 
 /**
+ * int解析为ip地址
  * @return string
- * int数据解析为ip地址
  * @param intIp ip地址
  */
-export const _int2ip = (intIp: number) => {
+export const _int2ip = (intIp: number): string => {
   let str = '';
   const tt = [];
   tt[0] = (intIp >>> 24) >>> 0;
@@ -42,4 +42,16 @@ export const _int2ip = (intIp: number) => {
   tt[3] = (intIp << 24) >>> 24;
   str = String(tt[0]) + '.' + String(tt[1]) + '.' + String(tt[2]) + '.' + String(tt[3]);
   return str;
+};
+
+/**
+ * 生成随机字符串
+ * @return string
+ * @param length 字符串长度
+ */
+export const randomString = (length: number): string => {
+  const str = 'abcdefghijklmnopqrstuvwxyz';
+  let result = '';
+  for (let i = length; i > 0; --i) result += str[Math.floor(Math.random() * str.length)];
+  return result;
 };
