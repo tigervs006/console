@@ -419,9 +419,9 @@ export default () => {
           : // @ts-ignore
             `${titles} 这【${titles.length}】个用户`),
       async onOk() {
-        const lcoalStorageId = localStorage.getItem('uid');
+        const lcoalStorageId = Number(localStorage.getItem('uid'));
         // @ts-ignore
-        if (record.id === lcoalStorageId || ids.includes(lcoalStorageId as number))
+        if (record.id === lcoalStorageId || ids.includes(lcoalStorageId))
           return message.error('亲，请不要自残');
         // @ts-ignore
         await remove({ id: record.id || ids }).then((res) => {
