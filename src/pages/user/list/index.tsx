@@ -340,9 +340,10 @@ const CreateUser: React.FC<{
 
 export default () => {
   const { confirm } = Modal;
-  const childRef = useRef();
-  // 表格重载
-  const ref: any = useRef<ActionType>();
+  // childRef
+  const childRef: React.MutableRefObject<any> = useRef();
+  // ActionType
+  const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
   // ModalForm 状态
   const [modalVisit, setModalVisit] = useState<boolean>(false);
   // ModalForm 标题
@@ -375,7 +376,6 @@ export default () => {
     setUserValues({});
     setModalVisit(true);
     setIsCreateUser(true);
-    // @ts-ignore 清除avatarList
     childRef.current?.setAvatarLists([]);
   };
 
@@ -383,7 +383,6 @@ export default () => {
     setUserValues(record);
     setModalVisit(true);
     setIsCreateUser(false);
-    // @ts-ignore
     childRef.current?.setAvatarLists([
       {
         status: 'done',
@@ -426,7 +425,7 @@ export default () => {
           return message.error('亲，请不要自残');
         // @ts-ignore
         await remove({ id: record.id || ids }).then((res) => {
-          ref.current.reload();
+          ref.current?.reload();
           message.success(res.msg);
         });
       },
@@ -576,7 +575,7 @@ export default () => {
         record={userValues}
         modalVisit={modalVisit}
         isCreateUser={isCreateUser}
-        reloadTable={() => ref.current.reload()}
+        reloadTable={() => ref.current?.reload()}
         handleSetModalVisit={(status: boolean) => setModalVisit(status)}
       />
     </PageContainer>

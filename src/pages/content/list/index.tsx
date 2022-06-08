@@ -102,12 +102,10 @@ const InputSearch: React.FC<Record<string, any>> = (props) => {
 export default () => {
   const { confirm } = Modal;
   const { Text } = Typography;
-
-  // 重载表格
-  const ref: any = useRef<ActionType>();
-
   // 文档作者
   const [authorEnum, setAuthorEnum] = useState<valueEnumData>();
+  // ActionType
+  const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
 
   // 获取文档作者
   useRequest(getAuthor, {
@@ -169,7 +167,7 @@ export default () => {
       async onOk() {
         // @ts-ignore
         await remove({ id: record.id || ids }).then((res) => {
-          ref.current.reload();
+          ref.current?.reload();
           message.success(res.msg);
         });
       },
