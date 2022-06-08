@@ -1,16 +1,19 @@
-import ProTable from '@ant-design/pro-table';
-import { PageContainer } from '@ant-design/pro-layout';
-import type { ProColumns, ActionType } from '@ant-design/pro-table';
-import { fetchData, setStatus } from '@/pages/channel/service';
-import React, { useRef, useState } from 'react';
 import type { tableDataItem } from './data';
+import React, { useRef, useState } from 'react';
+import { PageContainer } from '@ant-design/pro-layout';
+import { EditableProTable } from '@ant-design/pro-table';
 import { Button, message, Space, Switch, Table } from 'antd';
+import type { ProCoreActionType } from '@ant-design/pro-utils';
+import { fetchData, setStatus } from '@/pages/channel/service';
+import type { ProColumns, ActionType } from '@ant-design/pro-table';
+import { randomString, recursiveQuery, waitTime } from '@/utils/tools';
 import {
-  DeleteOutlined,
-  EditOutlined,
+  MinusCircleOutlined,
   PlusCircleOutlined,
-  PlusOutlined,
+  DeleteOutlined,
   SearchOutlined,
+  EditOutlined,
+  PlusOutlined,
 } from '@ant-design/icons';
 
 const RecordSwitch: React.FC<{ record: tableDataItem }> = (props) => {
@@ -25,15 +28,15 @@ const RecordSwitch: React.FC<{ record: tableDataItem }> = (props) => {
     // 阻止事件冒泡
     e.stopPropagation();
     setLoadings(true);
-    await setStatus({ id: Number(record.id), status: checked ? 1 : 0 }).then((res) => {
+    await setStatus({ id: record.id as number, status: checked ? 1 : 0 }).then((res) => {
       setLoadings(false);
       message.success(res.msg);
     });
   };
   return (
     <Switch
-      key="id"
       loading={loadings}
+      key={props.record.id}
       checkedChildren="显示"
       unCheckedChildren="隐藏"
       defaultChecked={!!props.record.status}
@@ -42,13 +45,25 @@ const RecordSwitch: React.FC<{ record: tableDataItem }> = (props) => {
   );
 };
 export default () => {
-  // 重载表格
-  const ref: any = useRef<ActionType>();
+  // 存放子项的id
+  const [expandedIds, setexpandedIds] = useState<number[]>([]);
+  // 控制点击展开行
+  const [expandByClick, setExpandByClick] = useState<boolean>(true);
   // 当前展开的行
   const [expandedRowKey, setExpandedRowKey] = useState<number[]>([]);
+  // editableKeys
+  const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
+  // ActionType
+  const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
 
-  const handleEdit = (e: React.MouseEvent<HTMLElement>, record: tableDataItem) => {
+  const handleEdit = (
+    e: React.MouseEvent<HTMLElement>,
+    action: ProCoreActionType | undefined,
+    record: tableDataItem,
+  ) => {
     e.stopPropagation();
+    setExpandByClick(false);
+    action?.startEditable?.(record.id as number);
     console.log('编辑栏目', record.cname);
   };
 
@@ -74,21 +89,21 @@ export default () => {
   // 处理展开/收缩状态的state
   const handleExpand = (expanded: boolean, record: tableDataItem) => {
     // 顶级栏目pid是0，需要Filter
-    const ids: number[] = [record.pid].concat(Number(record.id)).filter(Boolean);
-    setExpandedRowKey((state) => {
+    const ids: number[] = [record.pid].concat(record.id as number).filter(Boolean);
+    setExpandedRowKey((rowKey) => {
       // 如果是展开状态且有子菜单，则直接返回
       if (expanded && record.children) {
         return ids;
-        // 如果是展开状态且没有子菜单，则返回原始state
+        // 如果是展开状态且没有子菜单，则返回原始rowKey
       } else if (expanded && !record.children) {
-        return state;
-        // 如果是收缩状态，则找出当前id的索引，删除后返回原始state
+        return rowKey;
+        // 如果是收起状态，则找出当前id的索引，删除后返回rowKey
       } else {
-        state.splice(
-          state.findIndex((item) => item === record.id),
+        rowKey.splice(
+          rowKey.findIndex((item) => item === record.id),
           1,
         );
-        return state;
+        return rowKey.length ? rowKey : [];
       }
     });
   };
@@ -106,45 +121,83 @@ export default () => {
       if ('' === paramData[idx] || null === paramData[idx] || undefined === paramData[idx])
         delete paramData[idx];
     }
-    return await fetchData(paramData).then((res) => ({
-      data: res?.data?.list ?? [],
-      total: res?.data?.total ?? 0,
-      success: res?.success ?? true,
-    }));
+    return await fetchData(paramData).then((res) => {
+      // 把存在子项的栏目id存储起来
+      setexpandedIds(recursiveQuery(res?.data?.list));
+      return {
+        data: res?.data?.list ?? [],
+        total: res?.data?.total ?? 0,
+        success: res?.success ?? true,
+      };
+    });
   };
   const columns: ProColumns<tableDataItem>[] = [
     {
-      title: 'ID',
-      dataIndex: 'id',
+      width: 50,
+      editable: false,
     },
     {
+      width: 150,
       title: '上级栏目',
       dataIndex: 'pid',
     },
     {
+      width: 150,
       title: '栏目英文',
       dataIndex: 'name',
       tooltip: '作为网站伪静态URL',
+      formItemProps: () => ({
+        rules: [
+          { required: true, message: '此项为必填项' },
+          {
+            type: 'string',
+            pattern: /^[a-zA-Z]{4,12}$/,
+            message: '栏目英文只能是4~12个英文字母组成',
+          },
+        ],
+      }),
     },
     {
+      width: 150,
       title: '栏目中文',
       dataIndex: 'cname',
       tooltip: '作为网站导航栏显示',
+      formItemProps: () => ({
+        rules: [
+          { required: true, message: '此项为必填项' },
+          {
+            type: 'string',
+            pattern: /^[\u4e00-\u9fa5]{2,12}$/,
+            message: '栏目中文只能是2~12个汉字组成',
+          },
+        ],
+      }),
     },
     {
+      width: 150,
+      key: 'sort',
       title: '栏目排序',
       dataIndex: 'sort',
       tooltip: '数值越大越靠前',
+      formItemProps: () => ({
+        rules: [
+          { required: true, message: '此项为必填项' },
+          { pattern: /^([1-9]|[1-9]\d{1,2})$/, message: '只能是1~999的正整数' },
+        ],
+      }),
     },
     {
+      readonly: true,
       title: '创建时间',
       dataIndex: 'create_time',
     },
     {
+      readonly: true,
       title: '更新时间',
       dataIndex: 'update_time',
     },
     {
+      width: 150,
       filters: true,
       onFilter: true,
       title: '栏目状态',
@@ -165,20 +218,21 @@ export default () => {
     },
     {
       title: '操作',
-      render: (_, record) => [
+      valueType: 'option',
+      render: (text, record, _, action) => [
         <Space size={4} key="operation">
           <Button
             size="small"
             shape="round"
             icon={<EditOutlined />}
-            onClick={(e) => handleEdit(e, record)}
+            onClick={(event) => handleEdit(event, action, record)}
           >
             编辑
           </Button>
           <Button
             size="small"
-            type="primary"
             shape="round"
+            type="primary"
             icon={<SearchOutlined />}
             onClick={(e) => handlePreview(e, record)}
           >
@@ -187,8 +241,8 @@ export default () => {
           <Button
             danger
             size="small"
-            type="primary"
             shape="round"
+            type="primary"
             icon={<DeleteOutlined />}
             onClick={(e) => handleDelete(e, record)}
           >
@@ -200,15 +254,41 @@ export default () => {
   ];
   return (
     <PageContainer>
-      <ProTable<tableDataItem>
+      <EditableProTable<tableDataItem>
         search={false}
         actionRef={ref}
         columns={columns}
         pagination={false}
         request={tableData}
+        rowKey={(record) => record.id as number}
+        editable={{
+          editableKeys,
+          type: 'multiple',
+          onChange: setEditableRowKeys,
+          actionRender: (row, config, dom) => [dom.save, dom.cancel],
+          onSave: async (rowKey, data, pre) => {
+            console.log('rowKey', rowKey);
+            console.log('data', data);
+            console.log('pre', pre);
+            await waitTime(2000).then(() => setExpandByClick(true));
+          },
+          onCancel: async () => await waitTime(1000).then(() => setExpandByClick(true)),
+          onDelete: async () => await waitTime(1000).then(() => setExpandByClick(true)),
+        }}
+        recordCreatorProps={{
+          position: 'bottom',
+          creatorButtonText: '新增栏目',
+          record: {
+            pid: 1,
+            sort: 50,
+            status: '1',
+            name: 'ename',
+            cname: '栏目中文名',
+            id: randomString(6),
+          },
+        }}
         expandable={{
-          expandRowByClick: true,
-          defaultExpandAllRows: true,
+          expandRowByClick: expandByClick,
           expandedRowKeys: expandedRowKey,
           onExpand: (expanded, record) => handleExpand(expanded, record),
         }}
@@ -216,29 +296,26 @@ export default () => {
           checkStrictly: false,
           selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT, Table.SELECTION_NONE],
         }}
-        rowKey={(record) => Number(record.id)}
-        toolbar={{
-          actions: [
-            <Button
-              shape="round"
-              type="default"
-              key="expandedAll"
-              icon={<PlusCircleOutlined />}
-              onClick={() => message.info('展开所有栏目')}
-            >
-              展开所有
-            </Button>,
-            <Button
-              shape="round"
-              type="primary"
-              key="createChannel"
-              icon={<PlusOutlined />}
-              onClick={() => message.info('你点击了新建栏目')}
-            >
-              新建栏目
-            </Button>,
-          ],
-        }}
+        toolBarRender={() => [
+          <Button
+            shape="round"
+            type="default"
+            key="expandedAll"
+            icon={expandedRowKey?.length ? <MinusCircleOutlined /> : <PlusCircleOutlined />}
+            onClick={() => setExpandedRowKey(expandedRowKey?.length ? [] : expandedIds)}
+          >
+            {expandedRowKey?.length ? '收起所有' : '展开所有'}
+          </Button>,
+          <Button
+            shape="round"
+            type="primary"
+            key="createChannel"
+            icon={<PlusOutlined />}
+            onClick={() => message.info('你点击了新建栏目')}
+          >
+            新建栏目
+          </Button>,
+        ]}
         tableAlertRender={({ selectedRowKeys, onCleanSelected }) => (
           <span>
             已选 {selectedRowKeys.length} 个栏目
