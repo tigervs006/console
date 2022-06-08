@@ -341,7 +341,7 @@ const CreateUser: React.FC<{
 export default () => {
   const { confirm } = Modal;
   // childRef
-  const childRef: React.MutableRefObject<any> = useRef();
+  const childRef: React.ForwardedRef<any> = useRef();
   // ActionType
   const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
   // ModalForm 状态
