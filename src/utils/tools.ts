@@ -55,3 +55,19 @@ export const randomString = (length: number): string => {
   for (let i = length; i > 0; --i) result += str[Math.floor(Math.random() * str.length)];
   return result;
 };
+
+/**
+ * 递归查询子项id
+ * @return Array
+ * @param data 数据
+ * @param init ids
+ */
+export const recursiveQuery = (data: Record<string, any>, init: number[] = []) => {
+  data.filter((item: any) => {
+    if (item.children) {
+      init.push(item.id);
+      recursiveQuery(item.children, init);
+    }
+  });
+  return init;
+};
