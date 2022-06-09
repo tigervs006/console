@@ -1,8 +1,8 @@
 export type tableDataItem = {
-  pid: number;
-  sort: number;
-  name: string;
-  cname: string;
+  pid?: number;
+  sort?: number;
+  name?: string;
+  cname?: string;
   level?: number;
   title?: string;
   banner?: string;
@@ -10,6 +10,6 @@ export type tableDataItem = {
   id?: number | string;
   description?: string;
   ceraet_time?: string;
-  status: number | string;
+  status?: number | string;
   children?: tableDataItem[];
 };
