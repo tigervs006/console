@@ -5,6 +5,7 @@ import { EditableProTable } from '@ant-design/pro-table';
 import { Button, message, Space, Switch, Table } from 'antd';
 import type { ProCoreActionType } from '@ant-design/pro-utils';
 import { fetchData, setStatus } from '@/pages/channel/service';
+import { CreateModalForm } from "./components/CreateModalForm";
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import { randomString, recursiveQuery, waitTime } from '@/utils/tools';
 import {
@@ -45,6 +46,14 @@ const RecordSwitch: React.FC<{ record: tableDataItem }> = (props) => {
   );
 };
 export default () => {
+  // ModalForm 状态
+  const [modalVisit, setModalVisit] = useState<boolean>(false);
+  // ModalForm 标题
+  const [isCreate, setIsCreateChannel] = useState<boolean>(true);
+  // ModalForm 栏目
+  const [channelData, setChannelData] = useState<tableDataItem[]>([]);
+  // ModalForm 默认值
+  const [modalValues, setModallValues] = useState<tableDataItem>({});
   // 存放子项的id
   const [expandedIds, setexpandedIds] = useState<number[]>([]);
   // 控制点击展开行
@@ -82,14 +91,14 @@ export default () => {
     if (record instanceof Array) {
       record.forEach((item) => {
         ids.push(Number(item.id));
-        titles.push(item.cname);
+        titles.push(item?.cname ?? '');
       });
     }
   };
   // 处理展开/收缩状态的state
   const handleExpand = (expanded: boolean, record: tableDataItem) => {
     // 顶级栏目pid是0，需要Filter
-    const ids: number[] = [record.pid].concat(record.id as number).filter(Boolean);
+    const ids: number[] = [record?.pid ?? 0].concat(record?.id as number ?? null).filter(Boolean);
     setExpandedRowKey((rowKey) => {
       // 如果是展开状态且有子菜单，则直接返回
       if (expanded && record.children) {
@@ -122,10 +131,13 @@ export default () => {
         delete paramData[idx];
     }
     return await fetchData(paramData).then((res) => {
+      const resList = res?.data?.list
+      // 存储栏目在选择栏目时用
+      setChannelData(resList)
       // 把存在子项的栏目id存储起来
-      setexpandedIds(recursiveQuery(res?.data?.list));
+      setexpandedIds(recursiveQuery(resList));
       return {
-        data: res?.data?.list ?? [],
+        data: resList || [],
         total: res?.data?.total ?? 0,
         success: res?.success ?? true,
       };
@@ -311,7 +323,7 @@ export default () => {
             type="primary"
             key="createChannel"
             icon={<PlusOutlined />}
-            onClick={() => message.info('你点击了新建栏目')}
+            onClick={() => setModalVisit(true)}
           >
             新建栏目
           </Button>,
@@ -338,6 +350,13 @@ export default () => {
             };
           },
         }}
+      />
+      <CreateModalForm
+          record={modalValues}
+          modalVisit={modalVisit}
+          isCreateChannel={isCreate}
+          reloadTable={() => ref.current?.reload()}
+          handleSetModalVisit={(status: boolean) => setModalVisit(status)}
       />
     </PageContainer>
   );
