@@ -3,7 +3,9 @@ import React, { useRef } from 'react';
 import { waitTime } from '@/utils/tools';
 import type { tableDataItem } from '../data';
 import { fetchData, saveChannel } from '../service';
+import type { UploadFile } from 'antd/es/upload/interface';
 import type { ProFormInstance } from '@ant-design/pro-form';
+import { ProUploadButton } from '@/pages/components/UploadButton/ProUploadButton';
 import { ModalForm, ProFormText, ProFormTextArea, ProFormTreeSelect } from '@ant-design/pro-form';
 
 export const CreateModalForm: React.FC<{
@@ -14,6 +16,8 @@ export const CreateModalForm: React.FC<{
   handleSetModalVisit: (status: boolean) => void;
 }> = (props) => {
   const formRef = useRef<ProFormInstance>();
+  // uploadRef
+  const uploadRef: React.ForwardedRef<any> = useRef();
   const defaultOption = [{ id: 0, cname: '顶级栏目' }];
   const modalTitle = props.isCreateChannel ? '新增栏目' : '编辑栏目';
   // 处理onFinish事件
@@ -58,6 +62,23 @@ export const CreateModalForm: React.FC<{
       onValuesChange={(values) => console.log('onChange', values)}
       onFinish={(values) => handleFinish(values).then(() => true)}
     >
+      <ProUploadButton
+        ref={uploadRef}
+        imageHeight={500}
+        imageWidth={1920}
+        isRequired={true}
+        formName={'banner'}
+        formLabel={'栏目图片'}
+        formTitle={'上传图片'}
+        formTooltip={'上传图片作为栏目banner'}
+        extraData={{ field: 'banner', path: 'routine/banner' }}
+        useTransForm={(value) => {
+          if ('string' === typeof value) return { banner: value };
+          return {
+            banner: value.map((item: UploadFile) => item?.response?.data?.url ?? '').toString(),
+          };
+        }}
+      />
       <ProFormTreeSelect
         key="id"
         name="pid"
