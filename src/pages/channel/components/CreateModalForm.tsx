@@ -106,6 +106,18 @@ export const CreateModalForm: React.FC<{
       />
       <ProFormText
         hasFeedback
+        name="cname"
+        label="栏目名称"
+        tooltip="显示在前端的栏目名称"
+        placeholder="请输入栏目名称"
+        fieldProps={{ maxLength: 20, showCount: true }}
+        rules={[
+          { required: true, message: '请输入栏目名称' },
+          { type: 'string', pattern: /^[\u4e00-\u9fa5]+$/, message: '栏目名称只能是中文' },
+        ]}
+      />
+      <ProFormText
+        hasFeedback
         name="name"
         label="栏目英文"
         tooltip="伪静态URL地址需要"
@@ -118,18 +130,6 @@ export const CreateModalForm: React.FC<{
             pattern: /^\w+$/,
             message: '栏目英文名只能是字母、数字和下划线的组合',
           },
-        ]}
-      />
-      <ProFormText
-        hasFeedback
-        name="cname"
-        label="栏目中文"
-        tooltip="显示在前端的栏目名"
-        placeholder="请输入栏目中文名"
-        fieldProps={{ maxLength: 20, showCount: true }}
-        rules={[
-          { required: true, message: '请输入栏目中文名' },
-          { type: 'string', pattern: /^[\u4e00-\u9fa5]+$/, message: '栏目中文名只能是中文' },
         ]}
       />
       <ProFormText
