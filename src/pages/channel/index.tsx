@@ -1,13 +1,14 @@
 import type { tableDataItem } from './data';
+import { Button, Space, Table } from 'antd';
 import React, { useRef, useState } from 'react';
+import { fetchData } from '@/pages/channel/service';
 import { PageContainer } from '@ant-design/pro-layout';
 import { EditableProTable } from '@ant-design/pro-table';
-import { Button, message, Space, Switch, Table } from 'antd';
 import type { ProCoreActionType } from '@ant-design/pro-utils';
-import { fetchData, setStatus } from '@/pages/channel/service';
 import { CreateModalForm } from "./components/CreateModalForm";
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import { randomString, recursiveQuery, waitTime } from '@/utils/tools';
+import { RecordSwitch } from "@/pages/components/RecordSwitch/RecordSwitch";
 import {
   MinusCircleOutlined,
   PlusCircleOutlined,
@@ -17,34 +18,6 @@ import {
   PlusOutlined,
 } from '@ant-design/icons';
 
-const RecordSwitch: React.FC<{ record: tableDataItem }> = (props) => {
-  const [loadings, setLoadings] = useState<boolean>(false);
-  /**
-   * 设置栏目状态
-   * @param e 事件
-   * @param checked 状态
-   * @param record 当前记录
-   */
-  const handleChange = async (checked: boolean, e: MouseEvent, record: tableDataItem) => {
-    // 阻止事件冒泡
-    e.stopPropagation();
-    setLoadings(true);
-    await setStatus({ id: record.id as number, status: checked ? 1 : 0 }).then((res) => {
-      setLoadings(false);
-      message.success(res.msg);
-    });
-  };
-  return (
-    <Switch
-      loading={loadings}
-      key={props.record.id}
-      checkedChildren="显示"
-      unCheckedChildren="隐藏"
-      defaultChecked={!!props.record.status}
-      onChange={(checked, event) => handleChange(checked, event, props.record)}
-    />
-  );
-};
 export default () => {
   // ModalForm 状态
   const [modalVisit, setModalVisit] = useState<boolean>(false);
@@ -226,7 +199,7 @@ export default () => {
           status: 'Hide',
         },
       },
-      render: (_, record) => <RecordSwitch key={record.id} record={record} />,
+      render: (_, record) => <RecordSwitch record={record} url={'/channel/status'} />,
     },
     {
       title: '操作',
