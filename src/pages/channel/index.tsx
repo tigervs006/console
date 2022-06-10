@@ -19,6 +19,8 @@ import {
 } from '@ant-design/icons';
 
 export default () => {
+  // defaultOption
+  const defaultOption = [{ id: 0, cname: '顶级栏目' }];
   // ModalForm 状态
   const [modalVisit, setModalVisit] = useState<boolean>(false);
   // ModalForm 标题
@@ -106,7 +108,7 @@ export default () => {
     return await fetchData(paramData).then((res) => {
       const resList = res?.data?.list
       // 存储栏目在选择栏目时用
-      setChannelData(resList)
+      setChannelData(defaultOption.concat(resList))
       // 把存在子项的栏目id存储起来
       setexpandedIds(recursiveQuery(resList));
       return {
@@ -123,8 +125,37 @@ export default () => {
     },
     {
       width: 150,
+      title: '栏目名称',
+      dataIndex: 'cname',
+      tooltip: '作为网站导航栏显示',
+      formItemProps: () => ({
+        rules: [
+          { required: true, message: '栏目名称为必填项' },
+          {
+            type: 'string',
+            pattern: /^[\u4e00-\u9fa5]{2,12}$/,
+            message: '栏目名称只能是2~12个汉字组成',
+          },
+        ],
+      }),
+    },
+    {
+      width: 150,
       title: '上级栏目',
       dataIndex: 'pid',
+      fieldProps: {
+        options: channelData,
+        fieldNames: {
+          value: 'id',
+          label: 'cname',
+        },
+      },
+      valueType: 'treeSelect',
+      formItemProps: () => ({
+        rules: [
+          { required: true, message: '上级栏目为必填项' }
+        ]
+      })
     },
     {
       width: 150,
@@ -133,27 +164,11 @@ export default () => {
       tooltip: '作为网站伪静态URL',
       formItemProps: () => ({
         rules: [
-          { required: true, message: '此项为必填项' },
+          { required: true, message: '栏目英文为必填项' },
           {
             type: 'string',
             pattern: /^[a-zA-Z]{4,12}$/,
             message: '栏目英文只能是4~12个英文字母组成',
-          },
-        ],
-      }),
-    },
-    {
-      width: 150,
-      title: '栏目中文',
-      dataIndex: 'cname',
-      tooltip: '作为网站导航栏显示',
-      formItemProps: () => ({
-        rules: [
-          { required: true, message: '此项为必填项' },
-          {
-            type: 'string',
-            pattern: /^[\u4e00-\u9fa5]{2,12}$/,
-            message: '栏目中文只能是2~12个汉字组成',
           },
         ],
       }),
@@ -166,7 +181,7 @@ export default () => {
       tooltip: '数值越大越靠前',
       formItemProps: () => ({
         rules: [
-          { required: true, message: '此项为必填项' },
+          { required: true, message: '栏目排序为必填项' },
           { pattern: /^([1-9]|[1-9]\d{1,2})$/, message: '只能是1~999的正整数' },
         ],
       }),
@@ -264,11 +279,11 @@ export default () => {
           position: 'bottom',
           creatorButtonText: '新增栏目',
           record: {
-            pid: 1,
+            pid: 0,
             sort: 50,
             status: '1',
             name: 'ename',
-            cname: '栏目中文名',
+            cname: '栏目名称',
             id: randomString(6),
           },
         }}
