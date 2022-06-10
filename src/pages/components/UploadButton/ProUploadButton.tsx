@@ -126,19 +126,19 @@ export const ProUploadButton: React.FC<{
         image.onload = function () {
           if (!fileType.includes(curType)) {
             notification.error({
-              message: '上传的文件类型错误',
-              description: `请上传格式为 ${fileType} 的图片`,
+              message: '文件类型错误',
+              description: `请上传格式为 ${fileType} 的文件`,
             });
             reject();
           } else if (file.size > MAX_FILE_SIZE * UNIT) {
             notification.error({
-              message: '图像大小不符合要求',
-              description: `单张图像不得超过 ${MAX_FILE_SIZE}M`,
+              message: '大小不符合要求',
+              description: `单个文件不得超过 ${MAX_FILE_SIZE}M`,
             });
             reject();
           } else if (imageWidth > image.width || imageHeight > image.height) {
             notification.error({
-              message: '图像宽高不符合要求',
+              message: '图像的宽高不符合要求',
               description: `请上传宽高大于或等于 ${imageWidth}X${imageHeight} 的图像`,
             });
             reject();
