@@ -13,7 +13,8 @@ export const CreateModalForm: React.FC<{
   record: tableDataItem;
   reloadTable: () => void;
   isCreateChannel: boolean;
-  handleSetModalVisit: (status: boolean) => void;
+  setExpandByClick: (value: boolean) => void;
+  handleSetModalVisit: (value: boolean) => void;
 }> = (props) => {
   const formRef = useRef<ProFormInstance>();
   // uploadRef
@@ -22,13 +23,12 @@ export const CreateModalForm: React.FC<{
   const modalTitle = props.isCreateChannel ? '新增栏目' : '编辑栏目';
   // 处理onFinish事件
   const handleFinish = async (data: tableDataItem) => {
-    await saveChannel(Object.assign(data, { id: props?.record?.id ?? null, pid: 1 })).then(
-      (res) => {
-        message.success(res.msg);
-        // 延时重载列表数据
-        waitTime(1500).then(() => props.reloadTable());
-      },
-    );
+    await saveChannel(Object.assign(data, { id: props?.record?.id ?? null })).then((res) => {
+      message.success(res.msg);
+      props.setExpandByClick(true);
+      // 延时重载列表数据
+      waitTime(1500).then(() => props.reloadTable());
+    });
   };
   return (
     <ModalForm<tableDataItem>
@@ -36,6 +36,7 @@ export const CreateModalForm: React.FC<{
         centered: true,
         maskClosable: false,
         destroyOnClose: true,
+        onCancel: () => props.setExpandByClick(true),
       }}
       submitter={{
         searchConfig: {
@@ -52,8 +53,8 @@ export const CreateModalForm: React.FC<{
       }}
       width={500}
       formRef={formRef}
-      autoFocusFirstInput
       title={modalTitle}
+      autoFocusFirstInput
       submitTimeout={2000}
       visible={props.modalVisit}
       initialValues={props.record}
@@ -80,11 +81,9 @@ export const CreateModalForm: React.FC<{
         }}
       />
       <ProFormTreeSelect
-        key="id"
         name="pid"
         hasFeedback
         label="上级栏目"
-        initialValue="0"
         debounceTime={1000}
         tooltip="选择上级栏目"
         placeholder="请选择上级栏目"
