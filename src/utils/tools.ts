@@ -57,17 +57,31 @@ export const randomString = (length: number): string => {
 };
 
 /**
- * 递归查询子项id
+ * 查询存在子项的父id
  * @return Array
  * @param data 数据
  * @param init ids
  */
-export const recursiveQuery = (data: Record<string, any>, init: number[] = []) => {
+export const recursiveQuery = (data: Record<string, any>[], init: number[] = []) => {
   data.filter((item: any) => {
     if (item.children) {
       init.push(item.id);
       recursiveQuery(item.children, init);
     }
+  });
+  return init;
+};
+
+/**
+ * 查询当前存在子项的id
+ * @return Array
+ * @param data 数据
+ * @param init  ids
+ */
+export const queryChildId = (data: Record<string, any>[], init: number[] = []) => {
+  data.filter((item: Record<string, any>) => {
+    init.push(item.id);
+    if (item.children) queryChildId(item.children, init);
   });
   return init;
 };
