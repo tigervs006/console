@@ -1,14 +1,13 @@
 import type { tableDataItem } from './data';
-import { Button, Space, Table } from 'antd';
 import React, { useRef, useState } from 'react';
 import { fetchData } from '@/pages/channel/service';
 import { PageContainer } from '@ant-design/pro-layout';
+import { Popconfirm, Button, Space, Table } from 'antd';
 import { EditableProTable } from '@ant-design/pro-table';
-import type { ProCoreActionType } from '@ant-design/pro-utils';
-import { CreateModalForm } from "./components/CreateModalForm";
+import { CreateModalForm } from './components/CreateModalForm';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import { randomString, recursiveQuery, waitTime } from '@/utils/tools';
-import { RecordSwitch } from "@/pages/components/RecordSwitch/RecordSwitch";
+import { RecordSwitch } from '@/pages/components/RecordSwitch/RecordSwitch';
 import {
   MinusCircleOutlined,
   PlusCircleOutlined,
@@ -41,14 +40,14 @@ export default () => {
   const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
 
   const handleEdit = (
-    e: React.MouseEvent<HTMLElement>,
-    action: ProCoreActionType | undefined,
     record: tableDataItem,
+    e: React.MouseEvent<HTMLElement, MouseEvent> | undefined,
   ) => {
-    e.stopPropagation();
+    e!.stopPropagation();
+    setModallValues(record);
+    setModalVisit(true);
     setExpandByClick(false);
-    action?.startEditable?.(record.id as number);
-    console.log('编辑栏目', record.cname);
+    setIsCreateChannel(false);
   };
 
   const handlePreview = (e: React.MouseEvent<HTMLElement>, record: tableDataItem) => {
@@ -73,7 +72,7 @@ export default () => {
   // 处理展开/收缩状态的state
   const handleExpand = (expanded: boolean, record: tableDataItem) => {
     // 顶级栏目pid是0，需要Filter
-    const ids: number[] = [record?.pid ?? 0].concat(record?.id as number ?? null).filter(Boolean);
+    const ids: number[] = [record?.pid ?? 0].concat((record?.id as number) ?? null).filter(Boolean);
     setExpandedRowKey((rowKey) => {
       // 如果是展开状态且有子菜单，则直接返回
       if (expanded && record.children) {
@@ -106,9 +105,9 @@ export default () => {
         delete paramData[idx];
     }
     return await fetchData(paramData).then((res) => {
-      const resList = res?.data?.list
+      const resList = res?.data?.list;
       // 存储栏目在选择栏目时用
-      setChannelData(defaultOption.concat(resList))
+      setChannelData(defaultOption.concat(resList));
       // 把存在子项的栏目id存储起来
       setexpandedIds(recursiveQuery(resList));
       return {
@@ -152,10 +151,8 @@ export default () => {
       },
       valueType: 'treeSelect',
       formItemProps: () => ({
-        rules: [
-          { required: true, message: '上级栏目为必填项' }
-        ]
-      })
+        rules: [{ required: true, message: '上级栏目为必填项' }],
+      }),
     },
     {
       width: 150,
@@ -221,14 +218,26 @@ export default () => {
       valueType: 'option',
       render: (text, record, _, action) => [
         <Space size={4} key="operation">
-          <Button
-            size="small"
-            shape="round"
-            icon={<EditOutlined />}
-            onClick={(event) => handleEdit(event, action, record)}
+          <Popconfirm
+            okText="确定"
+            cancelText="取消"
+            title="确定编辑详情，取消编辑当前行"
+            onCancel={(e) => {
+              e?.stopPropagation();
+              setExpandByClick(false);
+              action?.startEditable?.(record.id as number);
+            }}
+            onConfirm={(event) => handleEdit(record, event)}
           >
-            编辑
-          </Button>
+            <Button
+              size="small"
+              shape="round"
+              icon={<EditOutlined />}
+              onClick={(e) => e.stopPropagation()}
+            >
+              编辑
+            </Button>
+          </Popconfirm>
           <Button
             size="small"
             shape="round"
@@ -311,7 +320,11 @@ export default () => {
             type="primary"
             key="createChannel"
             icon={<PlusOutlined />}
-            onClick={() => setModalVisit(true)}
+            onClick={() => {
+              setModalVisit(true);
+              setModallValues({});
+              setIsCreateChannel(true);
+            }}
           >
             新建栏目
           </Button>,
@@ -340,11 +353,12 @@ export default () => {
         }}
       />
       <CreateModalForm
-          record={modalValues}
-          modalVisit={modalVisit}
-          isCreateChannel={isCreate}
-          reloadTable={() => ref.current?.reload()}
-          handleSetModalVisit={(status: boolean) => setModalVisit(status)}
+        record={modalValues}
+        modalVisit={modalVisit}
+        isCreateChannel={isCreate}
+        reloadTable={() => ref.current?.reload()}
+        setExpandByClick={(value: boolean) => setExpandByClick(value)}
+        handleSetModalVisit={(value: boolean) => setModalVisit(value)}
       />
     </PageContainer>
   );
