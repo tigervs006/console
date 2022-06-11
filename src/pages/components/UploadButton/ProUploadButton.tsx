@@ -4,9 +4,9 @@ import { removeFile } from '@/services/ant-design-pro/api';
 import { ProFormUploadButton } from '@ant-design/pro-form';
 import { notification, message, Upload, Modal } from 'antd';
 import type { UploadChangeParam, UploadProps } from 'antd/es/upload';
-import React, { forwardRef, useImperativeHandle, useState } from 'react';
-import type { UploadFile, UploadListType } from 'antd/es/upload/interface';
-import { CloudUploadOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import React, { useImperativeHandle, forwardRef, useState } from 'react';
+import type { UploadListType, UploadFile } from 'antd/es/upload/interface';
+import { QuestionCircleOutlined, CloudUploadOutlined } from '@ant-design/icons';
 
 export const ProUploadButton: React.FC<{
   formName: string;
@@ -44,7 +44,9 @@ export const ProUploadButton: React.FC<{
   const acceptFile: string = props?.acceptFile ?? '.png, .jpg, .jpeg, .gif';
   // 文件格式
   const fileType: string[] = props?.fileType ?? ['image/png', 'image/jpeg', 'image/gif'];
-  useImperativeHandle(ref, () => (fileList: UploadFile[]) => setFileLists(fileList));
+  useImperativeHandle(ref, () => ({
+    setFileLists: (fileList: UploadFile[]) => setFileLists(fileList),
+  }));
   // 处理上传事件
   const handleChange: UploadProps['onChange'] = (info: UploadChangeParam) => {
     const { fileList } = info;
