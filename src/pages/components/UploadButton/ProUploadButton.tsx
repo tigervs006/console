@@ -1,10 +1,10 @@
-import type { ForwardedRef } from 'react';
+import React from 'react';
+import { useModel } from 'umi';
 import type { RcFile } from 'antd/es/upload';
 import { removeFile } from '@/services/ant-design-pro/api';
 import { ProFormUploadButton } from '@ant-design/pro-form';
 import { notification, message, Upload, Modal } from 'antd';
 import type { UploadChangeParam, UploadProps } from 'antd/es/upload';
-import React, { useImperativeHandle, forwardRef, useState } from 'react';
 import type { UploadListType, UploadFile } from 'antd/es/upload/interface';
 import { QuestionCircleOutlined, CloudUploadOutlined } from '@ant-design/icons';
 
@@ -20,11 +20,10 @@ export const ProUploadButton: React.FC<{
   fileType?: string[];
   formTooltip?: string;
   imageHeight?: number;
-  ref: ForwardedRef<any>;
   listType?: UploadListType;
   extraData: { field: string; path: string };
   useTransForm?: (value: string | UploadFile[]) => Record<string, string>;
-}> = forwardRef((props, ref) => {
+}> = (props) => {
   const { confirm } = Modal;
   // 大小限制
   const fileSize: number = props?.fileSize ?? 2;
@@ -38,15 +37,15 @@ export const ProUploadButton: React.FC<{
   const extraData: { field: string; path: string } = props.extraData;
   // 展示方式
   const listType: UploadListType = props?.listType ?? 'picture-card';
-  // 文件列表
-  const [fileLists, setFileLists] = useState<UploadFile[]>([]);
   // 文件后缀
   const acceptFile: string = props?.acceptFile ?? '.png, .jpg, .jpeg, .gif';
+  // 文件列表
+  const { fileLists, setFileLists } = useModel('file', (ret) => ({
+    fileLists: ret.fileList,
+    setFileLists: ret.setFileList,
+  }));
   // 文件格式
   const fileType: string[] = props?.fileType ?? ['image/png', 'image/jpeg', 'image/gif'];
-  useImperativeHandle(ref, () => ({
-    setFileLists: (fileList: UploadFile[]) => setFileLists(fileList),
-  }));
   // 处理上传事件
   const handleChange: UploadProps['onChange'] = (info: UploadChangeParam) => {
     const { fileList } = info;
@@ -185,4 +184,4 @@ export const ProUploadButton: React.FC<{
       }}
     />
   );
-});
+};

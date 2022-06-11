@@ -17,8 +17,6 @@ export const CreateModalForm: React.FC<{
   handleSetModalVisit: (value: boolean) => void;
 }> = (props) => {
   const formRef = useRef<ProFormInstance>();
-  // uploadRef
-  const uploadRef: React.ForwardedRef<any> = useRef();
   const defaultOption = [{ id: 0, cname: '顶级栏目' }];
   const modalTitle = props.isCreateChannel ? '新增栏目' : '编辑栏目';
   // 处理onFinish事件
@@ -64,7 +62,6 @@ export const CreateModalForm: React.FC<{
       onFinish={(values) => handleFinish(values).then(() => true)}
     >
       <ProUploadButton
-        ref={uploadRef}
         imageHeight={500}
         imageWidth={1920}
         isRequired={true}

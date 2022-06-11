@@ -1,3 +1,4 @@
+import { useModel } from 'umi';
 import type { tableDataItem } from './data';
 import React, { useRef, useState } from 'react';
 import { fetchData } from '@/pages/channel/service';
@@ -18,8 +19,12 @@ import {
 } from '@ant-design/icons';
 
 export default () => {
-  // defaultOption
+  // selectOption
   const defaultOption = [{ id: 0, cname: '顶级栏目' }];
+  // setFileList
+  const { setFileList } = useModel('file', (ret) => ({
+    setFileList: ret.setFileList,
+  }));
   // ModalForm 状态
   const [modalVisit, setModalVisit] = useState<boolean>(false);
   // ModalForm 标题
@@ -48,6 +53,14 @@ export default () => {
     setModalVisit(true);
     setExpandByClick(false);
     setIsCreateChannel(false);
+    setFileList([
+      {
+        status: 'done',
+        url: record?.banner,
+        uid: Math.floor(Math.random() * 100).toString(),
+        name: record?.banner?.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)?.[1] ?? '',
+      },
+    ]);
   };
 
   const handlePreview = (e: React.MouseEvent<HTMLElement>, record: tableDataItem) => {
@@ -321,6 +334,7 @@ export default () => {
             key="createChannel"
             icon={<PlusOutlined />}
             onClick={() => {
+              setFileList([]);
               setModalVisit(true);
               setModallValues({});
               setIsCreateChannel(true);
