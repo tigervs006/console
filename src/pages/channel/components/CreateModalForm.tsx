@@ -22,7 +22,7 @@ export const CreateModalForm: React.FC<{
   // 处理onFinish事件
   const handleFinish = async (data: tableDataItem) => {
     await saveChannel(Object.assign(data, { id: props?.record?.id ?? null })).then((res) => {
-      message.success(res.msg);
+      message.success(res?.msg);
       props.setExpandByClick(true);
       // 延时重载列表数据
       waitTime(1500).then(() => props.reloadTable());
@@ -121,11 +121,7 @@ export const CreateModalForm: React.FC<{
         fieldProps={{ maxLength: 20, showCount: true }}
         rules={[
           { required: true, message: '请输入栏目英文名' },
-          {
-            type: 'string',
-            pattern: /^\w+$/,
-            message: '栏目英文名只能是字母、数字和下划线的组合',
-          },
+          { type: 'string', pattern: /^\w+$/, message: '栏目英文名只能是字母、数字和下划线的组合' },
         ]}
       />
       <ProFormText
@@ -135,7 +131,10 @@ export const CreateModalForm: React.FC<{
         tooltip="请控制在30字以内"
         placeholder="请输入栏目SEO标题"
         fieldProps={{ maxLength: 32, showCount: true }}
-        rules={[{ required: true, message: '栏目标题不得为空' }]}
+        rules={[
+          { required: true, message: '栏目标题不得为空' },
+          { type: 'string', pattern: /^\S{8,32}$/, message: '栏目标题应在8~32个字符串之间' },
+        ]}
       />
       <ProFormText
         hasFeedback
@@ -144,7 +143,10 @@ export const CreateModalForm: React.FC<{
         tooltip="请控制在30字以内"
         placeholder="请输入栏目SEO关键词"
         fieldProps={{ maxLength: 32, showCount: true }}
-        rules={[{ required: true, message: 'keywords不得为空' }]}
+        rules={[
+          { required: true, message: 'keywords不得为空' },
+          { type: 'string', pattern: /^\S{8,32}$/, message: 'keywords应在8~32个字符串之间' },
+        ]}
       />
       <ProFormTextArea
         hasFeedback
@@ -152,7 +154,10 @@ export const CreateModalForm: React.FC<{
         label="Description"
         tooltip="请控制在100字以内"
         placeholder="请输入栏目SEO页面描述"
-        rules={[{ required: true, message: 'description不得为空' }]}
+        rules={[
+          { required: true, message: 'description不得为空' },
+          { type: 'string', pattern: /^\S{20,100}$/, message: 'description应在20~100个字符串之间' },
+        ]}
         fieldProps={{ autoSize: { minRows: 4, maxRows: 6 }, maxLength: 100, showCount: true }}
       />
     </ModalForm>
