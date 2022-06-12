@@ -3,10 +3,10 @@ import type { tableDataItem } from './data';
 import React, { useRef, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { EditableProTable } from '@ant-design/pro-table';
-import { fetchData, remove } from '@/pages/channel/service';
 import { CreateModalForm } from './components/CreateModalForm';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import { Popconfirm, Button, Space, Table, message, Modal } from 'antd';
+import { saveChannel, fetchData, remove } from '@/pages/channel/service';
 import { RecordSwitch } from '@/pages/components/RecordSwitch/RecordSwitch';
 import { queryChildId, randomString, recursiveQuery, waitTime } from '@/utils/tools';
 import {
@@ -55,14 +55,19 @@ export default () => {
     setModalVisit(true);
     setExpandByClick(false);
     setIsCreateChannel(false);
-    setFileList([
-      {
-        status: 'done',
-        url: record?.banner,
-        uid: Math.floor(Math.random() * 100).toString(),
-        name: record?.banner?.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)?.[1] ?? '',
-      },
-    ]);
+    setFileList(() => {
+      if (record?.banner) {
+        return [
+          {
+            status: 'done',
+            url: record.banner,
+            uid: Math.floor(Math.random() * 100).toString(),
+            name: record.banner.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)?.[1] ?? '',
+          },
+        ];
+      }
+      return [];
+    });
   };
 
   const handlePreview = (e: React.MouseEvent<HTMLElement>, record: tableDataItem) => {
@@ -96,23 +101,26 @@ export default () => {
         // @ts-ignore
         (record.name && `栏目：${record.cname} 及其所有子栏目`) ||
         (3 < titles.length
-          ? // @ts-ignore
-            `${titles.slice(0, 3)}...等【${titles.length}】个栏目`
-          : // @ts-ignore
-            `${titles} 这【${titles.length}】个栏目`),
+          ? `${titles.slice(0, 3).join('，')}...等【${titles.length}】个栏目`
+          : `${titles.join('，')} 这【${titles.length}】个栏目`),
       async onOk() {
-        // @ts-ignore
         await remove({ id: ids }).then((res) => {
           ref.current?.reload();
           message.success(res.msg);
+          // 只在多选的情况下清除已选择的项
+          if (record instanceof Array) ref.current?.clearSelected!();
         });
+      },
+      onCancel() {
+        // 只在多选的情况下清除已选择的项
+        if (record instanceof Array) ref.current?.clearSelected!();
       },
     });
   };
   // 处理展开/收缩状态的state
   const handleExpand = (expanded: boolean, record: tableDataItem) => {
     setExpandedRowKey((rowKey) => {
-      // 如果是展开状态且有子菜单，合并并返回
+      // 如果是展开状态且有子菜单，合并后返回
       if (expanded && record.children) {
         return rowKey.concat(record.id as number);
         // 如果是展开状态且没有子菜单，则返回原始rowKey
@@ -315,14 +323,15 @@ export default () => {
           type: 'multiple',
           onChange: setEditableRowKeys,
           actionRender: (row, config, dom) => [dom.save, dom.cancel],
-          onSave: async (rowKey, data, pre) => {
-            console.log('rowKey', rowKey);
-            console.log('data', data);
-            console.log('pre', pre);
-            await waitTime(2000).then(() => setExpandByClick(true));
+          onSave: async (rowKey, data) => {
+            await saveChannel(Object.assign(data, { single: true })).then((res) => {
+              message.success(res.msg);
+              setExpandByClick(true);
+              waitTime(1000).then(() => ref.current?.reload());
+            });
           },
-          onCancel: async () => await waitTime(1000).then(() => setExpandByClick(true)),
-          onDelete: async () => await waitTime(1000).then(() => setExpandByClick(true)),
+          onCancel: async () => setExpandByClick(true),
+          onDelete: async () => setExpandByClick(true),
         }}
         recordCreatorProps={{
           position: 'bottom',
