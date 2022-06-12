@@ -1,15 +1,16 @@
 import { useModel } from 'umi';
 import type { tableDataItem } from './data';
 import React, { useRef, useState } from 'react';
-import { fetchData } from '@/pages/channel/service';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Popconfirm, Button, Space, Table } from 'antd';
 import { EditableProTable } from '@ant-design/pro-table';
+import { fetchData, remove } from '@/pages/channel/service';
 import { CreateModalForm } from './components/CreateModalForm';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
-import { randomString, recursiveQuery, waitTime } from '@/utils/tools';
+import { Popconfirm, Button, Space, Table, message, Modal } from 'antd';
 import { RecordSwitch } from '@/pages/components/RecordSwitch/RecordSwitch';
+import { queryChildId, randomString, recursiveQuery, waitTime } from '@/utils/tools';
 import {
+  QuestionCircleOutlined,
   MinusCircleOutlined,
   PlusCircleOutlined,
   DeleteOutlined,
@@ -19,6 +20,7 @@ import {
 } from '@ant-design/icons';
 
 export default () => {
+  const { confirm } = Modal;
   // selectOption
   const defaultOption = [{ id: 0, cname: '顶级栏目' }];
   // setFileList
@@ -27,18 +29,18 @@ export default () => {
   }));
   // ModalForm 状态
   const [modalVisit, setModalVisit] = useState<boolean>(false);
-  // ModalForm 标题
-  const [isCreate, setIsCreateChannel] = useState<boolean>(true);
-  // ModalForm 栏目
-  const [channelData, setChannelData] = useState<tableDataItem[]>([]);
-  // ModalForm 默认值
-  const [modalValues, setModallValues] = useState<tableDataItem>({});
   // 存放子项的id
   const [expandedIds, setexpandedIds] = useState<number[]>([]);
+  // ModalForm 标题
+  const [isCreate, setIsCreateChannel] = useState<boolean>(true);
   // 控制点击展开行
   const [expandByClick, setExpandByClick] = useState<boolean>(true);
+  // ModalForm 默认值
+  const [modalValues, setModallValues] = useState<tableDataItem>({});
   // 当前展开的行
   const [expandedRowKey, setExpandedRowKey] = useState<number[]>([]);
+  // ModalForm 栏目
+  const [channelData, setChannelData] = useState<tableDataItem[]>([]);
   // editableKeys
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   // ActionType
@@ -73,23 +75,46 @@ export default () => {
     record: tableDataItem | tableDataItem[],
   ) => {
     e.stopPropagation();
-    const ids: number[] = [];
+    let ids: number[] = [];
     const titles: string[] = [];
     if (record instanceof Array) {
       record.forEach((item) => {
-        ids.push(Number(item.id));
+        ids.push(item.id as number);
         titles.push(item?.cname ?? '');
       });
+    } else {
+      ids = queryChildId([record]);
     }
+    confirm({
+      centered: true,
+      cancelText: '算了',
+      title: '当真要删除?',
+      icon: <QuestionCircleOutlined />,
+      cancelButtonProps: { shape: 'round' },
+      okButtonProps: { danger: true, shape: 'round' },
+      content:
+        // @ts-ignore
+        (record.name && `栏目：${record.cname} 及其所有子栏目`) ||
+        (3 < titles.length
+          ? // @ts-ignore
+            `${titles.slice(0, 3)}...等【${titles.length}】个栏目`
+          : // @ts-ignore
+            `${titles} 这【${titles.length}】个栏目`),
+      async onOk() {
+        // @ts-ignore
+        await remove({ id: ids }).then((res) => {
+          ref.current?.reload();
+          message.success(res.msg);
+        });
+      },
+    });
   };
   // 处理展开/收缩状态的state
   const handleExpand = (expanded: boolean, record: tableDataItem) => {
-    // 顶级栏目pid是0，需要Filter
-    const ids: number[] = [record?.pid ?? 0].concat((record?.id as number) ?? null).filter(Boolean);
     setExpandedRowKey((rowKey) => {
-      // 如果是展开状态且有子菜单，则直接返回
+      // 如果是展开状态且有子菜单，合并并返回
       if (expanded && record.children) {
-        return ids;
+        return rowKey.concat(record.id as number);
         // 如果是展开状态且没有子菜单，则返回原始rowKey
       } else if (expanded && !record.children) {
         return rowKey;
@@ -235,6 +260,8 @@ export default () => {
             okText="确定"
             cancelText="取消"
             title="确定编辑详情，取消编辑当前行"
+            okButtonProps={{ shape: 'round' }}
+            cancelButtonProps={{ shape: 'round' }}
             onCancel={(e) => {
               e?.stopPropagation();
               setExpandByClick(false);
