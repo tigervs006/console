@@ -8,7 +8,13 @@ import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import { Popconfirm, Button, Space, Table, message, Modal } from 'antd';
 import { saveChannel, fetchData, remove } from '@/pages/channel/service';
 import { RecordSwitch } from '@/pages/components/RecordSwitch/RecordSwitch';
-import { queryChildId, randomString, recursiveQuery, waitTime } from '@/utils/tools';
+import {
+  queryChildId,
+  queryParentPath,
+  randomString,
+  recursiveQuery,
+  waitTime,
+} from '@/utils/tools';
 import {
   QuestionCircleOutlined,
   MinusCircleOutlined,
@@ -46,6 +52,7 @@ export default () => {
   // ActionType
   const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
 
+  // handleEdit
   const handleEdit = (
     record: tableDataItem,
     e: React.MouseEvent<HTMLElement, MouseEvent> | undefined,
@@ -69,10 +76,14 @@ export default () => {
       return [];
     });
   };
-
+  // handlePreview
   const handlePreview = (e: React.MouseEvent<HTMLElement>, record: tableDataItem) => {
     e.stopPropagation();
-    console.log('预览栏目', record.cname);
+    const path = queryParentPath(
+      channelData,
+      (data: { name: string }) => data.name === record.name,
+    );
+    window.open(`/${path.join('/')}`);
   };
   // 处理单个/批量删除栏目
   const handleDelete = (
