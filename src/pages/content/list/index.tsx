@@ -132,8 +132,7 @@ export default () => {
    * @param record
    */
   const handlePreview = (record: tableDataItem) => {
-    // TODO: 正式部署时需要动态获取Domain
-    window.open(`https://demo.brandsz.cn/industry/${record.channel.name}/${record.id}.html`);
+    window.open(`/industry/${record.channel.name}/${record.id}.html`);
   };
 
   /**
