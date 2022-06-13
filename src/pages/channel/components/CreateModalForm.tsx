@@ -69,7 +69,7 @@ export const CreateModalForm: React.FC<{
         formLabel={'栏目图片'}
         formTitle={'上传图片'}
         formTooltip={'上传图片作为栏目banner'}
-        extraData={{ field: 'banner', path: 'routine/banner' }}
+        extraData={{ field: 'banner', path: 'images/banner' }}
         useTransForm={(value) => {
           if ('string' === typeof value) return { banner: value };
           return {
