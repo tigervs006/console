@@ -85,3 +85,23 @@ export const queryChildId = (data: Record<string, any>[], init: number[] = []) =
   });
   return init;
 };
+
+/**
+ * 反向查询父级的name
+ * @return Array
+ * @param data 树形数据
+ * @param func function
+ * @param path name路径
+ */
+export const queryParentPath = (data: Record<string, any>[], func: any, path: string[] = []) => {
+  for (const item of data) {
+    path.push(item.name);
+    if (func(item)) return path;
+    if (item.children) {
+      const child: string[] = queryParentPath(item.children, func, path);
+      if (child.length) return child;
+    }
+    path.pop();
+  }
+  return [];
+};
