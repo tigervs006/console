@@ -39,7 +39,7 @@ const operationTabList = [
 ];
 
 const TagList: React.FC<{ tags: CurrentUser['tags'] }> = ({ tags }) => {
-  const ref = useRef<Input | null>(null);
+  const ref = useRef<typeof Input | null>(null);
   const [newTags, setNewTags] = useState<TagType[]>([]);
   const [inputVisible, setInputVisible] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>('');
@@ -47,7 +47,7 @@ const TagList: React.FC<{ tags: CurrentUser['tags'] }> = ({ tags }) => {
   const showInput = () => {
     setInputVisible(true);
     if (ref.current) {
-      // eslint-disable-next-line no-unused-expressions
+      // @ts-ignore
       ref.current?.focus();
     }
   };
@@ -74,6 +74,7 @@ const TagList: React.FC<{ tags: CurrentUser['tags'] }> = ({ tags }) => {
       ))}
       {inputVisible && (
         <Input
+          // @ts-ignore
           ref={ref}
           type="text"
           size="small"
