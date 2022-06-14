@@ -9,10 +9,12 @@ declare namespace API {
     name?: string;
     cname?: string;
     email?: string;
+    access?: string;
     status?: string;
     avatar?: string;
     ipaddress?: string;
     last_login?: string;
+    unreadCount?: number;
     create_time?: string;
     info?: Record<string, any>;
   };
@@ -115,5 +117,22 @@ declare namespace API {
   type setStatus = {
     id: number;
     status: number;
+  };
+
+  type uploadButtonParam = {
+    formName: string;
+    formTitle: string;
+    fileSize?: number;
+    maxUpload?: number;
+    formLabel?: string;
+    imageWidth?: number;
+    acceptFile?: string;
+    fileType?: string[];
+    formTooltip?: string;
+    imageHeight?: number;
+    listType?: UploadListType;
+    validateRules?: Record<string, any>[];
+    extraData: { field: string; path: string };
+    useTransForm?: (value: string | UploadFile[]) => Record<string, string>;
   };
 }
