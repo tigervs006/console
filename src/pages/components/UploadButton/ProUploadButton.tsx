@@ -8,22 +8,7 @@ import type { UploadChangeParam, UploadProps } from 'antd/es/upload';
 import type { UploadListType, UploadFile } from 'antd/es/upload/interface';
 import { QuestionCircleOutlined, CloudUploadOutlined } from '@ant-design/icons';
 
-export const ProUploadButton: React.FC<{
-  formName: string;
-  formTitle: string;
-  fileSize?: number;
-  maxUpload?: number;
-  formLabel?: string;
-  imageWidth?: number;
-  acceptFile?: string;
-  fileType?: string[];
-  formTooltip?: string;
-  imageHeight?: number;
-  listType?: UploadListType;
-  validateRules?: Record<string, any>[];
-  extraData: { field: string; path: string };
-  useTransForm?: (value: string | UploadFile[]) => Record<string, string>;
-}> = (props) => {
+export const ProUploadButton: React.FC<API.uploadButtonParam> = (props) => {
   const { confirm } = Modal;
   // 大小限制
   const fileSize: number = props?.fileSize ?? 2;
