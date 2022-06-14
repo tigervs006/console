@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import React, { useRef } from 'react';
-import { waitTime } from '@/utils/tools';
 import type { tableDataItem } from '../data';
+import { waitTime, zh2Pinyin } from '@/utils/tools';
 import { fetchData, saveChannel } from '../service';
 import type { UploadFile } from 'antd/es/upload/interface';
 import type { ProFormInstance } from '@ant-design/pro-form';
@@ -105,7 +105,14 @@ export const CreateModalForm: React.FC<{
         label="栏目名称"
         tooltip="显示在前端的栏目名称"
         placeholder="请输入栏目名称"
-        fieldProps={{ maxLength: 20, showCount: true }}
+        fieldProps={{
+          maxLength: 20,
+          showCount: true,
+          onBlur: (e) =>
+            formRef.current?.setFieldsValue({
+              name: zh2Pinyin(e.target.value).replace(/\s+/g, ''),
+            }),
+        }}
         rules={[
           { required: true, message: '请输入栏目名称' },
           { type: 'string', pattern: /^[\u4e00-\u9fa5]+$/, message: '栏目名称只能是中文' },
