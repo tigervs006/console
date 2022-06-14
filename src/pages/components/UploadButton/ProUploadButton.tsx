@@ -133,13 +133,13 @@ export const ProUploadButton: React.FC<{
             reject();
           } else if (file.size > MAX_FILE_SIZE * UNIT) {
             notification.error({
-              message: '大小不符合要求',
+              message: '文件大小不符合要求',
               description: `单个文件不得超过 ${MAX_FILE_SIZE}M`,
             });
             reject();
           } else if (imageWidth > image.width || imageHeight > image.height) {
             notification.error({
-              message: '图像的宽高不符合要求',
+              message: '图像尺寸不符合要求',
               description: `请上传宽高大于或等于 ${imageWidth}X${imageHeight} 的图像`,
             });
             reject();
