@@ -1,12 +1,11 @@
+import { removeFile } from '@/services/ant-design-pro/api';
+import { CloudUploadOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { ProFormUploadButton } from '@ant-design/pro-form';
+import { message, Modal, notification, Upload } from 'antd';
+import type { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
+import type { UploadFile, UploadListType } from 'antd/es/upload/interface';
 import React from 'react';
 import { useModel } from 'umi';
-import type { RcFile } from 'antd/es/upload';
-import { removeFile } from '@/services/ant-design-pro/api';
-import { ProFormUploadButton } from '@ant-design/pro-form';
-import { notification, message, Upload, Modal } from 'antd';
-import type { UploadChangeParam, UploadProps } from 'antd/es/upload';
-import type { UploadListType, UploadFile } from 'antd/es/upload/interface';
-import { QuestionCircleOutlined, CloudUploadOutlined } from '@ant-design/icons';
 
 export const ProUploadButton: React.FC<API.uploadButtonParam> = (props) => {
   const { confirm } = Modal;
