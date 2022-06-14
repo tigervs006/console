@@ -14,13 +14,13 @@ export const ProUploadButton: React.FC<{
   fileSize?: number;
   maxUpload?: number;
   formLabel?: string;
-  isRequired: boolean;
   imageWidth?: number;
   acceptFile?: string;
   fileType?: string[];
   formTooltip?: string;
   imageHeight?: number;
   listType?: UploadListType;
+  validateRules?: Record<string, any>[];
   extraData: { field: string; path: string };
   useTransForm?: (value: string | UploadFile[]) => Record<string, string>;
 }> = (props) => {
@@ -159,10 +159,10 @@ export const ProUploadButton: React.FC<{
       label={props?.formLabel}
       title={props?.formTitle}
       tooltip={props.formTooltip}
+      rules={props.validateRules}
       icon={<CloudUploadOutlined />}
       action="/console/public/upload"
       transform={(value) => props?.useTransForm!(value)}
-      rules={[{ required: props.isRequired, message: '请上传图像' }]}
       fieldProps={{
         data: extraData,
         accept: acceptFile,
