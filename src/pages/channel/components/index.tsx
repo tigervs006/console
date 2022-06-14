@@ -109,9 +109,9 @@ export const CreateModalForm: React.FC<{
           maxLength: 20,
           showCount: true,
           onBlur: (e) =>
-            formRef.current?.setFieldsValue({
-              name: zh2Pinyin(e.target.value).replace(/\s+/g, ''),
-            }),
+            formRef.current?.setFieldsValue(
+            { name: zh2Pinyin(e.target.value).replace(/\s+/g, '') }
+            ),
         }}
         rules={[
           { required: true, message: '请输入栏目名称' },
