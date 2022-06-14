@@ -1,3 +1,5 @@
+import { pinyin } from 'pinyin-pro';
+
 /**
  * 延时返回结果
  * @return Promise
@@ -54,6 +56,16 @@ export const randomString = (length: number): string => {
   let result = '';
   for (let i = length; i > 0; --i) result += str[Math.floor(Math.random() * str.length)];
   return result;
+};
+
+/**
+ * 汉字转拼音
+ * @return string
+ * @param words 汉字
+ * @param options 设置项
+ */
+export const zh2Pinyin = (words: string, options?: Record<string, any>) => {
+  return pinyin(words, { ...options, removeNonZh: true, toneType: 'none', v: true });
 };
 
 /**
