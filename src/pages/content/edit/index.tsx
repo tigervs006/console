@@ -1,4 +1,4 @@
-import { history } from 'umi';
+import { history, useModel } from 'umi';
 import { useRef, useState } from 'react';
 import Ckeditor from '@/pages/components/Ckeditor';
 import { waitTime, extractImg } from '@/utils/tools';
@@ -6,33 +6,28 @@ import { PageContainer } from '@ant-design/pro-layout';
 import type { UploadFile } from 'antd/es/upload/interface';
 import type { articleData, channelDataItem } from '../data';
 import type { ProFormInstance } from '@ant-design/pro-form';
+import { FormOutlined, UndoOutlined } from '@ant-design/icons';
+import { notification, Button, Input, Space, message } from 'antd';
+import { ProUploadButton } from '@/pages/components/UploadButton/ProUploadButton';
 import ProForm, {
-  ProFormCheckbox,
   ProFormDependency,
+  ProFormCheckbox,
+  ProFormTextArea,
   ProFormSelect,
   ProFormText,
-  ProFormTextArea,
-  ProFormUploadButton,
 } from '@ant-design/pro-form';
-import type { RcFile, UploadProps, UploadChangeParam } from 'antd/es/upload';
-import { notification, Upload, Modal, Button, Input, Space, message } from 'antd';
-import { QuestionCircleOutlined, FormOutlined, UndoOutlined } from '@ant-design/icons';
-import {
-  removeFile,
-  getChannel,
-  getContent as getContents,
-  saveContent,
-} from '@/pages/content/service';
+import { getChannel, saveContent, getContent as getContents } from '@/pages/content/service';
 
 export default () => {
-  const { confirm } = Modal;
   const formRef = useRef<ProFormInstance>();
   // 文档内容
   const [content, setContent] = useState<string>(() => {
     return formRef.current?.getFieldValue('content') || null;
   });
   // 文件列表
-  const [fileLists, setFileLists] = useState<UploadFile[]>([]);
+  const { setFileLists } = useModel('file', (ret) => ({
+    setFileLists: ret.setFileList,
+  }));
   // 新闻栏目
   const channel = async () => {
     const res = await getChannel();
@@ -72,78 +67,6 @@ export default () => {
     setContent(CKcontent);
     // 设置到字段中只是为了rules规则验证
     formRef.current?.setFieldsValue({ content: CKcontent });
-  };
-
-  // 处理文件删除状态
-  const handleRemove: UploadProps['onRemove'] = (file: UploadFile) => {
-    return new Promise<boolean>((resolve, reject) => {
-      const url = file?.url ?? '';
-      // 从网址中截取文件的相对路径
-      const idx = url.lastIndexOf('.cn/');
-      const filePath = url.substring(idx + 4, url.length);
-      confirm({
-        centered: true,
-        cancelText: '算了',
-        title: '当真要删除?',
-        icon: <QuestionCircleOutlined />,
-        cancelButtonProps: { shape: 'round' },
-        okButtonProps: { danger: true, shape: 'round' },
-        // @ts-ignore
-        content: url.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)[1],
-        async onOk() {
-          const res = await removeFile({ filePath: filePath });
-          if (res.success) {
-            resolve(true);
-          } else {
-            reject('Failed');
-          }
-        },
-        onCancel() {
-          reject('onCancel');
-        },
-      });
-    });
-  };
-
-  // 处理文件上传状态
-  const handleChange: UploadProps['onChange'] = (info: UploadChangeParam) => {
-    const { fileList } = info;
-    /**
-     * 此处一定要先setState，否则状态
-     * 一直显示uploading并且无法读取
-     * response属性，antd历史遗留bug
-     * https://github.com/ant-design/ant-design/issues/2423
-     */
-    setFileLists(fileList.slice());
-    const status = info.file.status;
-    switch (status) {
-      case 'done':
-        message.success(info.file.response.msg);
-        setFileLists([
-          Object.assign(
-            { ...info.file.response.data },
-            { status: info.file.response.success ? 'done' : 'error' },
-          ),
-        ]);
-        break;
-      case 'error':
-        notification.error({
-          message: 'Error',
-          description: info.file?.response?.msg ?? 'Upload failed',
-        });
-        break;
-      case 'success':
-        message.success(info.file?.response?.msg ?? 'Upload successful');
-        break;
-      case 'removed':
-        message.success('Removed successfully');
-        break;
-      case 'uploading':
-        message.info('uploading...');
-        break;
-      default:
-        throw new Error('Not implemented yet: undefined case');
-    }
   };
 
   // 处理onFinsh提交
@@ -201,47 +124,6 @@ export default () => {
     } else {
       return {};
     }
-  };
-
-  // 处理上传前的文件
-  const handleBeforeUpload = (file: RcFile) => {
-    const MAX_FILE_SIZE = 2;
-    const UNIT = 1024 * 1024;
-    const curType = file.type;
-    const fileType = ['image/png', 'image/jpeg', 'image/pjpeg'];
-    return new Promise<boolean>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file as Blob);
-      reader.onload = function (e) {
-        const base64: string | ArrayBuffer | null | undefined = e.target?.result;
-        const image = document.createElement('img');
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        'string' === typeof base64 ? (image.src = base64) : undefined;
-        image.onload = function () {
-          if (!fileType.includes(curType)) {
-            notification.error({
-              message: '上传的文件类型错误',
-              description: `请上传格式为${fileType}的图像`,
-            });
-            reject();
-          } else if (file.size > MAX_FILE_SIZE * UNIT) {
-            notification.error({
-              message: '图像大小不符合要求',
-              description: `单张图像大小不得超过${MAX_FILE_SIZE}M`,
-            });
-            reject();
-          } else if (750 > image.width && 422 > image.height) {
-            notification.error({
-              message: '图像尺寸不符合要求',
-              description: `当前图像尺寸：${image.width}X${image.height}，要求的图像尺寸应为：≥750X422`,
-            });
-            reject();
-          } else {
-            resolve(true);
-          }
-        };
-      };
-    });
   };
 
   return (
@@ -408,15 +290,13 @@ export default () => {
                 );
               default:
                 return (
-                  <ProFormUploadButton
-                    max={1}
-                    name="litpic"
-                    label="上传图像"
-                    title="Upload"
-                    fileList={fileLists}
-                    tooltip="仅支持png、jpg、jpeg"
-                    action="/console/public/upload"
-                    transform={(litpic) => {
+                  <ProUploadButton
+                    formName={'litpic'}
+                    formTitle={'Upload'}
+                    formLabel={'上传图像'}
+                    formTooltip={'上传一张图片作为文档封面'}
+                    extraData={{ field: 'litpic', path: 'images/article' }}
+                    useTransForm={(litpic) => {
                       if ('string' === typeof litpic) return { litpic: litpic };
                       return {
                         litpic: litpic
@@ -424,29 +304,9 @@ export default () => {
                           .toString(),
                       };
                     }}
-                    rules={[
+                    validateRules={[
                       { required: true, message: '请选择上传图像或输入图像网址作为文档封面' },
                     ]}
-                    fieldProps={{
-                      onChange: handleChange,
-                      onRemove: handleRemove,
-                      progress: {
-                        strokeColor: {
-                          '0%': '#108ee9',
-                          '100%': '#87d068',
-                        },
-                        strokeWidth: 3,
-                        showInfo: false,
-                      },
-                      listType: 'picture-card',
-                      data: { field: 'litpic' },
-                      accept: '.png, .jpg, .jpeg, .gif',
-                      headers: { Authorization: localStorage.getItem('Authorization') || '' },
-                      beforeUpload: (file: RcFile) =>
-                        handleBeforeUpload(file)
-                          .then((check) => check)
-                          .catch(() => Upload.LIST_IGNORE),
-                    }}
                   />
                 );
             }
