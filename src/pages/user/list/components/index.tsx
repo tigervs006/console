@@ -1,13 +1,13 @@
 import md5 from 'md5';
 import { message } from 'antd';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import styles from '../../index.less';
 import { waitTime } from '@/utils/tools';
 import { saveUser } from '../../service';
 import type { tableDataItem } from '../../data';
 import type { UploadFile } from 'antd/es/upload/interface';
 import type { ProFormInstance } from '@ant-design/pro-form';
-import { ModalForm, ProFormText } from '@ant-design/pro-form';
+import { ModalForm, ProFormDependency, ProFormText } from '@ant-design/pro-form';
 import { ProUploadButton } from '@/pages/components/UploadButton';
 
 export const CreateUser: React.FC<{
@@ -17,10 +17,10 @@ export const CreateUser: React.FC<{
   reloadTable: () => void;
   handleSetModalVisit: (status: boolean) => void;
 }> = (props) => {
-  const currentUser = props?.record.name;
   const formRef = useRef<ProFormInstance>();
   const modalTitle = props.isCreateUser ? '新增用户' : '编辑用户';
   const uploadTitle = props.isCreateUser ? '上传头像' : '更换头像';
+  const [currentUser, setCurrentUser] = useState<string>(props?.record.name as string);
   // 处理onFinish事件
   const handleFinish = async (data: tableDataItem) => {
     await saveUser(Object.assign({ ...data }, { id: props?.record?.id ?? null, gid: 1 })).then(
@@ -62,31 +62,46 @@ export const CreateUser: React.FC<{
       onVisibleChange={props.handleSetModalVisit}
       onFinish={(values) => handleFinish(values).then(() => true)}
     >
-      <ProUploadButton
-        imageWidth={200}
-        imageHeight={200}
-        formName={'avatar'}
-        formTitle={uploadTitle}
-        className={styles.avatarUpload}
-        validateRules={[{ required: true, message: '请为当前用户上传头像' }]}
-        useTransForm={(value) => {
-          if ('string' === typeof value) return { avatar: value };
-          return {
-            avatar: value.map((item: UploadFile) => item?.response?.data?.url ?? '').toString(),
-          };
+      <ProFormDependency name={['name']}>
+        {/*@ts-ignore*/}
+        {({ name }) => {
+          if (name) {
+            return (
+              <ProUploadButton
+                imageWidth={200}
+                imageHeight={200}
+                formName={'avatar'}
+                formTitle={uploadTitle}
+                className={styles.avatarUpload}
+                validateRules={[{ required: true, message: '请为当前用户上传头像' }]}
+                useTransForm={(value) => {
+                  if ('string' === typeof value) return { avatar: value };
+                  return {
+                    avatar: value
+                      .map((item: UploadFile) => item?.response?.data?.url ?? '')
+                      .toString(),
+                  };
+                }}
+                extraData={{
+                  field: 'avatar',
+                  path: `images/avatar/${currentUser}`,
+                }}
+              />
+            );
+          }
         }}
-        extraData={{
-          field: 'avatar',
-          path: `images/avatar/${currentUser}`,
-        }}
-      />
+      </ProFormDependency>
       <ProFormText
         hasFeedback
         name="name"
         label="用户名"
         tooltip="你的登录账号"
         placeholder="请输入用户名"
-        fieldProps={{ maxLength: 20, showCount: true }}
+        fieldProps={{
+          maxLength: 20,
+          showCount: true,
+          onBlur: (e) => setCurrentUser(e.target.value),
+        }}
         rules={[
           { required: true, message: '请输入用户名' },
           { type: 'string', pattern: /^\w+$/, message: '用户名只能是英文或数字与下横线组合' },
