@@ -275,7 +275,7 @@ export default () => {
           <Popconfirm
             okText="确定"
             cancelText="取消"
-            title="确定编辑详情，取消编辑当前行"
+            title="取消为编辑当前行，点击确定编辑详情"
             okButtonProps={{ shape: 'round' }}
             cancelButtonProps={{ shape: 'round' }}
             onCancel={(e) => {
