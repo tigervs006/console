@@ -159,7 +159,7 @@ export const ProUploadButton: React.FC<{
       label={props?.formLabel}
       title={props?.formTitle}
       tooltip={props.formTooltip}
-      rules={props.validateRules}
+      rules={props?.validateRules}
       icon={<CloudUploadOutlined />}
       action="/console/public/upload"
       transform={(value) => props?.useTransForm!(value)}
