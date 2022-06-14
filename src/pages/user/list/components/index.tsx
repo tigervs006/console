@@ -15,8 +15,8 @@ export const CreateUser: React.FC<{
   modalVisit: boolean;
   isCreateUser: boolean;
   record: tableDataItem;
-  reloadTable: () => void;
   ref: ForwardedRef<any>;
+  reloadTable: () => void;
   handleSetModalVisit: (status: boolean) => void;
 }> = forwardRef((props, ref) => {
   const formRef = useRef<ProFormInstance>();
