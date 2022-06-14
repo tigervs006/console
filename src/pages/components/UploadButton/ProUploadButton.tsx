@@ -80,8 +80,7 @@ export const ProUploadButton: React.FC<API.uploadButtonParam> = (props) => {
         icon: <QuestionCircleOutlined />,
         cancelButtonProps: { shape: 'round' },
         okButtonProps: { danger: true, shape: 'round' },
-        // @ts-ignore
-        content: url.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)[1],
+        content: url.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)?.[1],
         async onOk() {
           const res = await removeFile({ filePath: filePath });
           if (res.success) {
