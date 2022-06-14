@@ -19,6 +19,8 @@ import {
 
 export default () => {
   const { confirm } = Modal;
+  // childRef
+  const childRef: React.ForwardedRef<any> = useRef();
   // ModalForm 状态
   const [modalVisit, setModalVisit] = useState<boolean>(false);
   // ModalForm 默认值
@@ -62,6 +64,7 @@ export default () => {
     setUserValues(record);
     setModalVisit(true);
     setIsCreateUser(false);
+    childRef.current?.setUser(record.name as string);
     setFileLists([
       {
         status: 'done',
@@ -256,6 +259,7 @@ export default () => {
         }}
       />
       <CreateUser
+        ref={childRef}
         record={userValues}
         modalVisit={modalVisit}
         isCreateUser={isCreateUser}

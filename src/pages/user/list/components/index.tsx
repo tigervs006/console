@@ -1,26 +1,29 @@
 import md5 from 'md5';
 import { message } from 'antd';
-import React, { useRef, useState } from 'react';
 import styles from '../../index.less';
 import { waitTime } from '@/utils/tools';
 import { saveUser } from '../../service';
+import type { ForwardedRef } from 'react';
 import type { tableDataItem } from '../../data';
 import type { UploadFile } from 'antd/es/upload/interface';
 import type { ProFormInstance } from '@ant-design/pro-form';
-import { ModalForm, ProFormDependency, ProFormText } from '@ant-design/pro-form';
 import { ProUploadButton } from '@/pages/components/UploadButton';
+import React, { useImperativeHandle, forwardRef, useRef, useState } from 'react';
+import { ModalForm, ProFormDependency, ProFormText } from '@ant-design/pro-form';
 
 export const CreateUser: React.FC<{
   modalVisit: boolean;
   isCreateUser: boolean;
   record: tableDataItem;
   reloadTable: () => void;
+  ref: ForwardedRef<any>;
   handleSetModalVisit: (status: boolean) => void;
-}> = (props) => {
+}> = forwardRef((props, ref) => {
   const formRef = useRef<ProFormInstance>();
+  const [currentUser, setCurrentUser] = useState<string>();
   const modalTitle = props.isCreateUser ? '新增用户' : '编辑用户';
   const uploadTitle = props.isCreateUser ? '上传头像' : '更换头像';
-  const [currentUser, setCurrentUser] = useState<string>(props?.record.name as string);
+  useImperativeHandle(ref, () => ({ setUser: (user: string) => setCurrentUser(user) }));
   // 处理onFinish事件
   const handleFinish = async (data: tableDataItem) => {
     await saveUser(Object.assign({ ...data }, { id: props?.record?.id ?? null, gid: 1 })).then(
@@ -173,4 +176,4 @@ export const CreateUser: React.FC<{
       />
     </ModalForm>
   );
-};
+});
