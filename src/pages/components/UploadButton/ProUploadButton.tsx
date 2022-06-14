@@ -160,6 +160,7 @@ export const ProUploadButton: React.FC<API.uploadButtonParam> = (props) => {
           strokeWidth: 3,
           showInfo: false,
         },
+        className: props?.className,
         beforeUpload: (file: RcFile) =>
           handleBeforeUpload(file)
             .then((res) => res)

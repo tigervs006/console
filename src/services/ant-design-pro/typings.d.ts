@@ -125,6 +125,7 @@ declare namespace API {
     fileSize?: number;
     maxUpload?: number;
     formLabel?: string;
+    className?: string;
     imageWidth?: number;
     acceptFile?: string;
     fileType?: string[];
