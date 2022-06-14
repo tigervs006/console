@@ -17,8 +17,6 @@ export const ProUploadButton: React.FC<API.uploadButtonParam> = (props) => {
   const imageWidth: number = props?.imageWidth ?? 750;
   // 图片高度
   const imageHeight: number = props?.imageHeight ?? 420;
-  // 扩展参数
-  const extraData: { field: string; path: string } = props.extraData;
   // 展示方式
   const listType: UploadListType = props?.listType ?? 'picture-card';
   // 文件后缀
@@ -105,8 +103,7 @@ export const ProUploadButton: React.FC<API.uploadButtonParam> = (props) => {
       reader.onload = function (e) {
         const base64: string | ArrayBuffer | null | undefined = e.target?.result;
         const image = document.createElement('img');
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        typeof base64 === 'string' ? (image.src = base64) : undefined;
+        image.src = 'string' === typeof base64 ? base64 : (undefined as unknown as string);
         image.onload = function () {
           if (!fileType.includes(curType)) {
             notification.error({
@@ -147,8 +144,8 @@ export const ProUploadButton: React.FC<API.uploadButtonParam> = (props) => {
       action="/console/public/upload"
       transform={(value) => props?.useTransForm!(value)}
       fieldProps={{
-        data: extraData,
         accept: acceptFile,
+        data: props.extraData,
         onChange: handleChange,
         onRemove: handleRemove,
         progress: {
