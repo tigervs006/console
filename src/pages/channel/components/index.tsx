@@ -5,7 +5,7 @@ import type { tableDataItem } from '../data';
 import { fetchData, saveChannel } from '../service';
 import type { UploadFile } from 'antd/es/upload/interface';
 import type { ProFormInstance } from '@ant-design/pro-form';
-import { ProUploadButton } from '@/pages/components/UploadButton/ProUploadButton';
+import { ProUploadButton } from '@/pages/components/UploadButton';
 import { ModalForm, ProFormText, ProFormTextArea, ProFormTreeSelect } from '@ant-design/pro-form';
 
 export const CreateModalForm: React.FC<{

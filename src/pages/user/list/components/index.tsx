@@ -8,7 +8,7 @@ import type { tableDataItem } from '../../data';
 import type { UploadFile } from 'antd/es/upload/interface';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import { ModalForm, ProFormText } from '@ant-design/pro-form';
-import { ProUploadButton } from '@/pages/components/UploadButton/ProUploadButton';
+import { ProUploadButton } from '@/pages/components/UploadButton';
 
 export const CreateUser: React.FC<{
   modalVisit: boolean;
@@ -17,6 +17,7 @@ export const CreateUser: React.FC<{
   reloadTable: () => void;
   handleSetModalVisit: (status: boolean) => void;
 }> = (props) => {
+  const currentUser = props?.record.name;
   const formRef = useRef<ProFormInstance>();
   const modalTitle = props.isCreateUser ? '新增用户' : '编辑用户';
   const uploadTitle = props.isCreateUser ? '上传头像' : '更换头像';
@@ -76,7 +77,7 @@ export const CreateUser: React.FC<{
         }}
         extraData={{
           field: 'avatar',
-          path: `images/avatar/${formRef.current?.getFieldValue('name') ?? null}`,
+          path: `images/avatar/${currentUser}`,
         }}
       />
       <ProFormText
@@ -150,7 +151,7 @@ export const CreateUser: React.FC<{
               if (!value || value === getFieldValue('password')) {
                 return Promise.resolve();
               }
-              return Promise.reject(new Error('验证错误，两次输入的密码不一致'));
+              return Promise.reject(new Error('验证失败，两次输入的密码不一致'));
             },
           }),
         ]}

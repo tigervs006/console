@@ -7,8 +7,8 @@ import type { UploadFile } from 'antd/es/upload/interface';
 import type { articleData, channelDataItem } from '../data';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import { FormOutlined, UndoOutlined } from '@ant-design/icons';
+import { ProUploadButton } from '@/pages/components/UploadButton';
 import { notification, Button, Input, Space, message } from 'antd';
-import { ProUploadButton } from '@/pages/components/UploadButton/ProUploadButton';
 import ProForm, {
   ProFormDependency,
   ProFormCheckbox,

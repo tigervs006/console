@@ -1,13 +1,13 @@
 import { useModel } from 'umi';
 import type { tableDataItem } from './data';
+import { CreateModalForm } from './components';
 import React, { useRef, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { EditableProTable } from '@ant-design/pro-table';
-import { CreateModalForm } from './components/CreateModalForm';
+import { RecordSwitch } from '@/pages/components/RecordSwitch';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import { Popconfirm, Button, Space, Table, message, Modal } from 'antd';
 import { saveChannel, fetchData, remove } from '@/pages/channel/service';
-import { RecordSwitch } from '@/pages/components/RecordSwitch/RecordSwitch';
 import {
   queryChildId,
   queryParentPath,

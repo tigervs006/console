@@ -1,15 +1,15 @@
 import moment from 'moment';
 import { useModel } from 'umi';
 import { _int2ip } from '@/utils/tools';
+import { CreateUser } from './components';
 import ProTable from '@ant-design/pro-table';
 import React, { useState, useRef } from 'react';
 import type { tableDataItem } from '@/pages/user/data';
 import { PageContainer } from '@ant-design/pro-layout';
 import { fetchData, remove } from '@/pages/user/service';
-import { CreateUser } from '@/pages/user/list/components';
 import { message, Button, Modal, Space, Table } from 'antd';
+import { RecordSwitch } from '@/pages/components/RecordSwitch';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
-import { RecordSwitch } from '@/pages/components/RecordSwitch/RecordSwitch';
 import {
   EditOutlined,
   PlusOutlined,
@@ -19,18 +19,18 @@ import {
 
 export default () => {
   const { confirm } = Modal;
-  // ActionType
-  const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
   // ModalForm 状态
   const [modalVisit, setModalVisit] = useState<boolean>(false);
-  // ModalForm 标题
-  const [isCreateUser, setIsCreateUser] = useState<boolean>(false);
   // ModalForm 默认值
   const [userValues, setUserValues] = useState<tableDataItem>({});
+  // ModalForm 标题
+  const [isCreateUser, setIsCreateUser] = useState<boolean>(false);
   // 文件列表
   const { setFileLists } = useModel('file', (ret) => ({
     setFileLists: ret.setFileList,
   }));
+  // ActionType
+  const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
   /**
    * 获取用户列表
    * @param params 参数
