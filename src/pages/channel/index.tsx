@@ -79,11 +79,8 @@ export default () => {
   // handlePreview
   const handlePreview = (e: React.MouseEvent<HTMLElement>, record: tableDataItem) => {
     e.stopPropagation();
-    const path = queryParentPath(
-      channelData,
-      (data: { name: string }) => data.name === record.name,
-    );
-    window.open(`/${path.join('/')}`);
+    const path = queryParentPath(channelData, record.name as string);
+    if (path.length) window.open(`/${path.join('/')}`, 'preview');
   };
   // 处理单个/批量删除栏目
   const handleDelete = (
