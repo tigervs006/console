@@ -5,6 +5,7 @@ import React, { useRef, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { EditableProTable } from '@ant-design/pro-table';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
+import type { EditableFormInstance } from '@ant-design/pro-table';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import { Popconfirm, Button, Space, Table, message, Modal } from 'antd';
 import { saveChannel, fetchData, remove } from '@/pages/channel/service';
@@ -14,6 +15,7 @@ import {
   randomString,
   recursiveQuery,
   waitTime,
+  zh2Pinyin,
 } from '@/utils/tools';
 import {
   QuestionCircleOutlined,
@@ -33,6 +35,8 @@ export default () => {
   const { setFileList } = useModel('file', (ret) => ({
     setFileList: ret.setFileList,
   }));
+  // formRef
+  const formRef = useRef<EditableFormInstance>();
   // ModalForm 状态
   const [modalVisit, setModalVisit] = useState<boolean>(false);
   // 存放子项的id
@@ -181,6 +185,12 @@ export default () => {
       title: '栏目名称',
       dataIndex: 'cname',
       tooltip: '作为网站导航栏显示',
+      fieldProps: () => ({
+        onBlur: (e: React.FocusEvent<HTMLInputElement>) =>
+          formRef.current?.setRowData!(editableKeys.toString(), {
+            name: zh2Pinyin(e.target.value).replace(/\s+/g, ''),
+          }),
+      }),
       formItemProps: () => ({
         rules: [
           { required: true, message: '栏目名称为必填项' },
@@ -325,6 +335,7 @@ export default () => {
         columns={columns}
         pagination={false}
         request={tableData}
+        editableFormRef={formRef}
         rowKey={(record) => record.id as number}
         editable={{
           editableKeys,
