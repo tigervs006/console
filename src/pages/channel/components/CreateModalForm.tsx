@@ -58,7 +58,6 @@ export const CreateModalForm: React.FC<{
       initialValues={props.record}
       validateTrigger={['onBlur']}
       onVisibleChange={props.handleSetModalVisit}
-      onValuesChange={(values) => console.log('onChange', values)}
       onFinish={(values) => handleFinish(values).then(() => true)}
     >
       <ProUploadButton
