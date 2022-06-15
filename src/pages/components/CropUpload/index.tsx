@@ -117,8 +117,9 @@ export const CropUpload: React.FC<
         });
         break;
       case undefined:
+        // 这里很重要
         setFileList([]);
-        break; // 这里很重要
+        break;
       default:
         throw new Error('Not implemented yet: undefined case');
     }
@@ -171,7 +172,7 @@ export const CropUpload: React.FC<
       rules={props?.validateRules}
       transform={(value) => props?.useTransForm!(value)}
     >
-      <ImgCrop grid rotate aspect={aspect} modalTitle="裁剪图像">
+      <ImgCrop grid quality={1} aspect={aspect} modalTitle="裁剪图像">
         <Upload
           accept={acceptFile}
           listType={listType}
