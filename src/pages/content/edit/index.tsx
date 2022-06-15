@@ -4,10 +4,10 @@ import Ckeditor from '@/pages/components/Ckeditor';
 import { waitTime, extractImg } from '@/utils/tools';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { UploadFile } from 'antd/es/upload/interface';
+import { CropUpload } from '@/pages/components/CropUpload';
 import type { articleData, channelDataItem } from '../data';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import { FormOutlined, UndoOutlined } from '@ant-design/icons';
-import { ProUploadButton } from '@/pages/components/UploadButton';
 import { notification, Button, Input, Space, message } from 'antd';
 import ProForm, {
   ProFormDependency,
@@ -51,7 +51,7 @@ export default () => {
     if (imgArr.length) {
       notification.success({
         message: '提取图像成功',
-        description: imgArr.toString(),
+        description: imgArr.toString().match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)?.[1],
       });
     } else {
       notification.error({
@@ -290,16 +290,16 @@ export default () => {
                 );
               default:
                 return (
-                  <ProUploadButton
+                  <CropUpload
                     formName={'litpic'}
+                    cropAspect={16 / 9}
                     formTitle={'Upload'}
-                    formLabel={'上传图像'}
                     formTooltip={'上传一张图片作为文档封面'}
                     extraData={{ field: 'litpic', path: 'images/article' }}
-                    useTransForm={(litpic) => {
-                      if ('string' === typeof litpic) return { litpic: litpic };
+                    useTransForm={(value) => {
+                      if ('string' === typeof value) return { litpic: value };
                       return {
-                        litpic: litpic
+                        litpic: value
                           .map((item: UploadFile) => item?.response.data.url ?? '')
                           .toString(),
                       };
@@ -307,6 +307,9 @@ export default () => {
                     validateRules={[
                       { required: true, message: '请选择上传图像或输入图像网址作为文档封面' },
                     ]}
+                    setFieldsValue={(fileList: UploadFile[]) =>
+                      formRef.current?.setFieldsValue({ litpic: fileList })
+                    }
                   />
                 );
             }
