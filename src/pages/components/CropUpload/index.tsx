@@ -1,12 +1,12 @@
-import { removeFile } from '@/services/ant-design-pro/api';
-import { CloudUploadOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import ProForm from '@ant-design/pro-form';
-import { Button, message, Modal, notification, Upload } from 'antd';
-import ImgCrop from 'antd-img-crop';
-import type { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
-import type { UploadFile, UploadListType } from 'antd/es/upload/interface';
 import React from 'react';
 import { useModel } from 'umi';
+import ImgCrop from 'antd-img-crop';
+import ProForm from '@ant-design/pro-form';
+import { removeFile } from '@/services/ant-design-pro/api';
+import { Button, message, Modal, notification, Upload } from 'antd';
+import type { UploadFile, UploadListType } from 'antd/es/upload/interface';
+import type { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
+import { CloudUploadOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 
 export const CropUpload: React.FC<
   API.uploadComponents & {
