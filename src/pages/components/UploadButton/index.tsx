@@ -1,11 +1,11 @@
-import { removeFile } from '@/services/ant-design-pro/api';
-import { CloudUploadOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { ProFormUploadButton } from '@ant-design/pro-form';
-import { message, Modal, notification, Upload } from 'antd';
-import type { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
-import type { UploadFile, UploadListType } from 'antd/es/upload/interface';
 import React from 'react';
 import { useModel } from 'umi';
+import { removeFile } from '@/services/ant-design-pro/api';
+import { ProFormUploadButton } from '@ant-design/pro-form';
+import { message, Modal, notification, Upload } from 'antd';
+import type { UploadFile, UploadListType } from 'antd/es/upload/interface';
+import type { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
+import { CloudUploadOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 
 export const ProUploadButton: React.FC<API.uploadComponents> = (props) => {
   const { confirm } = Modal;
@@ -35,10 +35,10 @@ export const ProUploadButton: React.FC<API.uploadComponents> = (props) => {
     const status = info.file.status;
     switch (status) {
       case 'uploading':
-        message.info('File is uploading...');
+        message.info!('File is uploading...');
         break;
       case 'done':
-        message.success(info.file.response.msg);
+        message.success!(info.file.response.msg);
         setFileLists([
           Object.assign(
             { ...info.file.response.data },
@@ -47,10 +47,10 @@ export const ProUploadButton: React.FC<API.uploadComponents> = (props) => {
         ]);
         break;
       case 'success':
-        message.success('File uploaded successfully');
+        message.success!('File uploaded successfully');
         break;
       case 'removed':
-        message.success('File removed successfully');
+        message.success!('File removed successfully');
         break;
       case 'error':
         notification.error({
