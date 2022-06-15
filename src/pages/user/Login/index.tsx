@@ -9,7 +9,7 @@ import {
 } from '@ant-design/icons';
 import styles from './index.less';
 import React, { useState } from 'react';
-import { waitTime } from '@/utils/tools';
+import { waitTime } from '@/extra/utils';
 import Footer from '@/components/Footer';
 import { Alert, message, Tabs } from 'antd';
 import { login } from '@/services/ant-design-pro/api';

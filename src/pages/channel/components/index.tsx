@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import React, { useRef } from 'react';
 import type { tableDataItem } from '../data';
-import { waitTime, zh2Pinyin } from '@/utils/tools';
+import { waitTime, zh2Pinyin } from '@/extra/utils';
 import { fetchData, saveChannel } from '../service';
 import type { UploadFile } from 'antd/es/upload/interface';
 import type { ProFormInstance } from '@ant-design/pro-form';
@@ -109,9 +109,9 @@ export const CreateModalForm: React.FC<{
           maxLength: 20,
           showCount: true,
           onBlur: (e) =>
-            formRef.current?.setFieldsValue(
-            { name: zh2Pinyin(e.target.value).replace(/\s+/g, '') }
-            ),
+            formRef.current?.setFieldsValue({
+              name: zh2Pinyin(e.target.value).replace(/\s+/g, ''),
+            }),
         }}
         rules={[
           { required: true, message: '请输入栏目名称' },

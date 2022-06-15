@@ -10,13 +10,13 @@ import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import { Popconfirm, Button, Space, Table, message, Modal } from 'antd';
 import { saveChannel, fetchData, remove } from '@/pages/channel/service';
 import {
-  queryChildId,
   queryParentPath,
-  randomString,
   recursiveQuery,
+  queryChildId,
+  randomString,
   waitTime,
   zh2Pinyin,
-} from '@/utils/tools';
+} from '@/extra/utils';
 import {
   QuestionCircleOutlined,
   MinusCircleOutlined,

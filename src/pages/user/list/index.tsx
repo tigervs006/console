@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { useModel } from 'umi';
-import { _int2ip } from '@/utils/tools';
+import { _int2ip } from '@/extra/utils';
 import { CreateUser } from './components';
 import ProTable from '@ant-design/pro-table';
 import React, { useState, useRef } from 'react';

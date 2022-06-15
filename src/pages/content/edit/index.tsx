@@ -1,7 +1,7 @@
 import { history, useModel } from 'umi';
 import { useRef, useState } from 'react';
 import Ckeditor from '@/pages/components/Ckeditor';
-import { waitTime, extractImg } from '@/utils/tools';
+import { waitTime, extractImg } from '@/extra/utils';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { UploadFile } from 'antd/es/upload/interface';
 import { CropUpload } from '@/pages/components/CropUpload';
