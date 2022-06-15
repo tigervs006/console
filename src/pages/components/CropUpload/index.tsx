@@ -1,4 +1,5 @@
 import React from 'react';
+import 'antd/es/slider/style';
 import { useModel } from 'umi';
 import ImgCrop from 'antd-img-crop';
 import ProForm from '@ant-design/pro-form';
