@@ -119,7 +119,7 @@ declare namespace API {
     status: number;
   };
 
-  type uploadButtonParam = {
+  type uploadComponents = {
     formName: string;
     formTitle: string;
     fileSize?: number;

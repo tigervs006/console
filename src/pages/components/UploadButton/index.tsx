@@ -7,7 +7,7 @@ import type { UploadFile, UploadListType } from 'antd/es/upload/interface';
 import React from 'react';
 import { useModel } from 'umi';
 
-export const ProUploadButton: React.FC<API.uploadButtonParam> = (props) => {
+export const ProUploadButton: React.FC<API.uploadComponents> = (props) => {
   const { confirm } = Modal;
   // 大小限制
   const fileSize: number = props?.fileSize ?? 2;
@@ -16,7 +16,7 @@ export const ProUploadButton: React.FC<API.uploadButtonParam> = (props) => {
   // 图片宽度
   const imageWidth: number = props?.imageWidth ?? 750;
   // 图片高度
-  const imageHeight: number = props?.imageHeight ?? 420;
+  const imageHeight: number = props?.imageHeight ?? 422;
   // 展示方式
   const listType: UploadListType = props?.listType ?? 'picture-card';
   // 文件后缀
@@ -58,9 +58,8 @@ export const ProUploadButton: React.FC<API.uploadButtonParam> = (props) => {
           description: info.file?.response?.msg ?? 'File upload failed',
         });
         break;
-      default: {
+      default:
         throw new Error('Not implemented yet: undefined case');
-      }
     }
   };
   // 处理文件删除状态
