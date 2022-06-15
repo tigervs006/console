@@ -1,15 +1,15 @@
-import md5 from 'md5';
-import { message } from 'antd';
-import styles from '../../index.less';
+import { CropUpload } from '@/pages/components/CropUpload';
 import { waitTime } from '@/utils/tools';
-import { saveUser } from '../../service';
-import type { ForwardedRef } from 'react';
-import type { tableDataItem } from '../../data';
-import type { UploadFile } from 'antd/es/upload/interface';
 import type { ProFormInstance } from '@ant-design/pro-form';
-import { ProUploadButton } from '@/pages/components/UploadButton';
-import React, { useImperativeHandle, forwardRef, useRef, useState } from 'react';
 import { ModalForm, ProFormDependency, ProFormText } from '@ant-design/pro-form';
+import { message } from 'antd';
+import type { UploadFile } from 'antd/es/upload/interface';
+import md5 from 'md5';
+import type { ForwardedRef } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+import type { tableDataItem } from '../../data';
+import styles from '../../index.less';
+import { saveUser } from '../../service';
 
 export const CreateUser: React.FC<{
   modalVisit: boolean;
@@ -22,7 +22,6 @@ export const CreateUser: React.FC<{
   const formRef = useRef<ProFormInstance>();
   const [currentUser, setCurrentUser] = useState<string>();
   const modalTitle = props.isCreateUser ? '新增用户' : '编辑用户';
-  const uploadTitle = props.isCreateUser ? '上传头像' : '更换头像';
   useImperativeHandle(ref, () => ({ setUser: (user: string) => setCurrentUser(user) }));
   // 处理onFinish事件
   const handleFinish = async (data: tableDataItem) => {
@@ -70,12 +69,16 @@ export const CreateUser: React.FC<{
         {({ name }) => {
           if (name) {
             return (
-              <ProUploadButton
+              <CropUpload
                 imageWidth={200}
                 imageHeight={200}
                 formName={'avatar'}
-                formTitle={uploadTitle}
+                formTitle={'上传头像'}
                 className={styles.avatarUpload}
+                extraData={{
+                  field: 'avatar',
+                  path: `images/avatar/${currentUser}`,
+                }}
                 validateRules={[{ required: true, message: '请为当前用户上传头像' }]}
                 useTransForm={(value) => {
                   if ('string' === typeof value) return { avatar: value };
@@ -85,10 +88,9 @@ export const CreateUser: React.FC<{
                       .toString(),
                   };
                 }}
-                extraData={{
-                  field: 'avatar',
-                  path: `images/avatar/${currentUser}`,
-                }}
+                setFieldsValue={(fileList: UploadFile[]) =>
+                  formRef.current?.setFieldsValue({ avatar: fileList })
+                }
               />
             );
           }
