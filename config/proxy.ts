@@ -10,19 +10,19 @@ export default {
   dev: {
     '/console/': {
       changeOrigin: true,
-      target: 'https://demo.brandsz.cn'
-    }
+      target: 'https://www.brandsz.cn',
+    },
   },
   pre: {
     '/console/': {
       changeOrigin: true,
-      target: 'https://www.brandsz.cn'
+      target: 'https://www.brandsz.cn',
     },
   },
   test: {
     '/console/': {
       changeOrigin: true,
-      target: 'https://test.brandsz.cn'
+      target: 'https://test.brandsz.cn',
     },
-  }
-}
+  },
+};
