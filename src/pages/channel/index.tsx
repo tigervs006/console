@@ -7,9 +7,10 @@ import { EditableProTable } from '@ant-design/pro-table';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
 import type { EditableFormInstance } from '@ant-design/pro-table';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
-import { Popconfirm, Button, Space, Table, message, Modal } from 'antd';
+import { Popconfirm, Button, Space, Table, message, Modal, Cascader } from 'antd';
 import { saveChannel, fetchData, remove } from '@/pages/channel/service';
 import {
+  setChildPathToArray,
   queryParentPath,
   recursiveQuery,
   queryChildId,
@@ -30,15 +31,15 @@ import {
 export default () => {
   const { confirm } = Modal;
   // selectOption
-  const defaultOption = [{ id: 0, cname: '顶级栏目' }];
+  const defaultOption = [{ id: 0, pid: 0, cname: '顶级栏目' }];
   // setFileList
   const { setFileList } = useModel('file', (ret) => ({
     setFileList: ret.setFileList,
   }));
+  // 栏目路径
+  const [pid, setPid] = useState<number[]>();
   // formRef
   const formRef = useRef<EditableFormInstance>();
-  // 栏目路径
-  const [deepPath, setDeepPath] = useState<number[]>();
   // ModalForm 状态
   const [modalVisit, setModalVisit] = useState<boolean>(false);
   // 存放子项的id
@@ -63,8 +64,8 @@ export default () => {
     record: tableDataItem,
     e: React.MouseEvent<HTMLElement, MouseEvent> | undefined,
   ) => {
+    setPid([]);
     e!.stopPropagation();
-    setDeepPath([]);
     setModallValues(record);
     setModalVisit(true);
     setExpandByClick(false);
@@ -138,8 +139,8 @@ export default () => {
     const post = {
       ...data,
       single: true,
-      pid: deepPath?.at(-1) ?? data.pid,
-      path: deepPath?.join('-') ?? data.path,
+      pid: pid?.at(-1) ?? data.pid,
+      path: pid?.join('-') ?? data.path,
     };
     await saveChannel(post).then((res) => {
       message.success(res.msg);
@@ -183,6 +184,8 @@ export default () => {
     }
     return await fetchData(paramData).then((res) => {
       const resList = res?.data?.list;
+      // 将对象中的path转成数组
+      if (resList) setChildPathToArray(resList);
       // 存储栏目在选择栏目时用
       setChannelData(defaultOption.concat(resList));
       // 把存在子项的栏目id存储起来
@@ -224,21 +227,23 @@ export default () => {
     {
       width: 150,
       title: '上级栏目',
-      dataIndex: 'pid',
-      fieldProps: {
-        fieldNames: {
-          value: 'id',
-          label: 'cname',
-        },
-        showSearch: true,
-        changeOnSelect: true,
-        options: channelData,
-        onChange: (value: number[]) => setDeepPath(value),
-      },
-      valueType: 'cascader',
+      dataIndex: 'path',
       formItemProps: () => ({
         rules: [{ required: true, message: '上级栏目为必填项' }],
       }),
+      render: (_, record) => record.pname,
+      renderFormItem: () => (
+        <Cascader
+          showSearch
+          changeOnSelect
+          allowClear={false}
+          options={channelData}
+          onChange={(value: any) => setPid(value)}
+          fieldNames={{ value: 'id', label: 'cname' }}
+          // 始终只显示最后一个父级栏目名
+          displayRender={(labels: string[]) => labels.at(-1)}
+        />
+      ),
     },
     {
       width: 150,
