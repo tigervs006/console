@@ -119,3 +119,15 @@ export const queryParentPath = (data: Record<string, any>[], name: string, path:
   }
   return [];
 };
+
+/**
+ * 将树型数组的path转换为数字数组
+ * @return void
+ * @param data
+ */
+export const setChildPathToArray = (data: Record<string, any>[]) => {
+  data.forEach((item: Record<string, any>) => {
+    item.path = item.path.split('-').map(Number);
+    if (item.children) setChildPathToArray(item.children);
+  });
+};
