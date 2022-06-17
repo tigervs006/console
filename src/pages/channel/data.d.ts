@@ -1,6 +1,7 @@
 export type tableDataItem = {
   pid?: number;
   sort?: number;
+  path?: string;
   name?: string;
   cname?: string;
   level?: number;
