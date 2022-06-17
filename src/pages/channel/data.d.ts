@@ -5,6 +5,7 @@ export type tableDataItem = {
   cname?: string;
   level?: number;
   title?: string;
+  pname?: string;
   banner?: string;
   keywords?: string;
   id?: number | string;
