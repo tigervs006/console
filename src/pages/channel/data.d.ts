@@ -1,5 +1,4 @@
 export type tableDataItem = {
-  pid?: number;
   sort?: number;
   path?: string;
   name?: string;
@@ -11,6 +10,7 @@ export type tableDataItem = {
   id?: number | string;
   description?: string;
   ceraet_time?: string;
+  pid?: number | number[];
   status?: number | string;
   children?: tableDataItem[];
 };
