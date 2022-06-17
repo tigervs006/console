@@ -1,7 +1,7 @@
 import { useModel } from 'umi';
 import type { tableDataItem } from './data';
 import { CreateModalForm } from './components';
-import React, { useRef, useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { EditableProTable } from '@ant-design/pro-table';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
@@ -14,8 +14,8 @@ import {
   recursiveQuery,
   queryChildId,
   randomString,
-  waitTime,
   zh2Pinyin,
+  waitTime,
 } from '@/extra/utils';
 import {
   QuestionCircleOutlined,
@@ -37,6 +37,8 @@ export default () => {
   }));
   // formRef
   const formRef = useRef<EditableFormInstance>();
+  // 栏目路径
+  const [deepPath, setDeepPath] = useState<number[]>();
   // ModalForm 状态
   const [modalVisit, setModalVisit] = useState<boolean>(false);
   // 存放子项的id
@@ -62,6 +64,7 @@ export default () => {
     e: React.MouseEvent<HTMLElement, MouseEvent> | undefined,
   ) => {
     e!.stopPropagation();
+    setDeepPath([]);
     setModallValues(record);
     setModalVisit(true);
     setExpandByClick(false);
@@ -129,6 +132,22 @@ export default () => {
       },
     });
   };
+
+  // 处理单行编辑保存
+  const handleOnSave = async (data: tableDataItem) => {
+    const post = {
+      ...data,
+      single: true,
+      pid: deepPath?.at(-1) ?? data.pid,
+      path: deepPath?.join('-') ?? data.path,
+    };
+    await saveChannel(post).then((res) => {
+      message.success(res.msg);
+      setExpandByClick(true);
+      waitTime(1000).then(() => ref.current?.reload());
+    });
+  };
+
   // 处理展开/收缩状态的state
   const handleExpand = (expanded: boolean, record: tableDataItem) => {
     setExpandedRowKey((rowKey) => {
@@ -207,13 +226,16 @@ export default () => {
       title: '上级栏目',
       dataIndex: 'pid',
       fieldProps: {
-        options: channelData,
         fieldNames: {
           value: 'id',
           label: 'cname',
         },
+        showSearch: true,
+        changeOnSelect: true,
+        options: channelData,
+        onChange: (value: number[]) => setDeepPath(value),
       },
-      valueType: 'treeSelect',
+      valueType: 'cascader',
       formItemProps: () => ({
         rules: [{ required: true, message: '上级栏目为必填项' }],
       }),
@@ -341,16 +363,9 @@ export default () => {
           editableKeys,
           type: 'multiple',
           onChange: setEditableRowKeys,
-          actionRender: (row, config, dom) => [dom.save, dom.cancel],
-          onSave: async (rowKey, data) => {
-            await saveChannel(Object.assign(data, { single: true })).then((res) => {
-              message.success(res.msg);
-              setExpandByClick(true);
-              waitTime(1000).then(() => ref.current?.reload());
-            });
-          },
+          onSave: (_, data) => handleOnSave(data),
           onCancel: async () => setExpandByClick(true),
-          onDelete: async () => setExpandByClick(true),
+          actionRender: (row, config, dom) => [dom.save, dom.cancel],
         }}
         recordCreatorProps={{
           position: 'bottom',
