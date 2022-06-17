@@ -1,12 +1,12 @@
 import { message } from 'antd';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import type { tableDataItem } from '../data';
 import { waitTime, zh2Pinyin } from '@/extra/utils';
 import { fetchData, saveChannel } from '../service';
 import type { UploadFile } from 'antd/es/upload/interface';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import { ProUploadButton } from '@/pages/components/UploadButton';
-import { ModalForm, ProFormText, ProFormTextArea, ProFormTreeSelect } from '@ant-design/pro-form';
+import { ProFormCascader, ProFormTextArea, ProFormText, ModalForm } from '@ant-design/pro-form';
 
 export const CreateModalForm: React.FC<{
   modalVisit: boolean;
@@ -18,10 +18,18 @@ export const CreateModalForm: React.FC<{
 }> = (props) => {
   const formRef = useRef<ProFormInstance>();
   const defaultOption = [{ id: 0, cname: '顶级栏目' }];
+  // 上级栏目
+  const [pid, setPid] = useState<number[]>([]);
   const modalTitle = props.isCreateChannel ? '新增栏目' : '编辑栏目';
   // 处理onFinish事件
   const handleFinish = async (data: tableDataItem) => {
-    await saveChannel(Object.assign(data, { id: props?.record?.id ?? null })).then((res) => {
+    const post = {
+      ...data,
+      single: true,
+      id: props?.record?.id ?? '',
+      pid: pid || props.record.pid,
+    };
+    await saveChannel(post).then((res) => {
       message.success(res?.msg);
       props.setExpandByClick(true);
       // 延时重载列表数据
@@ -76,8 +84,8 @@ export const CreateModalForm: React.FC<{
           };
         }}
       />
-      <ProFormTreeSelect
-        name="pid"
+      <ProFormCascader
+        name="path"
         hasFeedback
         label="上级栏目"
         debounceTime={1000}
@@ -90,13 +98,19 @@ export const CreateModalForm: React.FC<{
           },
           allowClear: true,
           showSearch: true,
-          defaultValue: '0',
-          filterTreeNode: true,
-          treeNodeFilterProp: 'cname',
+          changeOnSelect: true,
+          onChange: (value: any) => setPid(value.at(-1)),
+          displayRender: (labels: string[]) => labels[labels.length - 1],
         }}
         rules={[{ required: true, message: '请选择上级栏目' }]}
         request={async (params) =>
           await fetchData(params).then((res) => defaultOption.concat(res?.data?.list))
+        }
+        transform={(value: string | number[]) =>
+          value instanceof Array ? { path: value.join('-') } : { path: value }
+        }
+        convertValue={(value: string | number[]) =>
+          value instanceof Array ? value : value?.split('-').map(Number) ?? [0]
         }
       />
       <ProFormText
