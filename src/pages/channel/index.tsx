@@ -11,7 +11,7 @@ import type { EditableFormInstance } from '@ant-design/pro-table';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import { saveChannel, fetchData, remove } from '@/pages/channel/service';
 import { Popconfirm, Button, Space, Table, message, Modal, Cascader } from 'antd';
-import { setChildPathToArray, queryParentPath, recursiveQuery, queryChildId, randomString, zh2Pinyin, waitTime } from '@/extra/utils';
+import { queryParentPath, recursiveQuery, queryChildId, randomString, zh2Pinyin, waitTime } from '@/extra/utils';
 import {
     QuestionCircleOutlined,
     MinusCircleOutlined,
@@ -75,6 +75,16 @@ export default () => {
             return [];
         });
     };
+
+    // pathToArray
+    const pathToArray = (data: tableDataItem[]) => {
+        data.forEach((item: Record<string, any>) => {
+            // 拆分为数组后再转换成数字数组
+            item.path = item.path.split('-').map(Number);
+            if (item.children) pathToArray(item.children);
+        });
+    };
+
     // handlePreview
     const handlePreview = (e: React.MouseEvent<HTMLElement>, record: tableDataItem) => {
         e.stopPropagation();
@@ -172,7 +182,7 @@ export default () => {
         return await fetchData(paramData).then(res => {
             const resList = res?.data?.list;
             // 将对象中的path转换数组
-            if (resList) setChildPathToArray(resList);
+            if (resList) pathToArray(resList);
             // 存储栏目在选择栏目时用
             setChannelData(defaultOption.concat(resList));
             // 把存在子项的栏目id存储起来
