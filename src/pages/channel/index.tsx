@@ -279,6 +279,16 @@ export default () => {
             filterMode: 'tree',
             dataIndex: 'status',
             valueType: 'select',
+            valueEnum: {
+                1: {
+                    text: '显示',
+                    status: 'Show',
+                },
+                0: {
+                    text: '隐藏',
+                    status: 'Hide',
+                },
+            },
             fieldProps: {
                 allowClear: false,
                 options: [
