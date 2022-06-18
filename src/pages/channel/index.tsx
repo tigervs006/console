@@ -277,17 +277,14 @@ export default () => {
             onFilter: true,
             title: '栏目状态',
             filterMode: 'tree',
-            valueType: 'select',
             dataIndex: 'status',
-            valueEnum: {
-                1: {
-                    text: '显示',
-                    status: 'Show',
-                },
-                0: {
-                    text: '隐藏',
-                    status: 'Hide',
-                },
+            valueType: 'select',
+            fieldProps: {
+                allowClear: false,
+                options: [
+                    { label: '隐藏', value: 0 },
+                    { label: '显示', value: 1 },
+                ],
             },
             render: (_, record) => <RecordSwitch record={record} url={'/channel/status'} />,
         },
