@@ -1,3 +1,5 @@
+/** @format */
+
 import { pinyin } from 'pinyin-pro';
 
 /**
@@ -6,11 +8,11 @@ import { pinyin } from 'pinyin-pro';
  * @param time 毫秒
  */
 export const waitTime = (time: number = 100) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, time);
-  });
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve(true);
+        }, time);
+    });
 };
 
 /**
@@ -20,14 +22,14 @@ export const waitTime = (time: number = 100) => {
  * TODO: 表达式有优化空间
  */
 export const extractImg = (content: string) => {
-  const images: string[] = [];
-  const srcReg = /src=[\'\"]?([^\'\"]*)[\'\"]?/i;
-  const imgArr = content.match(/<img.*?(?:>|\/>)/gi);
-  for (const idx in imgArr) {
-    const src = imgArr[idx].match(srcReg);
-    images.push(src?.[1]);
-  }
-  return images;
+    const images: string[] = [];
+    const srcReg = /src=[\'\"]?([^\'\"]*)[\'\"]?/i;
+    const imgArr = content.match(/<img.*?(?:>|\/>)/gi);
+    for (const idx in imgArr) {
+        const src = imgArr[idx].match(srcReg);
+        images.push(src?.[1]);
+    }
+    return images;
 };
 
 /**
@@ -36,14 +38,14 @@ export const extractImg = (content: string) => {
  * @param intIp ip地址
  */
 export const _int2ip = (intIp: number): string => {
-  let str = '';
-  const tt = [];
-  tt[0] = (intIp >>> 24) >>> 0;
-  tt[1] = ((intIp << 8) >>> 24) >>> 0;
-  tt[2] = (intIp << 16) >>> 24;
-  tt[3] = (intIp << 24) >>> 24;
-  str = String(tt[0]) + '.' + String(tt[1]) + '.' + String(tt[2]) + '.' + String(tt[3]);
-  return str;
+    let str = '';
+    const tt = [];
+    tt[0] = (intIp >>> 24) >>> 0;
+    tt[1] = ((intIp << 8) >>> 24) >>> 0;
+    tt[2] = (intIp << 16) >>> 24;
+    tt[3] = (intIp << 24) >>> 24;
+    str = String(tt[0]) + '.' + String(tt[1]) + '.' + String(tt[2]) + '.' + String(tt[3]);
+    return str;
 };
 
 /**
@@ -52,10 +54,10 @@ export const _int2ip = (intIp: number): string => {
  * @param length 字符串长度
  */
 export const randomString = (length: number): string => {
-  const str = 'abcdefghijklmnopqrstuvwxyz';
-  let result = '';
-  for (let i = length; i > 0; --i) result += str[Math.floor(Math.random() * str.length)];
-  return result;
+    const str = 'abcdefghijklmnopqrstuvwxyz';
+    let result = '';
+    for (let i = length; i > 0; --i) result += str[Math.floor(Math.random() * str.length)];
+    return result;
 };
 
 /**
@@ -65,7 +67,7 @@ export const randomString = (length: number): string => {
  * @param options 设置项
  */
 export const zh2Pinyin = (words: string, options?: Record<string, any>) => {
-  return pinyin(words, { ...options, removeNonZh: true, toneType: 'none', v: true });
+    return pinyin(words, { ...options, removeNonZh: true, toneType: 'none', v: true });
 };
 
 /**
@@ -75,13 +77,13 @@ export const zh2Pinyin = (words: string, options?: Record<string, any>) => {
  * @param init ids
  */
 export const recursiveQuery = (data: Record<string, any>[], init: number[] = []) => {
-  data.filter((item: any) => {
-    if (item.children) {
-      init.push(item.id);
-      recursiveQuery(item.children, init);
-    }
-  });
-  return init;
+    data.filter((item: any) => {
+        if (item.children) {
+            init.push(item.id);
+            recursiveQuery(item.children, init);
+        }
+    });
+    return init;
 };
 
 /**
@@ -91,11 +93,11 @@ export const recursiveQuery = (data: Record<string, any>[], init: number[] = [])
  * @param init  ids
  */
 export const queryChildId = (data: Record<string, any>[], init: number[] = []) => {
-  data.filter((item: Record<string, any>) => {
-    init.push(item.id);
-    if (item.children) queryChildId(item.children, init);
-  });
-  return init;
+    data.filter((item: Record<string, any>) => {
+        init.push(item.id);
+        if (item.children) queryChildId(item.children, init);
+    });
+    return init;
 };
 
 /**
@@ -106,28 +108,16 @@ export const queryChildId = (data: Record<string, any>[], init: number[] = []) =
  * @param path name路径
  */
 export const queryParentPath = (data: Record<string, any>[], name: string, path: string[] = []) => {
-  for (const item of data) {
-    path.push(item.name);
-    if (name === item.name) {
-      return path;
+    for (const item of data) {
+        path.push(item.name);
+        if (name === item.name) {
+            return path;
+        }
+        if (item.children) {
+            const child: string[] = queryParentPath(item.children, name, path);
+            if (child.length) return child;
+        }
+        path.pop();
     }
-    if (item.children) {
-      const child: string[] = queryParentPath(item.children, name, path);
-      if (child.length) return child;
-    }
-    path.pop();
-  }
-  return [];
-};
-
-/**
- * 将树型数组的path转换为数字数组
- * @return void
- * @param data
- */
-export const setChildPathToArray = (data: Record<string, any>[]) => {
-  data.forEach((item: Record<string, any>) => {
-    item.path = item.path.split('-').map(Number);
-    if (item.children) setChildPathToArray(item.children);
-  });
+    return [];
 };
