@@ -1,26 +1,25 @@
 /** @format */
 
-import { useModel } from 'umi';
-import type { tableDataItem } from './data';
-import { CreateModalForm } from './components';
-import React, { useState, useRef } from 'react';
-import { PageContainer } from '@ant-design/pro-layout';
-import { EditableProTable } from '@ant-design/pro-table';
+import { queryChildId, queryParentPath, randomString, recursiveQuery, waitTime, zh2Pinyin } from '@/extra/utils';
+import { fetchData, remove, saveChannel } from '@/pages/channel/service';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
-import type { EditableFormInstance } from '@ant-design/pro-table';
-import type { ProColumns, ActionType } from '@ant-design/pro-table';
-import { saveChannel, fetchData, remove } from '@/pages/channel/service';
-import { Popconfirm, Button, Space, Table, message, Modal, Cascader } from 'antd';
-import { queryParentPath, recursiveQuery, queryChildId, randomString, zh2Pinyin, waitTime } from '@/extra/utils';
 import {
-    QuestionCircleOutlined,
+    DeleteOutlined,
+    EditOutlined,
     MinusCircleOutlined,
     PlusCircleOutlined,
-    DeleteOutlined,
-    SearchOutlined,
-    EditOutlined,
     PlusOutlined,
+    QuestionCircleOutlined,
+    SearchOutlined,
 } from '@ant-design/icons';
+import { PageContainer } from '@ant-design/pro-layout';
+import type { ActionType, EditableFormInstance, ProColumns } from '@ant-design/pro-table';
+import { EditableProTable } from '@ant-design/pro-table';
+import { Button, Cascader, message, Modal, Popconfirm, Space, Table } from 'antd';
+import React, { useRef, useState } from 'react';
+import { useModel } from 'umi';
+import { CreateModalForm } from './components';
+import type { tableDataItem } from './data';
 
 export default () => {
     const { confirm } = Modal;
@@ -138,7 +137,8 @@ export default () => {
             ...data,
             single: true,
             pid: pid?.at(-1) ?? data.pid,
-            path: pid?.join('-') ?? data.path,
+            // @ts-ignore
+            path: pid?.join('-') ?? data.path!.join('-'),
         };
         await saveChannel(post).then(res => {
             message.success(res.msg);
