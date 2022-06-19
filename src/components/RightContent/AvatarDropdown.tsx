@@ -44,13 +44,11 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
     const onMenuClick = useCallback(
         (event: MenuInfo) => {
             const { key } = event;
-            switch (key) {
-                case 'logout':
-                    setInitialState!(s => ({ ...s, currentUser: undefined }));
-                    loginOut!();
-                    break;
-                default:
-                    history.push(`/account/${key}`);
+            if ('logout' === key) {
+                setInitialState!(s => ({ ...s, currentUser: undefined }));
+                loginOut!();
+            } else {
+                history.push('/account');
             }
         },
         [setInitialState],
