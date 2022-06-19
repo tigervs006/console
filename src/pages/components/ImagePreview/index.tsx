@@ -1,16 +1,15 @@
 /** @format */
 
-import { randomString } from '@/extra/utils';
 import { Image } from 'antd';
-import type { UploadFile } from 'antd/es/upload/interface';
 import type { ForwardedRef } from 'react';
+import { randomString } from '@/extra/utils';
+import type { UploadFile } from 'antd/es/upload/interface';
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
 
 export const ImagePreview: React.FC<{
     imgList: UploadFile[];
     ref: ForwardedRef<any>;
 }> = forwardRef((props, ref) => {
-    // 是否可见
     const [visible, setVisible] = useState(false);
     useImperativeHandle(ref, () => ({ imagePreview: (value: boolean) => setVisible(value) }));
     return (
