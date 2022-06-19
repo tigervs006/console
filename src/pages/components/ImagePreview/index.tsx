@@ -10,6 +10,7 @@ export const ImagePreview: React.FC<{
     imgList: UploadFile[];
     ref: ForwardedRef<any>;
 }> = forwardRef((props, ref) => {
+    // 是否可见
     const [visible, setVisible] = useState(false);
     useImperativeHandle(ref, () => ({ imagePreview: (value: boolean) => setVisible(value) }));
     return (
