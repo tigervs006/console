@@ -1,27 +1,27 @@
 /** @format */
 
-import { waitTime } from '@/extra/utils';
-import { CropUpload } from '@/pages/components/CropUpload';
-import type { ProFormInstance } from '@ant-design/pro-form';
-import { ModalForm, ProFormDependency, ProFormText } from '@ant-design/pro-form';
-import { message } from 'antd';
-import type { UploadFile } from 'antd/es/upload/interface';
 import md5 from 'md5';
-import type { ForwardedRef } from 'react';
-import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
-import type { tableDataItem } from '../../data';
+import {message} from 'antd';
 import styles from '../../index.less';
-import { saveUser } from '../../service';
+import {waitTime} from '@/extra/utils';
+import {saveUser} from '../../service';
+import type {ForwardedRef} from 'react';
+import type {tableDataItem} from '../../data';
+import type {UploadFile} from 'antd/es/upload/interface';
+import {CropUpload} from '@/pages/components/CropUpload';
+import type {ProFormInstance} from '@ant-design/pro-form';
+import React, {forwardRef, useImperativeHandle, useRef, useState} from 'react';
+import {ModalForm, ProFormDependency, ProFormText} from '@ant-design/pro-form';
 
 export const CreateUser: React.FC<{
-    modalVisit: boolean;
-    isCreateUser: boolean;
-    record: tableDataItem;
-    ref: ForwardedRef<any>;
-    reloadTable: () => void;
-    handleSetModalVisit: (status: boolean) => void;
+	modalVisit: boolean;
+	isCreateUser: boolean;
+	record: tableDataItem;
+	ref: ForwardedRef<any>;
+	reloadTable: () => void;
+	handleSetModalVisit: (status: boolean) => void;
 }> = forwardRef((props, ref) => {
-    const formRef = useRef<ProFormInstance>();
+	const formRef = useRef<ProFormInstance>();
     const [currentUser, setCurrentUser] = useState<string>();
     const modalTitle = props.isCreateUser ? '新增用户' : '编辑用户';
     useImperativeHandle(ref, () => ({ setUser: (user: string) => setCurrentUser(user) }));
