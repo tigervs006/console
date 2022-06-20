@@ -101,7 +101,7 @@ export default () => {
      * @param record
      */
     const handlePreview = (record: tableDataItem) => {
-        window.open(`/industry/${record.channel.name}/${record.id}.html`);
+        window.open(`/${record.channel.name}/${record.id}.html`, 'preview');
     };
 
     /**
