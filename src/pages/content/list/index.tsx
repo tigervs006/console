@@ -5,11 +5,12 @@ import { useRequest, history } from 'umi';
 import ProTable from '@ant-design/pro-table';
 import React, { useRef, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
+import { RecordSwitch } from '@/pages/components/RecordSwitch';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
-import { fetchData, getAuthor, getChannel, remove, setStatus } from '../service';
+import { fetchData, getAuthor, getChannel, remove } from '../service';
 import type { authorData, valueEnumData, tableDataItem, channelOptions, channelDataItem } from '../data';
-import { Typography, InputNumber, Input, Modal, Button, message, Switch, Select, Space, Table, Tag } from 'antd';
 import { EditOutlined, SearchOutlined, DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { Typography, InputNumber, Input, Modal, Button, message, Select, Space, Table, Tag } from 'antd';
 
 const SelectChannel: React.FC<Record<string, any>> = props => {
     const [channelOptions, setChannelOptions] = useState<channelOptions[]>();
@@ -24,32 +25,6 @@ const SelectChannel: React.FC<Record<string, any>> = props => {
         },
     });
     return <Select showArrow allowClear {...props} mode="multiple" maxTagCount={3} options={channelOptions} placeholder="请选择栏目..." />;
-};
-
-const RecordSwitch: React.FC<{ record: tableDataItem }> = props => {
-    const [loadings, setLoadings] = useState<boolean>(false);
-    /**
-     * 设置文档状态
-     * @param checked 状态
-     * @param record 当前记录
-     */
-    const handleChange = async (checked: boolean, record: tableDataItem) => {
-        setLoadings(true);
-        await setStatus({ id: record.id, status: checked ? 1 : 0 }).then(res => {
-            setLoadings(false);
-            message.success(res.msg);
-        });
-    };
-    return (
-        <Switch
-            key="id"
-            loading={loadings}
-            checkedChildren="显示"
-            unCheckedChildren="隐藏"
-            defaultChecked={!!props.record.status}
-            onChange={checked => handleChange(checked, props.record)}
-        />
-    );
 };
 
 const InputSearch: React.FC<Record<string, any>> = props => {
@@ -321,7 +296,7 @@ export default () => {
                     status: 'Hide',
                 },
             },
-            render: (_, record) => <RecordSwitch key={record.id} record={record} />,
+            render: (_, record) => <RecordSwitch record={record} url={'/article/status'} echoChecked={'启用'} echoUnChecked={'禁用'} />,
         },
         {
             title: '操作',
