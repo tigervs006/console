@@ -1,33 +1,38 @@
 /** @format */
 
 import 'antd/es/slider/style';
-import {useModel} from 'umi';
+import { useModel } from 'umi';
 import ImgCrop from 'antd-img-crop';
-import React, {useRef} from 'react';
+import React, { useRef } from 'react';
 import ProForm from '@ant-design/pro-form';
-import {removeFile} from '@/services/ant-design-pro/api';
-import {ImagePreview} from '@/pages/components/ImagePreview';
-import {Button, message, Modal, notification, Upload} from 'antd';
-import type {UploadFile, UploadListType} from 'antd/es/upload/interface';
-import type {RcFile, UploadChangeParam, UploadProps} from 'antd/es/upload';
-import {CloudUploadOutlined, QuestionCircleOutlined} from '@ant-design/icons';
+import { removeFile } from '@/services/ant-design-pro/api';
+import { ImagePreview } from '@/pages/components/ImagePreview';
+import { Button, message, Modal, notification, Upload } from 'antd';
+import type { UploadFile, UploadListType } from 'antd/es/upload/interface';
+import type { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
+import { CloudUploadOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 
-export const CropUpload: React.FC<API.uploadComponents & {
-	cropAspect?: number;
-	setFieldsValue: (fileList: UploadFile[]) => void;
-}> = props => {
-	const {confirm} = Modal;
-	// 大小限制
-	const fileSize: number = props?.fileSize ?? 2;
-	// 数量限制
-	const maxUpload: number = props?.maxUpload ?? 1;
-	// 裁剪比例
-	const aspect: number = props?.cropAspect ?? 1 / 1;
-	// 图片宽度
-	const imageWidth: number = props?.imageWidth ?? 750;
-	// 图片预览
-	const previewRef: React.ForwardedRef<any> = useRef();
-	// 图片高度
+export const CropUpload: React.FC<
+    API.uploadComponents & {
+        cropAspect?: number;
+        cropQuality?: number;
+        setFieldsValue: (fileList: UploadFile[]) => void;
+    }
+> = props => {
+    const { confirm } = Modal;
+    // 大小限制
+    const fileSize: number = props?.fileSize ?? 2;
+    // 数量限制
+    const maxUpload: number = props?.maxUpload ?? 1;
+    // 裁剪比例
+    const aspect: number = props?.cropAspect ?? 1 / 1;
+    // 裁剪质量
+    const quality: number = props?.cropQuality ?? 0.6;
+    // 图片宽度
+    const imageWidth: number = props?.imageWidth ?? 750;
+    // 图片预览
+    const previewRef: React.ForwardedRef<any> = useRef();
+    // 图片高度
     const imageHeight: number = props?.imageHeight ?? 422;
     // 按钮文字
     const uploadText: string = props?.formTitle ?? '上传图像';
@@ -156,7 +161,7 @@ export const CropUpload: React.FC<API.uploadComponents & {
                 rules={props?.validateRules}
                 transform={value => props?.useTransForm!(value)}
             >
-                <ImgCrop grid quality={1} aspect={aspect} modalTitle="裁剪图像">
+                <ImgCrop grid quality={quality} aspect={aspect} modalTitle="裁剪图像">
                     <Upload
                         accept={acceptFile}
                         listType={listType}
