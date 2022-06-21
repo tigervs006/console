@@ -61,7 +61,6 @@ export const SiteSettings: React.FC<{
                 label={props.list.keywords?.description}
                 initialValue={props.list.keywords?.value}
                 tooltip={props.list.keywords?.description}
-                getValueFromEvent={e => e.target.value.trim()}
                 fieldProps={{ maxLength: 20, showCount: true, allowClear: true }}
                 rules={[{ type: 'string', required: true, message: '请输入网站的关键词' }]}
             />
@@ -86,7 +85,6 @@ export const SiteSettings: React.FC<{
                 label={props.list.beian?.description}
                 initialValue={props.list.beian?.value}
                 tooltip={props.list.beian?.description}
-                getValueFromEvent={e => e.target.value.trim()}
                 fieldProps={{ maxLength: 50, showCount: true, allowClear: true }}
             />
             <ProFormText
@@ -95,7 +93,6 @@ export const SiteSettings: React.FC<{
                 label={props.list.copyright?.description}
                 initialValue={props.list.copyright?.value}
                 tooltip={props.list.copyright?.description}
-                getValueFromEvent={e => e.target.value.trim()}
                 fieldProps={{ maxLength: 100, showCount: true, allowClear: true }}
             />
             <ProFormTextArea
@@ -104,7 +101,6 @@ export const SiteSettings: React.FC<{
                 label={props.list.notice?.description}
                 initialValue={props.list.notice?.value}
                 tooltip={props.list.notice?.description}
-                getValueFromEvent={e => e.target.value.trim()}
                 fieldProps={{
                     maxLength: 500,
                     showCount: true,
