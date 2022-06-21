@@ -97,7 +97,7 @@ export const BaiduSettings: React.FC<{
                 tooltip={props.list.baidutongji_username?.description}
                 getValueFromEvent={e => e.target.value.trim()}
             />
-            <ProFormText
+            <ProFormText.Password
                 hasFeedback
                 label="用户密码"
                 name={props.list.baidutongji_password?.name}

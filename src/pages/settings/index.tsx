@@ -1,13 +1,14 @@
 /** @format */
 
-import { message, Tabs } from 'antd';
 import { useRequest } from 'umi';
+import { message, Tabs } from 'antd';
 import { list, saveConfig } from './service';
 import { ApiSettings } from './components/cloud';
 import { SiteSettings } from './components/site';
 import { useLayoutEffect, useState } from 'react';
 import { BaiduSettings } from './components/baidu';
 import { OtherSettings } from './components/other';
+import { ContactSettings } from './components/contact';
 import { PageContainer } from '@ant-design/pro-layout';
 
 export default () => {
@@ -24,9 +25,11 @@ export default () => {
         { key: '1', pane: '网站配置' },
         { key: '2', pane: '百度配置' },
         { key: '3', pane: '接口配置' },
-        { key: '4', pane: '其它配置' },
+        { key: '4', pane: '联络方式' },
+        { key: '5', pane: '其它配置' },
     ];
 
+    /** 设置tab模式 */
     const setTabMode = (resize: number) => {
         requestAnimationFrame(() => {
             // eslint-disable-next-line
@@ -67,6 +70,8 @@ export default () => {
             case '3':
                 return <ApiSettings list={settings} handleFinish={data => handleFinish(data)} />;
             case '4':
+                return <ContactSettings list={settings} handleFinish={data => handleFinish(data)} />;
+            case '5':
                 return <OtherSettings list={settings} handleFinish={data => handleFinish(data)} />;
             default:
                 return null;
@@ -75,12 +80,7 @@ export default () => {
 
     return (
         <PageContainer>
-            <Tabs
-                tabPosition={position}
-                onTabClick={key => {
-                    run!({ type: key });
-                }}
-            >
+            <Tabs tabPosition={position} onTabClick={key => run({ type: key })}>
                 {tabItem.map(item => (
                     <TabPane key={item.key} tab={item.pane}>
                         {renderView(item.key)}

@@ -1,5 +1,6 @@
 /** @format */
 
+import md5 from 'md5';
 import { Divider, Space } from 'antd';
 import React, { useRef } from 'react';
 import type { SliderMarks } from 'antd/lib/slider';
@@ -50,21 +51,22 @@ export const OtherSettings: React.FC<{
             <ProForm.Item>
                 <Divider orientation="left">简数采集</Divider>
             </ProForm.Item>
-            <ProFormText
+            <ProFormText.Password
                 hasFeedback
                 label="采集密码"
                 name={props.list.keydata_password?.name}
+                getValueFromEvent={e => e.target.value.trim()}
                 initialValue={props.list.keydata_password?.value}
                 tooltip={props.list.keydata_password?.description}
-                getValueFromEvent={e => e.target.value.trim()}
+                transform={value => ({ keydata_password: md5(value) })}
             />
             <ProFormText
                 hasFeedback
                 label="加密因子"
                 name={props.list.keydata_encryption?.name}
+                getValueFromEvent={e => e.target.value.trim()}
                 initialValue={props.list.keydata_encryption?.value}
                 tooltip={props.list.keydata_encryption?.description}
-                getValueFromEvent={e => e.target.value.trim()}
             />
             <ProForm.Item>
                 <Divider orientation="left">系统安全</Divider>
@@ -78,6 +80,15 @@ export const OtherSettings: React.FC<{
                     checkedChildren: '启用',
                     unCheckedChildren: '禁用',
                 }}
+            />
+            <ProFormText.Password
+                hasFeedback
+                label="安全密码"
+                name={props.list.delcode?.name}
+                initialValue={props.list.delcode?.value}
+                tooltip={props.list.delcode?.description}
+                transform={value => ({ delcode: md5(value) })}
+                getValueFromEvent={e => e.target.value.trim()}
             />
             <ProFormSlider
                 label="Token时效"
