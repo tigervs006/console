@@ -139,7 +139,7 @@ export default () => {
         },
         {
             sorter: true,
-            title: '上次登录',
+            title: '最近登录',
             dataIndex: 'last_login',
             render: (_, record) =>
                 null === record.last_login ? '未曾登录' : moment(parseInt(record?.last_login ?? '1654092601') * 1000).format('YYYY-MM-DD hh:mm:ss'),
