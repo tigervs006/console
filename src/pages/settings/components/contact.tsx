@@ -1,7 +1,10 @@
 /** @format */
 
 import { Space } from 'antd';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
+import { useModel } from '@@/plugin-model/useModel';
+import type { UploadFile } from 'antd/es/upload/interface';
+import { CropUpload } from '@/pages/components/CropUpload';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import ProForm, { ProFormText } from '@ant-design/pro-form';
 import { FormOutlined, UndoOutlined } from '@ant-design/icons';
@@ -11,6 +14,20 @@ export const ContactSettings: React.FC<{
     handleFinish: (data: Record<string, any>) => Promise<void>;
 }> = props => {
     const formRef = useRef<ProFormInstance>();
+    // 文件列表
+    const { setFileLists } = useModel('file', ret => ({
+        setFileLists: ret.setFileList,
+    }));
+    useEffect(() => {
+        setFileLists([
+            {
+                status: 'done',
+                url: props.list.qrcode?.value,
+                uid: Math.floor(Math.random() * 100).toString(),
+                name: props.list.qrcode?.value?.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)?.[1] ?? '',
+            },
+        ]);
+    });
     return (
         <ProForm
             formRef={formRef}
@@ -35,9 +52,28 @@ export const ContactSettings: React.FC<{
             validateTrigger={['onBlur']}
             onFinish={values => props.handleFinish(values)}
         >
+            <CropUpload
+                imageWidth={200}
+                imageHeight={200}
+                formLabel={'二维码'}
+                extraData={{
+                    field: 'qrcode',
+                    path: `images/system/qrcode`,
+                }}
+                formTitle={'上传二维码'}
+                formName={props.list.qrcode?.name}
+                formTooltip={props.list.qrcode?.description}
+                useTransForm={value => {
+                    if ('string' === typeof value) return { qrcode: value };
+                    return {
+                        qrcode: value.map((item: UploadFile) => item?.response?.data?.url ?? '').toString(),
+                    };
+                }}
+                setFieldsValue={(fileList: UploadFile[]) => formRef.current?.setFieldsValue({ qrcode: fileList })}
+            />
             <ProFormText
                 hasFeedback
-                label="QQ号"
+                label="QQ号码"
                 name={props.list.qq?.name}
                 initialValue={props.list.qq?.value}
                 tooltip={props.list.qq?.description}
