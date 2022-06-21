@@ -52,17 +52,27 @@ export const SiteSettings: React.FC<{
                 initialValue={props.list.title?.value}
                 tooltip={props.list.title?.description}
                 getValueFromEvent={e => e.target.value.trim()}
-                fieldProps={{ maxLength: 20, showCount: true, allowClear: true }}
-                rules={[{ type: 'string', required: true, message: '请输入网站首页标题' }]}
+                fieldProps={{ maxLength: 36, showCount: true, allowClear: true }}
+                rules={[
+                    { required: true, message: '请输入网站首页标题' },
+                    { type: 'string', pattern: /^\S{1,35}$/, message: '网站标题超过35个字符搜索引擎会自动隐藏' },
+                ]}
             />
             <ProFormText
                 hasFeedback
+                tooltip="请使用英文逗号分隔关键词"
                 name={props.list.keywords?.name}
                 label={props.list.keywords?.description}
                 initialValue={props.list.keywords?.value}
-                tooltip={props.list.keywords?.description}
-                fieldProps={{ maxLength: 20, showCount: true, allowClear: true }}
-                rules={[{ type: 'string', required: true, message: '请输入网站的关键词' }]}
+                fieldProps={{ maxLength: 50, showCount: true, allowClear: true }}
+                rules={[
+                    { required: true, message: '请输入网站的关键词' },
+                    {
+                        type: 'string',
+                        pattern: /^[^\u2018-\u2027\uff01-\uff0f\uff1a-\uff20\u3002\s]+$/,
+                        message: '网站关键词不得使用中文符号或空格分隔',
+                    },
+                ]}
             />
             <ProFormTextArea
                 hasFeedback
