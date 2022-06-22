@@ -83,9 +83,9 @@ export const OtherSettings: React.FC<{
             </ProForm.Item>
             <ProFormSwitch
                 label="Token认证"
-                name={props.list.accessTokenCheck?.name}
-                tooltip={props.list.accessTokenCheck?.description}
-                initialValue={!!Number(props.list.accessTokenCheck?.value)}
+                name={props.list.access_token_check?.name}
+                tooltip={props.list.access_token_check?.description}
+                initialValue={!!Number(props.list.access_token_check?.value)}
                 fieldProps={{
                     checkedChildren: '启用',
                     unCheckedChildren: '禁用',
