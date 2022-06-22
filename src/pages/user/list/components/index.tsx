@@ -1,27 +1,27 @@
 /** @format */
 
 import md5 from 'md5';
-import {message} from 'antd';
+import { message } from 'antd';
 import styles from '../../index.less';
-import {waitTime} from '@/extra/utils';
-import {saveUser} from '../../service';
-import type {ForwardedRef} from 'react';
-import type {tableDataItem} from '../../data';
-import type {UploadFile} from 'antd/es/upload/interface';
-import {CropUpload} from '@/pages/components/CropUpload';
-import type {ProFormInstance} from '@ant-design/pro-form';
-import React, {forwardRef, useImperativeHandle, useRef, useState} from 'react';
-import {ModalForm, ProFormDependency, ProFormText} from '@ant-design/pro-form';
+import { waitTime } from '@/extra/utils';
+import { saveUser } from '../../service';
+import type { ForwardedRef } from 'react';
+import type { tableDataItem } from '../../data';
+import type { UploadFile } from 'antd/es/upload/interface';
+import { CropUpload } from '@/pages/components/CropUpload';
+import type { ProFormInstance } from '@ant-design/pro-form';
+import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+import { ModalForm, ProFormDependency, ProFormText } from '@ant-design/pro-form';
 
 export const CreateUser: React.FC<{
-	modalVisit: boolean;
-	isCreateUser: boolean;
-	record: tableDataItem;
-	ref: ForwardedRef<any>;
-	reloadTable: () => void;
-	handleSetModalVisit: (status: boolean) => void;
+    modalVisit: boolean;
+    isCreateUser: boolean;
+    record: tableDataItem;
+    ref: ForwardedRef<any>;
+    reloadTable: () => void;
+    handleSetModalVisit: (status: boolean) => void;
 }> = forwardRef((props, ref) => {
-	const formRef = useRef<ProFormInstance>();
+    const formRef = useRef<ProFormInstance>();
     const [currentUser, setCurrentUser] = useState<string>();
     const modalTitle = props.isCreateUser ? '新增用户' : '编辑用户';
     useImperativeHandle(ref, () => ({ setUser: (user: string) => setCurrentUser(user) }));
@@ -142,7 +142,14 @@ export const CreateUser: React.FC<{
                 label="用户密码"
                 tooltip="6~18位的密码"
                 transform={value => ({ password: md5(value) })}
-                fieldProps={{ minLength: 6, maxLength: 18, showCount: true }}
+                fieldProps={{
+                    minLength: 6,
+                    maxLength: 18,
+                    readOnly: true,
+                    showCount: true,
+                    onFocus: e => e.target.removeAttribute('readonly'),
+                    onBlur: e => e.target.setAttribute('readonly', 'true'),
+                }}
                 rules={[
                     { required: props.isCreateUser, message: '请为用户设置密码' },
                     {
@@ -159,7 +166,14 @@ export const CreateUser: React.FC<{
                 name="confirmPassword"
                 dependencies={['password']}
                 transform={value => ({ confirmPassword: md5(value) })}
-                fieldProps={{ minLength: 6, maxLength: 18, showCount: true }}
+                fieldProps={{
+                    minLength: 6,
+                    maxLength: 18,
+                    readOnly: true,
+                    showCount: true,
+                    onFocus: e => e.target.removeAttribute('readonly'),
+                    onBlur: e => e.target.setAttribute('readonly', 'true'),
+                }}
                 rules={[
                     { required: props.isCreateUser, message: '请再次输入以确认用户密码' },
                     ({ getFieldValue }) => ({

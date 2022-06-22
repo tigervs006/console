@@ -1,8 +1,8 @@
 /** @format */
 
 import md5 from 'md5';
-import { Divider, Space } from 'antd';
 import React, { useRef } from 'react';
+import { Divider, Space } from 'antd';
 import type { SliderMarks } from 'antd/lib/slider';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import { FormOutlined, UndoOutlined } from '@ant-design/icons';
@@ -54,7 +54,11 @@ export const OtherSettings: React.FC<{
             <ProFormText.Password
                 hasFeedback
                 label="采集密码"
-                fieldProps={{ readOnly: true }}
+                fieldProps={{
+                    readOnly: true,
+                    onFocus: e => e.target.removeAttribute('readonly'),
+                    onBlur: e => e.target.setAttribute('readonly', 'true'),
+                }}
                 name={props.list.keydata_password?.name}
                 getValueFromEvent={e => e.target.value.trim()}
                 initialValue={props.list.keydata_password?.value}
@@ -64,7 +68,11 @@ export const OtherSettings: React.FC<{
             <ProFormText.Password
                 hasFeedback
                 label="加密因子"
-                fieldProps={{ readOnly: true }}
+                fieldProps={{
+                    readOnly: true,
+                    onFocus: e => e.target.removeAttribute('readonly'),
+                    onBlur: e => e.target.setAttribute('readonly', 'true'),
+                }}
                 name={props.list.keydata_encryption?.name}
                 getValueFromEvent={e => e.target.value.trim()}
                 initialValue={props.list.keydata_encryption?.value}
@@ -91,6 +99,11 @@ export const OtherSettings: React.FC<{
                 tooltip={props.list.delcode?.description}
                 transform={value => ({ delcode: md5(value) })}
                 getValueFromEvent={e => e.target.value.trim()}
+                fieldProps={{
+                    readOnly: true,
+                    onFocus: e => e.target.removeAttribute('readonly'),
+                    onBlur: e => e.target.setAttribute('readonly', 'true'),
+                }}
             />
             <ProFormSlider
                 label="Token时效"

@@ -66,17 +66,17 @@ export const BaiduSettings: React.FC<{
                 hasFeedback
                 label="百家号ID"
                 name={props.list.baijiahao_app_id?.name}
+                getValueFromEvent={e => e.target.value.trim()}
                 initialValue={props.list.baijiahao_app_id?.value}
                 tooltip={props.list.baijiahao_app_id?.description}
-                getValueFromEvent={e => e.target.value.trim()}
             />
             <ProFormText
                 hasFeedback
                 label="百家号Token"
                 name={props.list.baijiahao_app_token?.name}
+                getValueFromEvent={e => e.target.value.trim()}
                 initialValue={props.list.baijiahao_app_token?.value}
                 tooltip={props.list.baijiahao_app_token?.description}
-                getValueFromEvent={e => e.target.value.trim()}
             />
             <ProForm.Item>
                 <Divider orientation="left">百家统计</Divider>
@@ -85,33 +85,38 @@ export const BaiduSettings: React.FC<{
                 hasFeedback
                 label="网站ID"
                 name={props.list.baidutongji_site_id?.name}
+                getValueFromEvent={e => e.target.value.trim()}
                 initialValue={props.list.baidutongji_site_id?.value}
                 tooltip={props.list.baidutongji_site_id?.description}
-                getValueFromEvent={e => e.target.value.trim()}
             />
             <ProFormText
                 hasFeedback
                 label="用户名"
                 name={props.list.baidutongji_username?.name}
+                getValueFromEvent={e => e.target.value.trim()}
                 initialValue={props.list.baidutongji_username?.value}
                 tooltip={props.list.baidutongji_username?.description}
-                getValueFromEvent={e => e.target.value.trim()}
             />
             <ProFormText.Password
                 hasFeedback
                 label="用户密码"
                 name={props.list.baidutongji_password?.name}
+                getValueFromEvent={e => e.target.value.trim()}
                 initialValue={props.list.baidutongji_password?.value}
                 tooltip={props.list.baidutongji_password?.description}
-                getValueFromEvent={e => e.target.value.trim()}
+                fieldProps={{
+                    readOnly: true,
+                    onFocus: e => e.target.removeAttribute('readonly'),
+                    onBlur: e => e.target.setAttribute('readonly', 'true'),
+                }}
             />
             <ProFormText
                 hasFeedback
                 label="接口Token"
                 name={props.list.baidutongji_token?.name}
+                getValueFromEvent={e => e.target.value.trim()}
                 initialValue={props.list.baidutongji_token?.value}
                 tooltip={props.list.baidutongji_token?.description}
-                getValueFromEvent={e => e.target.value.trim()}
             />
             <ProForm.Item>
                 <Divider orientation="left">百度小程序</Divider>
@@ -119,50 +124,50 @@ export const BaiduSettings: React.FC<{
             <ProFormText
                 hasFeedback
                 label="小程序Appid"
+                getValueFromEvent={e => e.target.value.trim()}
                 name={props.list.baidusmartprogram_app_id?.name}
                 initialValue={props.list.baidusmartprogram_app_id?.value}
                 tooltip={props.list.baidusmartprogram_app_id?.description}
-                getValueFromEvent={e => e.target.value.trim()}
             />
             <ProFormText
                 hasFeedback
                 label="小程序Token"
+                getValueFromEvent={e => e.target.value.trim()}
                 name={props.list.baidusmartprogram_token?.name}
                 initialValue={props.list.baidusmartprogram_token?.value}
                 tooltip={props.list.baidusmartprogram_token?.description}
-                getValueFromEvent={e => e.target.value.trim()}
             />
             <ProFormText
                 hasFeedback
                 label="信息流类型"
+                getValueFromEvent={e => e.target.value.trim()}
                 name={props.list.baidusmartprogram_mapp_type?.name}
                 initialValue={props.list.baidusmartprogram_mapp_type?.value}
                 tooltip={props.list.baidusmartprogram_mapp_type?.description}
-                getValueFromEvent={e => e.target.value.trim()}
             />
             <ProFormText
                 hasFeedback
                 label="信息流子类型"
+                getValueFromEvent={e => e.target.value.trim()}
                 name={props.list.baidusmartprogram_mapp_sub_type?.name}
                 initialValue={props.list.baidusmartprogram_mapp_sub_type?.value}
                 tooltip={props.list.baidusmartprogram_mapp_sub_type?.description}
-                getValueFromEvent={e => e.target.value.trim()}
             />
             <ProFormText
                 hasFeedback
                 label="Feed一级分类"
+                getValueFromEvent={e => e.target.value.trim()}
                 name={props.list.baidusmartprogram_feed_type?.name}
                 initialValue={props.list.baidusmartprogram_feed_type?.value}
                 tooltip={props.list.baidusmartprogram_feed_type?.description}
-                getValueFromEvent={e => e.target.value.trim()}
             />
             <ProFormText
                 hasFeedback
                 label="Feed二级分类"
+                getValueFromEvent={e => e.target.value.trim()}
                 name={props.list.baidusmartprogram_feed_sub_type?.name}
                 initialValue={props.list.baidusmartprogram_feed_sub_type?.value}
                 tooltip={props.list.baidusmartprogram_feed_sub_type?.description}
-                getValueFromEvent={e => e.target.value.trim()}
             />
         </ProForm>
     );
