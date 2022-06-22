@@ -102,6 +102,13 @@ export const OtherSettings: React.FC<{
                     tooltipVisible: true,
                     tipFormatter: value => `${value} 小时`,
                 }}
+                convertValue={value => {
+                    if ('string' === typeof value) {
+                        return value.match(/\d+/);
+                    }
+                    return value;
+                }}
+                transform={value => ({ tokenExpireTime: `+${value} hour` })}
             />
         </ProForm>
     );
