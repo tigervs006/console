@@ -54,15 +54,17 @@ export const OtherSettings: React.FC<{
             <ProFormText.Password
                 hasFeedback
                 label="采集密码"
+                fieldProps={{ readOnly: true }}
                 name={props.list.keydata_password?.name}
                 getValueFromEvent={e => e.target.value.trim()}
                 initialValue={props.list.keydata_password?.value}
                 tooltip={props.list.keydata_password?.description}
                 transform={value => ({ keydata_password: md5(value) })}
             />
-            <ProFormText
+            <ProFormText.Password
                 hasFeedback
                 label="加密因子"
+                fieldProps={{ readOnly: true }}
                 name={props.list.keydata_encryption?.name}
                 getValueFromEvent={e => e.target.value.trim()}
                 initialValue={props.list.keydata_encryption?.value}
