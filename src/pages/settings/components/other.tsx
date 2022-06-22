@@ -21,7 +21,7 @@ export const OtherSettings: React.FC<{
             style: {
                 color: '#f50',
             },
-            label: <strong>48小时</strong>,
+            label: <b>48小时</b>,
         },
     };
     return (
