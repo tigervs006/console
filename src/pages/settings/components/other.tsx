@@ -1,6 +1,5 @@
 /** @format */
 
-import md5 from 'md5';
 import React, { useRef } from 'react';
 import { Divider, Space } from 'antd';
 import type { SliderMarks } from 'antd/lib/slider';
@@ -63,7 +62,6 @@ export const OtherSettings: React.FC<{
                 getValueFromEvent={e => e.target.value.trim()}
                 initialValue={props.list.keydata_password?.value}
                 tooltip={props.list.keydata_password?.description}
-                transform={value => ({ keydata_password: md5(value) })}
             />
             <ProFormText.Password
                 hasFeedback
@@ -85,11 +83,9 @@ export const OtherSettings: React.FC<{
                 label="Token认证"
                 name={props.list.access_token_check?.name}
                 tooltip={props.list.access_token_check?.description}
+                transform={value => ({ access_token_check: value ? 1 : 0 })}
                 initialValue={!!Number(props.list.access_token_check?.value)}
-                fieldProps={{
-                    checkedChildren: '启用',
-                    unCheckedChildren: '禁用',
-                }}
+                fieldProps={{ checkedChildren: '启用', unCheckedChildren: '禁用' }}
             />
             <ProFormText.Password
                 hasFeedback
@@ -97,7 +93,6 @@ export const OtherSettings: React.FC<{
                 name={props.list.delcode?.name}
                 initialValue={props.list.delcode?.value}
                 tooltip={props.list.delcode?.description}
-                transform={value => ({ delcode: md5(value) })}
                 getValueFromEvent={e => e.target.value.trim()}
                 fieldProps={{
                     readOnly: true,
@@ -107,9 +102,9 @@ export const OtherSettings: React.FC<{
             />
             <ProFormSlider
                 label="Token时效"
-                name={props.list.tokenExpireTime?.name}
-                initialValue={props.list.tokenExpireTime?.value}
-                tooltip={props.list.tokenExpireTime?.description}
+                name={props.list.token_expire_time?.name}
+                initialValue={props.list.token_expire_time?.value}
+                tooltip={props.list.token_expire_time?.description}
                 fieldProps={{
                     min: 1,
                     max: 48,
@@ -123,7 +118,12 @@ export const OtherSettings: React.FC<{
                     }
                     return value;
                 }}
-                transform={value => ({ tokenExpireTime: `+${value} hour` })}
+                transform={value => {
+                    if ('number' === typeof value) {
+                        return { token_expire_time: `+${value} hour` };
+                    }
+                    return { token_expire_time: value };
+                }}
             />
         </ProForm>
     );
