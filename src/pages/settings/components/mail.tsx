@@ -1,17 +1,21 @@
 /** @format */
 
-import React, { useRef } from 'react';
-import type { ProFormInstance } from '@ant-design/pro-form';
-import ProForm, { ProFormDependency, ProFormDigit, ProFormSwitch, ProFormText } from '@ant-design/pro-form';
 import { Space } from 'antd';
+import React, { useEffect, useRef } from 'react';
+import type { ProFormInstance } from '@ant-design/pro-form';
 import { FormOutlined, UndoOutlined } from '@ant-design/icons';
+import { InputTagList } from '@/pages/components/InputTagList';
+import ProForm, { ProFormDependency, ProFormDigit, ProFormSwitch, ProFormText } from '@ant-design/pro-form';
 
 export const MailSettings: React.FC<{
     list: Record<string, any>;
     handleFinish: (data: Record<string, any>) => Promise<void>;
 }> = props => {
     const formRef = useRef<ProFormInstance>();
-
+    const tagRef: React.ForwardedRef<any> = useRef();
+    useEffect(() => {
+        tagRef.current?.setTagList(props.list.mail_receiver?.value.split(','));
+    }, [props]);
     return (
         <ProForm
             formRef={formRef}
@@ -50,15 +54,24 @@ export const MailSettings: React.FC<{
                     if (mail_service)
                         return (
                             <>
-                                <ProFormText
+                                <ProForm.Item
                                     hasFeedback
-                                    label="收件人"
+                                    label="收件人组"
                                     name={props.list.mail_receiver?.name}
                                     initialValue={props.list.mail_receiver?.value}
-                                    getValueFromEvent={e => e.target.value.trim()}
                                     tooltip={props.list.mail_receiver?.description}
                                     rules={[{ required: true, message: '请至少填写一个收件人' }]}
-                                />
+                                >
+                                    <InputTagList
+                                        ref={tagRef}
+                                        addition={'收件人'}
+                                        handleChange={value =>
+                                            formRef.current?.setFieldsValue({
+                                                mail_receiver: value.join(','),
+                                            })
+                                        }
+                                    />
+                                </ProForm.Item>
                                 <ProFormDigit
                                     hasFeedback
                                     label="发件端口"
