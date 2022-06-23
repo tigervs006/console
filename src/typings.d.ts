@@ -1,3 +1,5 @@
+/** @format */
+
 declare module 'md5';
 declare module '*.map';
 declare module 'slash2';
@@ -15,6 +17,7 @@ declare module '*.tiff';
 declare module 'omit.js';
 declare module 'numeral';
 declare module 'mockjs';
+declare module 'rc-tween-one';
 declare module 'react-fittext';
 declare module '@antv/data-set';
 declare module 'bizcharts-plugin-slider';
