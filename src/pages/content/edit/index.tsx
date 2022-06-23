@@ -111,7 +111,7 @@ export default () => {
         } else {
             // 清空fileList
             setFileLists([]);
-            return {}; // 不是编辑文档则直接返回空对象
+            return {}; // 不是编辑文档直接返回空对象
         }
     };
 
@@ -143,10 +143,10 @@ export default () => {
                 }}
                 // 失焦校验数据
                 validateTrigger={['onBlur']}
-                // 提交文档数据
-                onFinish={(data: articleData) => handleFinsh(data)}
                 // request参数
                 params={{ id: history.location.query?.id }}
+                // 提交文档数据
+                onFinish={(data: articleData) => handleFinsh(data)}
                 // request请求
                 request={(params: Record<'id', string>) => handleRequest(params)}
             >
