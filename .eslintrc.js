@@ -11,6 +11,8 @@ module.exports = {
 		'arrow-spacing': 1,
 		// 禁止连续空格
 		'no-multi-spaces': 1,
+		// 强制关键词空格
+		'keyword-spacing': 1,
 		// 算术运算符空格
 		'space-infix-ops': 1,
 		// 禁止尾随的空格
@@ -37,6 +39,8 @@ module.exports = {
 		'no-whitespace-before-property': 2,
 		// 运算符需在表达式的前面
 		'operator-linebreak': [2, 'before'],
+		// 对象键值冒号后面需带空格
+		'key-spacing': [1, { afterColon: true }],
 		// 每行允许的最大执行语句数
 		'max-statements-per-line': [1, { max: 2 }],
 		// 参数的逗号后面用空格分隔
