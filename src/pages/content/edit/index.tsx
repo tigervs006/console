@@ -11,8 +11,8 @@ import type { articleData, channelDataItem } from '../data';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import { FormOutlined, UndoOutlined } from '@ant-design/icons';
 import { notification, Button, Input, Space, message } from 'antd';
-import ProForm, { ProFormDependency, ProFormCheckbox, ProFormTextArea, ProFormSelect, ProFormText } from '@ant-design/pro-form';
 import { getChannel, saveContent, getContent as getContents } from '@/pages/content/service';
+import ProForm, { ProFormDependency, ProFormCheckbox, ProFormTextArea, ProFormSelect, ProFormText } from '@ant-design/pro-form';
 
 export default () => {
     const formRef = useRef<ProFormInstance>();
@@ -109,8 +109,10 @@ export default () => {
             }
             return res?.data ? Object.assign({ ...info }, { attribute: attribute || [], content: info?.content?.content ?? null }) : {};
         } else {
-            return {};
+            // 清空fileList
+            setFileLists([]);
         }
+        return {}; // 不是编辑文档则直接返回空对象
     };
 
     return (
