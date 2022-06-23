@@ -17,7 +17,9 @@ export default () => {
     // Tab布局
     type TabPosition = 'top' | 'left';
     // 设置布局方式
-    const [position, setPosition] = useState<TabPosition>('left');
+    const [position, setPosition] = useState<TabPosition>(() => {
+        return 768 > innerWidth ? 'top' : 'left';
+    });
     // 设置系统配置项
     const [settings, setSettings] = useState<Record<string, any>[]>([]);
 
