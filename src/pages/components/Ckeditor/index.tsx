@@ -23,21 +23,21 @@ export default class Ckeditor extends React.Component<parentProps, stateData> {
         const { Text } = Typography;
         // 自动保存
         const saveData = (data: any) => {
-            console.log('自动保存成功：', data);
-            message.success('自动保存成功');
+            console.log('自动保存：', data);
+            message.success!('自动保存成功');
         };
         // 自定义配置
         const customConfig = {
             autosave: {
-                // TODO: 后期通过后台设置
-                waitingTime: 60000, // 每分钟自动保存
+                // 每分钟自动保存
+                waitingTime: 60000,
                 save(editor: any) {
                     return saveData(editor.getData());
                 },
             },
             simpleUpload: {
                 uploadUrl: '/console/public/upload',
-                headers: { Authorization: localStorage.getItem('Authorization') || '' },
+                headers: { Authorization: localStorage?.getItem('Authorization') },
             },
         };
         // 编辑器初始化
