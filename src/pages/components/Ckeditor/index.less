@@ -1,26 +1,43 @@
+/** @format */
+
+@textbox-font-weight: 550;
 .edit-footer-info {
-  margin-top: 0.5rem;
-  #word-count {
-    margin-bottom: 0.5rem;
-  }
+    margin-top: 0.5rem;
+    #word-count {
+        margin-bottom: 0.5rem;
+    }
+}
+div[role='textbox'] {
+    h1 {
+        font-weight: @textbox-font-weight;
+        font-size: 1.75rem;
+    }
+    h2 {
+        font-weight: @textbox-font-weight;
+        font-size: 1.5rem;
+    }
+    h3 {
+        font-weight: @textbox-font-weight;
+        font-size: 1.25rem;
+    }
 }
 @media screen and (max-width: 3840px) {
-  .ck-content {
-    height: 1200px;
-  }
+    .ck-content {
+        height: 1200px;
+    }
 }
 @media screen and (max-width: 2560px) {
-  .ck-content {
-    height: 800px;
-  }
+    .ck-content {
+        height: 800px;
+    }
 }
 @media screen and (max-width: 1920px) {
-  .ck-content {
-    height: 600px;
-  }
+    .ck-content {
+        height: 600px;
+    }
 }
 @media screen and (max-width: 768px) {
-  .ck-content {
-    height: 400px;
-  }
+    .ck-content {
+        height: 400px;
+    }
 }
