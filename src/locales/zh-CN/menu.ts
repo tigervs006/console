@@ -57,6 +57,7 @@ export default {
     'menu.product': '商品管理',
     'menu.product.edit': '商品编辑',
     'menu.product.list': '商品列表',
+    'menu.client': '客户管理',
     'menu.user': '用户管理',
     'menu.user.login': '用户登录',
     'menu.user.list': '用户列表',

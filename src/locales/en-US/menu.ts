@@ -57,6 +57,7 @@ export default {
     'menu.product': 'Product',
     'menu.product.edit': 'Product Edit',
     'menu.product.list': 'Product List',
+    'menu.client': 'Client',
     'menu.user': 'User',
     'menu.user.login': 'UserLogin',
     'menu.user.list': 'UserList',

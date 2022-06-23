@@ -57,6 +57,12 @@ export default [
         component: './channel',
     },
     {
+        name: 'client',
+        path: '/client',
+        icon: 'user-switch',
+        component: './client/list',
+    },
+    {
         name: 'user',
         icon: 'team',
         path: '/user',
