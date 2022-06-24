@@ -1,33 +1,33 @@
 /** @format */
 
-import {useModel} from 'umi';
-import React, {useRef} from 'react';
-import {removeFile} from '@/services/ant-design-pro/api';
-import {ProFormUploadButton} from '@ant-design/pro-form';
-import {message, Modal, notification, Upload} from 'antd';
-import {ImagePreview} from '@/pages/components/ImagePreview';
-import type {UploadFile, UploadListType} from 'antd/es/upload/interface';
-import type {RcFile, UploadChangeParam, UploadProps} from 'antd/es/upload';
-import {CloudUploadOutlined, QuestionCircleOutlined} from '@ant-design/icons';
+import { ImagePreview } from '@/pages/components/ImagePreview';
+import { removeFile } from '@/services/ant-design-pro/api';
+import { CloudUploadOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { ProFormUploadButton } from '@ant-design/pro-form';
+import { message, Modal, notification, Upload } from 'antd';
+import type { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
+import type { UploadFile, UploadListType } from 'antd/es/upload/interface';
+import React, { useRef } from 'react';
+import { useModel } from 'umi';
 
 export const ProUploadButton: React.FC<API.uploadComponents> = props => {
-	const {confirm} = Modal;
-	// 大小限制
-	const fileSize: number = props?.fileSize ?? 2;
-	// 数量限制
-	const maxUpload: number = props?.maxUpload ?? 1;
-	// 图片宽度
-	const imageWidth: number = props?.imageWidth ?? 750;
-	// 图片预览
-	const previewRef: React.ForwardedRef<any> = useRef();
-	// 图片高度
-	const imageHeight: number = props?.imageHeight ?? 422;
-	// 展示方式
-	const listType: UploadListType = props?.listType ?? 'picture-card';
-	// 文件后缀
-	const acceptFile: string = props?.acceptFile ?? '.png, .jpg, .jpeg, .gif';
-	// 文件列表
-	const {fileLists, setFileLists} = useModel('file', ret => ({
+    const { confirm } = Modal;
+    // 大小限制
+    const fileSize: number = props?.fileSize ?? 2;
+    // 数量限制
+    const maxUpload: number = props?.maxUpload ?? 1;
+    // 图片宽度
+    const imageWidth: number = props?.imageWidth ?? 750;
+    // 图片预览
+    const previewRef: React.ForwardedRef<any> = useRef();
+    // 图片高度
+    const imageHeight: number = props?.imageHeight ?? 422;
+    // 展示方式
+    const listType: UploadListType = props?.listType ?? 'picture-card';
+    // 文件后缀
+    const acceptFile: string = props?.acceptFile ?? '.png, .jpg, .jpeg, .gif';
+    // 文件列表
+    const { fileLists, setFileLists } = useModel('file', ret => ({
         fileLists: ret.fileList,
         setFileLists: ret.setFileList,
     }));
@@ -77,13 +77,10 @@ export const ProUploadButton: React.FC<API.uploadComponents> = props => {
                 cancelButtonProps: { shape: 'round' },
                 okButtonProps: { danger: true, shape: 'round' },
                 content: url.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)?.[1],
-                async onOk() {
-                    const res = await removeFile({ filePath: filePath });
-                    if (res.success) {
-                        resolve(true);
-                    } else {
-                        reject('Failed');
-                    }
+                onOk() {
+                    removeFile({ filePath: filePath }).then(res => {
+                        res.success ? resolve(true) : reject('Failed');
+                    });
                 },
                 onCancel() {
                     reject('onCancel');

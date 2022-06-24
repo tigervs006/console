@@ -1,16 +1,16 @@
 /** @format */
 
-import 'antd/es/slider/style';
-import { useModel } from 'umi';
-import ImgCrop from 'antd-img-crop';
-import React, { useRef } from 'react';
-import ProForm from '@ant-design/pro-form';
-import { removeFile } from '@/services/ant-design-pro/api';
 import { ImagePreview } from '@/pages/components/ImagePreview';
-import { Button, message, Modal, notification, Upload } from 'antd';
-import type { UploadFile, UploadListType } from 'antd/es/upload/interface';
-import type { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
+import { removeFile } from '@/services/ant-design-pro/api';
 import { CloudUploadOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import ProForm from '@ant-design/pro-form';
+import { Button, message, Modal, notification, Upload } from 'antd';
+import ImgCrop from 'antd-img-crop';
+import 'antd/es/slider/style';
+import type { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
+import type { UploadFile, UploadListType } from 'antd/es/upload/interface';
+import React, { useRef } from 'react';
+import { useModel } from 'umi';
 
 export const CropUpload: React.FC<
     API.uploadComponents & {
@@ -24,10 +24,10 @@ export const CropUpload: React.FC<
     const fileSize: number = props?.fileSize ?? 2;
     // 数量限制
     const maxUpload: number = props?.maxUpload ?? 1;
-    // 裁剪比例
-    const aspect: number = props?.cropAspect ?? 1 / 1;
     // 裁剪质量
     const quality: number = props?.cropQuality ?? 0.6;
+    // 裁剪比例
+    const aspect: number = props?.cropAspect ?? 1 / 1!;
     // 图片宽度
     const imageWidth: number = props?.imageWidth ?? 750;
     // 图片预览
@@ -63,13 +63,10 @@ export const CropUpload: React.FC<
                 cancelButtonProps: { shape: 'round' },
                 okButtonProps: { danger: true, shape: 'round' },
                 content: url.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)?.[1],
-                async onOk() {
-                    const res = await removeFile({ filePath: filePath });
-                    if (res.success) {
-                        resolve(true);
-                    } else {
-                        reject('Failed');
-                    }
+                onOk() {
+                    removeFile({ filePath: filePath }).then(res => {
+                        res.success ? resolve(true) : reject('Failed');
+                    });
                 },
                 onCancel() {
                     reject('onCancel');
