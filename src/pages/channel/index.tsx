@@ -414,13 +414,6 @@ export default () => {
                         </Space>
                     );
                 }}
-                form={{
-                    syncToUrl: values => {
-                        return {
-                            ...values,
-                        };
-                    },
-                }}
             />
             <CreateModalForm
                 record={modalValues}
