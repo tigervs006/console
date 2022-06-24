@@ -33,8 +33,6 @@ module.exports = {
 		'max-len': [1, { code: 150 }],
 		// 箭头函数单个参数的括号
 		'arrow-parens': [1, 'as-needed'],
-		// 函数括号前必须带有空格
-		'space-before-function-paren': 1,
 		// 禁止对象的属性前带空格
 		'no-whitespace-before-property': 2,
 		// 运算符需在表达式的前面
