@@ -99,23 +99,18 @@ export default () => {
             icon: <QuestionCircleOutlined />,
             cancelButtonProps: { shape: 'round' },
             okButtonProps: { danger: true, shape: 'round' },
-            content:
-                // @ts-ignore
-                (record.title && `《${record.title}》`) ||
-                (3 < titles.length
-                    ? // @ts-ignore
-                      `${titles.slice(0, 3)}...等【${titles.length}】篇文档`
-                    : // @ts-ignore
-                      `${titles} 这【${titles.length}】篇文档`),
+            content: record instanceof Array ? `${titles.slice(0, 3).join('，')} 等 ${titles.length} 篇文档` : `${record.title} 这篇文档`,
             async onOk() {
-                // @ts-ignore
-                await remove({ id: record.id || ids }).then(res => {
+                await remove({ id: record instanceof Array ? ids : record.id }).then(res => {
                     ref.current?.reload();
                     message.success(res.msg);
+                    // 只在多选的情况下清除已选择的项
+                    record instanceof Array && ref.current?.clearSelected!();
                 });
             },
             onCancel() {
-                console.log('取消删除文档');
+                // 只在多选的情况下清除已选择的项
+                record instanceof Array && ref.current?.clearSelected!();
             },
         });
     };

@@ -87,26 +87,23 @@ export default () => {
             icon: <QuestionCircleOutlined />,
             cancelButtonProps: { shape: 'round' },
             okButtonProps: { danger: true, shape: 'round' },
-            content:
-                // @ts-ignore
-                (record.name && `用户：${record.cname}`) ||
-                (3 < titles.length
-                    ? // @ts-ignore
-                      `${titles.slice(0, 3)}...等【${titles.length}】个用户`
-                    : // @ts-ignore
-                      `${titles} 这【${titles.length}】个用户`),
+            content: record instanceof Array ? `${titles.slice(0, 3).join('，')} 等 ${titles.length} 个用户` : `${record.cname} 这个用户`,
             async onOk() {
                 const lcoalStorageId = Number(localStorage.getItem('uid'));
                 // @ts-ignore
-                if (record.id === lcoalStorageId || ids.includes(lcoalStorageId)) return message.error('亲，请不要自残');
-                // @ts-ignore
-                await remove({ id: record.id || ids }).then(res => {
+                if (record?.id === lcoalStorageId || ids.includes(lcoalStorageId)) {
+                    return message.error('亲，请不要自残');
+                }
+                await remove({ id: record instanceof Array ? ids : record.id! }).then(res => {
                     ref.current?.reload();
                     message.success(res.msg);
+                    // 只在多选的情况下清除已选择的项
+                    record instanceof Array && ref.current?.clearSelected!();
                 });
             },
             onCancel() {
-                console.log('取消删除用户');
+                // 只在多选的情况下清除已选择的项
+                record instanceof Array && ref.current?.clearSelected!();
             },
         });
     };
