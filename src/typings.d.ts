@@ -20,6 +20,7 @@ declare module 'mockjs';
 declare module 'rc-tween-one';
 declare module 'react-fittext';
 declare module '@antv/data-set';
+declare module '@ant-design/pro-list';
 declare module 'bizcharts-plugin-slider';
 declare module '@ckeditor/ckeditor5-react';
 declare module '@ckeditor/ckeditor5-build-classic';
