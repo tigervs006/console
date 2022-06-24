@@ -34,6 +34,6 @@ export async function getContent(params: Record<string, any>) {
 }
 
 // 单个/批量删除
-export async function remove(data: { id: (string | number)[] }) {
+export async function remove(data: { id: number | number[] }) {
     return postData('/article/del', { ...data });
 }
