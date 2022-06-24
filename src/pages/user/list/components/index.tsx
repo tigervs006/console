@@ -24,11 +24,12 @@ export const CreateUser: React.FC<{
     const formRef = useRef<ProFormInstance>();
     const [currentUser, setCurrentUser] = useState<string>();
     const modalTitle = props.isCreateUser ? '新增用户' : '编辑用户';
+    const [passwordRequire, setPasswordRequire] = useState<boolean>(false);
     useImperativeHandle(ref, () => ({ setUser: (user: string) => setCurrentUser(user) }));
     // 处理onFinish事件
     const handleFinish = async (data: tableDataItem) => {
         await saveUser(Object.assign({ ...data }, { id: props?.record?.id ?? null, gid: 1 })).then(res => {
-            message.success(res.msg);
+            res?.msg && message.success(res.msg);
             // 延时重载列表数据
             waitTime(1500).then(() => props.reloadTable());
         });
@@ -39,6 +40,7 @@ export const CreateUser: React.FC<{
                 centered: true,
                 maskClosable: false,
                 destroyOnClose: true,
+                afterClose: () => setPasswordRequire(false),
             }}
             submitter={{
                 searchConfig: {
@@ -147,6 +149,7 @@ export const CreateUser: React.FC<{
                     maxLength: 18,
                     readOnly: true,
                     showCount: true,
+                    onChange: () => setPasswordRequire(true),
                     onFocus: e => e.target.removeAttribute('readonly'),
                     onBlur: e => e.target.setAttribute('readonly', 'true'),
                 }}
@@ -175,7 +178,7 @@ export const CreateUser: React.FC<{
                     onBlur: e => e.target.setAttribute('readonly', 'true'),
                 }}
                 rules={[
-                    { required: props.isCreateUser, message: '请再次输入以确认用户密码' },
+                    { required: passwordRequire, message: '请再次输入以确认用户密码' },
                     ({ getFieldValue }) => ({
                         validator(_, value) {
                             if (!value || value === getFieldValue('password')) {
