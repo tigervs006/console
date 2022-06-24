@@ -53,6 +53,7 @@
     "@ant-design/pro-descriptions": "^1.11.5",
     "@ant-design/pro-form": "^1.69.3",
     "@ant-design/pro-layout": "^6.38.8",
+    "@ant-design/pro-list": "^1.21.69",
     "@ant-design/pro-table": "^2.76.3",
     "@antv/l7-react": "2.1.15",
     "@ckeditor/ckeditor5-build-classic": "^34.0.0",
