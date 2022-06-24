@@ -83,7 +83,7 @@ export default () => {
         const paramData = Object.assign(params, sort, filter);
         // 过滤参数以避免后台接收到空值参数
         for (const idx in paramData) {
-            if ('' === paramData[idx] || null === paramData[idx] || undefined === paramData[idx]) delete paramData[idx];
+            ('' === paramData[idx] || null === paramData[idx] || undefined === paramData[idx]) && delete paramData[idx];
         }
         return await fetchData(paramData).then(res => ({
             data: res?.data?.list ?? [],
