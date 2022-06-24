@@ -1,11 +1,11 @@
 /** @format */
 
+import { InputTagList } from '@/pages/components/InputTagList';
+import { FormOutlined, UndoOutlined } from '@ant-design/icons';
+import type { ProFormInstance } from '@ant-design/pro-form';
+import ProForm, { ProFormDependency, ProFormDigit, ProFormSwitch, ProFormText } from '@ant-design/pro-form';
 import { Space } from 'antd';
 import React, { useEffect, useRef } from 'react';
-import type { ProFormInstance } from '@ant-design/pro-form';
-import { FormOutlined, UndoOutlined } from '@ant-design/icons';
-import { InputTagList } from '@/pages/components/InputTagList';
-import ProForm, { ProFormDependency, ProFormDigit, ProFormSwitch, ProFormText } from '@ant-design/pro-form';
 
 export const MailSettings: React.FC<{
     list: Record<string, any>;
@@ -49,9 +49,8 @@ export const MailSettings: React.FC<{
                 fieldProps={{ checkedChildren: '启用', unCheckedChildren: '禁用' }}
             />
             <ProFormDependency name={[props.list.mail_service?.name]}>
-                {/*@ts-ignore*/}
                 {({ mail_service }) => {
-                    if (mail_service)
+                    if (mail_service) {
                         return (
                             <>
                                 <ProForm.Item
@@ -141,6 +140,9 @@ export const MailSettings: React.FC<{
                                 />
                             </>
                         );
+                    } else {
+                        return null;
+                    }
                 }}
             </ProFormDependency>
         </ProForm>
