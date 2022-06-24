@@ -36,7 +36,7 @@ module.exports = {
 		// 禁止对象的属性前带空格
 		'no-whitespace-before-property': 2,
 		// 运算符需在表达式的前面
-		'operator-linebreak': [2, 'before'],
+		'operator-linebreak': [1, 'before'],
 		// 对象键值冒号后面需带空格
 		'key-spacing': [1, { afterColon: true }],
 		// 每行允许的最大执行语句数
