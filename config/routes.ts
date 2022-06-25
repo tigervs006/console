@@ -60,7 +60,7 @@ export default [
         name: 'client',
         path: '/client',
         icon: 'user-switch',
-        component: './client/list',
+        component: './client',
     },
     {
         name: 'user',

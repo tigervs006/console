@@ -1,15 +1,15 @@
 /** @format */
 
-import type { tableDataItem } from '../data';
+import type { tableDataItem } from './data';
 import ProTable from '@ant-design/pro-table';
-import { fetchData, remove } from '../service';
+import { fetchData, remove } from './service';
 import React, { useState, useRef } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType } from '@ant-design/pro-table';
 import type { ProColumns } from '@ant-design/pro-table';
+import { CreateClient } from './components/createClient';
 import { message, Button, Modal, Space, Table, Tag } from 'antd';
-import { ExpandDescriptions } from '../components/expandDescriptions';
-import { CreateClient } from '@/pages/client/components/createClient';
+import { ExpandDescriptions } from './components/expandDescriptions';
 import { QuestionCircleOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 
 export default () => {
