@@ -14,7 +14,7 @@ import { Typography, InputNumber, Input, Modal, Button, message, Select, Space, 
 
 const SelectChannel: React.FC<Record<string, any>> = props => {
     const [channelOptions, setChannelOptions] = useState<channelOptions[]>();
-    // 获取新闻栏目
+    /** 获取新闻栏目 */
     useRequest(getChannel, {
         onSuccess: (res: { list: channelDataItem[] }) => {
             const channel = res?.list.map((item: channelDataItem) => ({
@@ -35,7 +35,7 @@ const InputSearch: React.FC<Record<string, any>> = props => {
             {...props}
             maxLength={30}
             placeholder="请输入文档标题"
-            // 失焦时清除字符串首尾的空格
+            /** 失焦时清除字符串首尾的空格 */
             onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
                 props.onChange(e.target.value.trim());
             }}
@@ -46,12 +46,14 @@ const InputSearch: React.FC<Record<string, any>> = props => {
 export default () => {
     const { confirm } = Modal;
     const { Text } = Typography;
-    // 文档作者
+    /** 文档作者 */
     const [authorEnum, setAuthorEnum] = useState<valueEnumData>();
-    // ActionType
+    /** loading */
+    const [loading, setLoading] = useState<boolean>(false);
+    /** ActionType */
     const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
 
-    // 获取文档作者
+    /** 获取文档作者 */
     useRequest(getAuthor, {
         onSuccess: (res: { list: authorData[] }) => {
             const newObj: Record<string, { text: string; status: string }> = {};
@@ -127,11 +129,14 @@ export default () => {
         for (const idx in paramData) {
             ('' === paramData[idx] || null === paramData[idx] || undefined === paramData[idx]) && delete paramData[idx];
         }
-        return await fetchData(paramData).then(res => ({
-            data: res?.data?.list ?? [],
-            total: res?.data?.total ?? 0,
-            success: res?.success ?? true,
-        }));
+        return await fetchData(paramData).then(res => {
+            setLoading(false);
+            return {
+                data: res?.data?.list ?? [],
+                total: res?.data?.total ?? 0,
+                success: res?.success ?? true,
+            };
+        });
     };
 
     const columns: ProColumns<tableDataItem>[] = [
@@ -322,6 +327,23 @@ export default () => {
                 search={{
                     labelWidth: 'auto',
                     defaultCollapsed: false,
+                    optionRender: searchConfig => [
+                        <Button key="reset" shape="round" onClick={() => searchConfig?.form?.resetFields()}>
+                            重置
+                        </Button>,
+                        <Button
+                            key="query"
+                            shape="round"
+                            type="primary"
+                            loading={loading}
+                            onClick={() => {
+                                setLoading(true);
+                                searchConfig?.form?.submit();
+                            }}
+                        >
+                            查询
+                        </Button>,
+                    ],
                 }}
                 rowSelection={{
                     selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
