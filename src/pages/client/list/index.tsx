@@ -202,13 +202,11 @@ export default () => {
                 rowSelection={{
                     selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
                 }}
-                toolbar={{
-                    actions: [
-                        <Button shape="round" type="primary" key="createClient" icon={<PlusOutlined />} onClick={handleCreate}>
-                            新增客户
-                        </Button>,
-                    ],
-                }}
+                headerTitle={
+                    <Button shape="round" type="primary" key="createClient" icon={<PlusOutlined />} onClick={handleCreate}>
+                        新增客户
+                    </Button>
+                }
                 expandable={{
                     expandRowByClick: true,
                     rowExpandable: () => true,

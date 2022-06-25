@@ -201,11 +201,11 @@ export default () => {
                         </span>
                     </Space>
                 )}
-                toolBarRender={() => [
+                headerTitle={
                     <Button shape="round" type="primary" key="createUser" icon={<PlusOutlined />} onClick={handleCreate}>
-                        新建用户
-                    </Button>,
-                ]}
+                        新增用户
+                    </Button>
+                }
                 tableAlertOptionRender={({ selectedRows }) => {
                     return (
                         <Space size={16}>
