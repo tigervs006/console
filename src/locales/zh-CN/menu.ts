@@ -61,6 +61,6 @@ export default {
     'menu.user': '用户管理',
     'menu.user.login': '用户登录',
     'menu.user.list': '用户列表',
-    'menu.user.auth-list': '权限列表',
-    'menu.user.group-list': '用户组列表',
+    'menu.user.auth': '权限列表',
+    'menu.user.group': '用户组列表',
 };
