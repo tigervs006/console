@@ -1,16 +1,16 @@
 /** @format */
 
+import md5 from 'md5';
+import styles from './index.less';
+import React, { useState } from 'react';
 import Footer from '@/components/Footer';
 import { waitTime } from '@/extra/utils';
+import { Alert, message, Tabs } from 'antd';
 import { login } from '@/services/ant-design-pro/api';
 import { getFakeCaptcha } from '@/services/ant-design-pro/login';
-import { AlipayCircleOutlined, LockOutlined, MobileOutlined, TaobaoCircleOutlined, UserOutlined, WeiboCircleOutlined } from '@ant-design/icons';
-import { LoginForm, ProFormCaptcha, ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
-import { Alert, message, Tabs } from 'antd';
-import md5 from 'md5';
-import React, { useState } from 'react';
 import { FormattedMessage, history, SelectLang, useIntl, useModel } from 'umi';
-import styles from './index.less';
+import { LoginForm, ProFormCaptcha, ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
+import { AlipayCircleOutlined, LockOutlined, MobileOutlined, TaobaoCircleOutlined, UserOutlined, WeiboCircleOutlined } from '@ant-design/icons';
 
 const LoginMessage: React.FC<{
     content: string;
@@ -70,7 +70,7 @@ const Login: React.FC = () => {
                 }
             })
             .catch(() => {
-                // 设置登录错误信息
+                /* 设置登录错误信息 */
                 setUserLoginState({ status: 400, type: 'account' });
             });
     };
