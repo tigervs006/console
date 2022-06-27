@@ -14,7 +14,7 @@ import { PageLoading, SettingDrawer } from '@ant-design/pro-layout';
 import type { Settings as LayoutSettings } from '@ant-design/pro-layout';
 import { currentUser as queryCurrentUser, currentUserMenu } from './services/ant-design-pro/api';
 
-const loginPath = '/user/login';
+const loginPath: string = '/login';
 const isDev = process.env.NODE_ENV === 'development';
 
 /** 获取用户信息比较慢的时候会展示一个 loading */
