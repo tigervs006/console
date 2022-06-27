@@ -25,7 +25,7 @@ const LoginMessage: React.FC<{
     />
 );
 
-const Login: React.FC = () => {
+export default () => {
     const intl = useIntl();
     const [type, setType] = useState<string>('account');
     const { initialState, setInitialState } = useModel('@@initialState');
@@ -253,5 +253,3 @@ const Login: React.FC = () => {
         </div>
     );
 };
-
-export default Login;
