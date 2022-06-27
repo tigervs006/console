@@ -78,9 +78,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         },
         menu: {
             params: { id: initialState?.currentUser?.id },
-            request: async (params, defaultMenuData) => {
-                return (await initialState?.fetchUserMenu?.(params)) ?? defaultMenuData;
-            },
+            request: async params => (await initialState?.fetchUserMenu?.(params)) ?? [],
         },
         links: isDev
             ? [
