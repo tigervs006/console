@@ -1,19 +1,21 @@
 /** @format */
 
-import Footer from '@/components/Footer';
-import RightContent from '@/components/RightContent';
-import { BookOutlined, LinkOutlined } from '@ant-design/icons';
-import type { Settings as LayoutSettings } from '@ant-design/pro-layout';
-import { PageLoading, SettingDrawer } from '@ant-design/pro-layout';
 import { notification } from 'antd';
-import type { RequestConfig, RunTimeLayoutConfig } from 'umi';
 import { history, Link } from 'umi';
+import Footer from '@/components/Footer';
+import { loopMenuItem } from './extra/menu';
+import RightContent from '@/components/RightContent';
 import type { RequestOptionsInit } from 'umi-request';
 import defaultSettings from '../config/defaultSettings';
-import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
+import type { MenuDataItem } from '@ant-design/pro-layout';
+import type { RequestConfig, RunTimeLayoutConfig } from 'umi';
+import { BookOutlined, LinkOutlined } from '@ant-design/icons';
+import { PageLoading, SettingDrawer } from '@ant-design/pro-layout';
+import type { Settings as LayoutSettings } from '@ant-design/pro-layout';
+import { currentUser as queryCurrentUser, currentUserMenu } from './services/ant-design-pro/api';
 
-const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
+const isDev = process.env.NODE_ENV === 'development';
 
 /** 获取用户信息比较慢的时候会展示一个 loading */
 export const initialStateConfig = {
@@ -24,11 +26,13 @@ export const initialStateConfig = {
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
  * */
 export async function getInitialState(): Promise<{
-    settings?: Partial<LayoutSettings>;
-    currentUser?: API.CurrentUser;
     loading?: boolean;
+    currentUser?: API.CurrentUser;
+    settings?: Partial<LayoutSettings>;
     fetchUserInfo?: (params: { id: string }) => Promise<API.CurrentUser | undefined>;
+    fetchUserMenu?: (params: Record<string, any>) => Promise<MenuDataItem[] | undefined>;
 }> {
+    /* 获取当前用户信息 */
     const fetchUserInfo = async (params: { id: string }) => {
         try {
             return await queryCurrentUser(params).then(res => res.data?.info);
@@ -37,12 +41,17 @@ export async function getInitialState(): Promise<{
         }
         return undefined;
     };
-    // 如果不是登录页面，执行
+    /* 获取当前用户菜单 */
+    const fetchUserMenu = async (params: Record<string, any>) => {
+        return await currentUserMenu(params).then(res => loopMenuItem(res?.data?.list));
+    };
+    /* 如果不是登录页面 */
     if (history.location.pathname !== loginPath) {
         const currentUser = await fetchUserInfo({ id: localStorage.getItem('uid') || '0' });
         return {
-            fetchUserInfo,
             currentUser,
+            fetchUserMenu,
+            fetchUserInfo,
             settings: defaultSettings,
         };
     }
@@ -52,7 +61,6 @@ export async function getInitialState(): Promise<{
     };
 }
 
-// ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
     return {
         rightContentRender: () => <RightContent />,
@@ -63,10 +71,14 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         footerRender: () => <Footer />,
         onPageChange: () => {
             const { location } = history;
-            // 如果没有登录，重定向到 login
+            /* 如果没有登录，重定向到 login */
             if (!initialState?.currentUser && location.pathname !== loginPath) {
                 history.push(loginPath);
             }
+        },
+        menu: {
+            params: { id: initialState?.currentUser?.id },
+            request: async (params, defaultMenuData) => (await initialState?.fetchUserMenu?.(params)) ?? defaultMenuData,
         },
         links: isDev
             ? [
@@ -81,11 +93,10 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
               ]
             : [],
         menuHeaderRender: undefined,
-        // 自定义 403 页面
-        // unAccessible: <div>unAccessible</div>,
-        // 增加一个 loading 的状态
+        /* 自定义 403 页面 */
+        unAccessible: <div>unAccessible</div>,
+        /* 增加一个 loading 的状态 */
         childrenRender: (children, props) => {
-            // if (initialState?.loading) return <PageLoading />;
             return (
                 <>
                     {children}
@@ -95,7 +106,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
                             enableDarkTheme
                             settings={initialState?.settings}
                             onSettingChange={settings => {
-                                setInitialState(preInitialState => ({
+                                setInitialState!(preInitialState => ({
                                     ...preInitialState,
                                     settings,
                                 }));
