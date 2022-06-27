@@ -50,12 +50,12 @@ export async function getInitialState(): Promise<{
         const currentUser = await fetchUserInfo({ id: localStorage.getItem('uid') || '0' });
         return {
             currentUser,
-            fetchUserMenu,
             fetchUserInfo,
             settings: defaultSettings,
         };
     }
     return {
+        fetchUserMenu,
         fetchUserInfo,
         settings: defaultSettings,
     };
@@ -78,7 +78,9 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         },
         menu: {
             params: { id: initialState?.currentUser?.id },
-            request: async (params, defaultMenuData) => (await initialState?.fetchUserMenu?.(params)) ?? defaultMenuData,
+            request: async (params, defaultMenuData) => {
+                return (await initialState?.fetchUserMenu?.(params)) ?? defaultMenuData;
+            },
         },
         links: isDev
             ? [
