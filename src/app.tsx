@@ -3,7 +3,7 @@
 import { notification } from 'antd';
 import { history, Link } from 'umi';
 import Footer from '@/components/Footer';
-import { loopMenuItem } from './extra/menu';
+import { loopMenuItem } from './extra/iconsMap';
 import RightContent from '@/components/RightContent';
 import type { RequestOptionsInit } from 'umi-request';
 import defaultSettings from '../config/defaultSettings';
