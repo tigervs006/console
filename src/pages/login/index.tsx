@@ -31,46 +31,65 @@ export default () => {
     const { initialState, setInitialState } = useModel('@@initialState');
     const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
 
+    /* 查询用户信息 */
     const fetchUserInfo = async (params: { id: string }) => {
         const userInfo = await initialState?.fetchUserInfo?.(params);
         if (userInfo) {
             await setInitialState(s => ({
                 ...s,
+                isLoginPage: false,
                 currentUser: userInfo,
             }));
         }
+    };
+
+    /* 查询用户菜单 */
+    const fetchUserMenu = async (params: { id: string }) => {
+        await initialState?.fetchUserMenu?.(params).then(async menuItem => {
+            await setInitialState(s => ({
+                ...s,
+                useMenuItem: menuItem,
+            }));
+        });
     };
 
     /** 处理用户登录 */
     const handleSubmit = async (values: API.LoginParams) => {
         await login({ ...values, type })
             .then(async res => {
-                if (200 === res.status) {
-                    const uid = res.data?.info?.uid ?? '0';
-                    const avatar = res.data?.info?.avatar ?? '';
-                    const userName = res.data?.info?.name ?? 'anonymous';
-                    const authorization = res.data?.info?.authorization ?? '';
-                    // 写入到localStorage
-                    localStorage.setItem('uid', uid);
-                    localStorage.setItem('user', userName);
-                    localStorage.setItem('avatar', avatar);
-                    localStorage.setItem('Authorization', authorization);
-                    const defaultLoginSuccessMessage = intl.formatMessage({
-                        id: 'pages.login.success',
-                        defaultMessage: '登录成功！',
-                    });
-                    message.success(defaultLoginSuccessMessage);
-                    await waitTime(2000).then(() => fetchUserInfo({ id: res?.data?.info?.uid ?? '0' }));
-                    /** 登录成功后转到 redirect 参数所在的位置 */
-                    if (!history) return;
-                    const { query } = history.location;
-                    const { redirect } = query as { redirect: string };
-                    history.push(redirect || '/dashboard/analysis');
-                    return;
-                }
+                const localItem = [
+                    { uid: res.data?.info?.uid ?? '0' },
+                    { avatar: res.data?.info?.avatar ?? '' },
+                    { user: res.data?.info?.name ?? 'anonymous' },
+                    { Authorization: res.data?.info?.authorization ?? '' },
+                ];
+                /* 写入localStorage */
+                localItem.forEach(item => {
+                    for (const idx in item) {
+                        localStorage.setItem(idx, item[idx]);
+                    }
+                });
+                const defaultLoginSuccessMessage = intl.formatMessage({
+                    id: 'pages.login.success',
+                    defaultMessage: res?.msg,
+                });
+                message.success(defaultLoginSuccessMessage);
+                /* 延迟两秒是为了让token生效 */
+                await waitTime(2000).then(() => {
+                    /* 查询用户信息 */
+                    fetchUserInfo({ id: localStorage.getItem('uid') ?? '0' });
+                    /* 查询用户菜单 */
+                    fetchUserMenu({ id: localStorage.getItem('uid') ?? '0' });
+                });
+                /** 登录成功后转到 redirect 参数所在的位置 */
+                if (!history) return;
+                const { query } = history.location;
+                const { redirect } = query as { redirect: string };
+                history.push(redirect || '/dashboard/analysis');
+                return;
             })
             .catch(() => {
-                /* 设置登录错误信息 */
+                /* 设置错误信息 */
                 setUserLoginState({ status: 400, type: 'account' });
             });
     };
