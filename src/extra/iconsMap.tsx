@@ -21,9 +21,10 @@ const IconMap = {
     'user-switch': <UserSwitchOutlined />,
     'unordered-list': <UnorderedListOutlined />,
 };
-export const loopMenuItem = (menus: MenuDataItem[]): MenuDataItem[] =>
-    menus.map(({ icon, routes, ...item }) => ({
+export const loopMenuItem = (menus: MenuDataItem[]): MenuDataItem[] => {
+    return menus.map(({ icon, routes, ...item }) => ({
         ...item,
         icon: icon && IconMap[icon as string],
         routes: routes && loopMenuItem(routes),
     }));
+};
