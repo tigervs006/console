@@ -7,11 +7,12 @@ import { loopMenuItem } from './extra/iconsMap';
 import RightContent from '@/components/RightContent';
 import type { RequestOptionsInit } from 'umi-request';
 import defaultSettings from '../config/defaultSettings';
+import type { MenuDataItem } from '@ant-design/pro-layout';
 import type { RequestConfig, RunTimeLayoutConfig } from 'umi';
 import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 import { PageLoading, SettingDrawer } from '@ant-design/pro-layout';
 import type { Settings as LayoutSettings } from '@ant-design/pro-layout';
-import { currentUser as queryCurrentUser, currentUserMenu } from './services/ant-design-pro/api';
+import { currentUser as queryCurrentUser, currentUserMenu as queryUserMenu } from './services/ant-design-pro/api';
 
 const loginPath: string = '/login';
 const isDev = process.env.NODE_ENV === 'development';
@@ -26,8 +27,11 @@ export const initialStateConfig = {
  * */
 export async function getInitialState(): Promise<{
     loading?: boolean;
+    isLoginPage?: boolean;
+    useMenuItem?: MenuDataItem[];
     currentUser?: API.CurrentUser;
     settings?: Partial<LayoutSettings>;
+    fetchUserMenu?: (params: { id: string }) => Promise<MenuDataItem[] | undefined>;
     fetchUserInfo?: (params: { id: string }) => Promise<API.CurrentUser | undefined>;
 }> {
     /* 获取当前用户信息 */
@@ -39,22 +43,44 @@ export async function getInitialState(): Promise<{
         }
         return undefined;
     };
+    /* 获取当前用户菜单 */
+    const fetchUserMenu = async (params: { id: string }) => {
+        try {
+            return await queryUserMenu(params).then(res => res?.data?.list);
+        } catch (error) {
+            history.push(loginPath);
+        }
+        return undefined;
+    };
     /* 如果不是登录页面 */
     if (history.location.pathname !== loginPath) {
         const currentUser = await fetchUserInfo({ id: localStorage.getItem('uid') || '0' });
+        const currentMenu = await fetchUserMenu({ id: localStorage.getItem('uid') || '0' });
         return {
             currentUser,
             fetchUserInfo,
+            fetchUserMenu,
+            isLoginPage: false,
+            useMenuItem: currentMenu,
             settings: defaultSettings,
         };
     }
     return {
         fetchUserInfo,
+        fetchUserMenu,
+        useMenuItem: [],
+        isLoginPage: true,
         settings: defaultSettings,
     };
 }
 
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
+    if (initialState?.isLoginPage) {
+        return {
+            menuRender: false,
+            headerRender: false,
+        };
+    }
     return {
         rightContentRender: () => <RightContent />,
         disableContentMargin: false,
@@ -69,10 +95,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
                 history.push(loginPath);
             }
         },
-        menu: {
-            params: { id: initialState?.currentUser?.id },
-            request: async params => await currentUserMenu(params).then(res => loopMenuItem(res?.data?.list)),
-        },
+        menuDataRender: () => (initialState?.useMenuItem ? loopMenuItem(initialState?.useMenuItem) : []),
         links: isDev
             ? [
                   <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
