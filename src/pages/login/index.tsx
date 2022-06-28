@@ -101,7 +101,7 @@ export default () => {
     return (
         <div className={styles.container}>
             <div className={styles.lang} data-lang>
-                {SelectLang && <SelectLang />}
+                {SelectLang && <SelectLang reload={false} />}
             </div>
             <div className={styles.content}>
                 <LoginForm
