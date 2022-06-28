@@ -25,6 +25,5 @@ export const loopMenuItem = (menus: MenuDataItem[]): MenuDataItem[] => {
     return menus.map(({ icon, routes, ...item }) => ({
         ...item,
         icon: icon && IconMap[icon as string],
-        routes: routes && loopMenuItem(routes),
     }));
 };
