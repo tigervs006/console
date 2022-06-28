@@ -31,46 +31,18 @@ export async function getInitialState(): Promise<{
     useMenuItem?: MenuDataItem[];
     currentUser?: API.CurrentUser;
     settings?: Partial<LayoutSettings>;
-    fetchUserMenu?: (params: { id: string }) => Promise<MenuDataItem[] | undefined>;
-    fetchUserInfo?: (params: { id: string }) => Promise<API.CurrentUser | undefined>;
 }> {
-    /* 获取当前用户信息 */
-    const fetchUserInfo = async (params: { id: string }) => {
-        try {
-            return await queryCurrentUser(params).then(res => res.data?.info);
-        } catch (error) {
-            history.push(loginPath);
-        }
-        return undefined;
-    };
+    /* 判断是否为登录页 */
+    const isLogin: boolean = loginPath === history.location.pathname;
     /* 获取当前用户菜单 */
-    const fetchUserMenu = async (params: { id: string }) => {
-        try {
-            return await queryUserMenu(params).then(res => res?.data?.list);
-        } catch (error) {
-            history.push(loginPath);
-        }
-        return undefined;
-    };
-    /* 如果不是登录页面 */
-    if (history.location.pathname !== loginPath) {
-        const currentUser = await fetchUserInfo({ id: localStorage.getItem('uid') || '0' });
-        const currentMenu = await fetchUserMenu({ id: localStorage.getItem('uid') || '0' });
-        return {
-            currentUser,
-            fetchUserInfo,
-            fetchUserMenu,
-            isLoginPage: false,
-            useMenuItem: currentMenu,
-            settings: defaultSettings,
-        };
-    }
+    const fetchUserMenu = async (params: { id: string }) => await queryUserMenu(params).then(res => res?.data?.list);
+    /* 获取当前用户信息 */
+    const fetchUserInfo = async (params: { id: string }) => await queryCurrentUser(params).then(res => res.data?.info);
     return {
-        fetchUserInfo,
-        fetchUserMenu,
-        useMenuItem: [],
-        isLoginPage: true,
+        isLoginPage: isLogin,
         settings: defaultSettings,
+        useMenuItem: isLogin ? [] : await fetchUserMenu({ id: localStorage.getItem('uid') || '0' }),
+        currentUser: isLogin ? undefined : await fetchUserInfo({ id: localStorage.getItem('uid') || '0' }),
     };
 }
 
@@ -91,11 +63,16 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         onPageChange: () => {
             const { location } = history;
             /* 如果没有登录，重定向到 login */
-            if (!initialState?.currentUser && location.pathname !== loginPath) {
-                history.push(loginPath);
+            if (!initialState?.currentUser && loginPath !== location.pathname) {
+                setInitialState(s => ({
+                    ...s,
+                    isLoginPage: true,
+                })).then(() => {
+                    history.push(loginPath);
+                });
             }
         },
-        menuDataRender: () => (initialState?.useMenuItem ? loopMenuItem(initialState?.useMenuItem) : []),
+        menuDataRender: () => loopMenuItem(initialState?.useMenuItem ?? []),
         links: isDev
             ? [
                   <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
