@@ -7,7 +7,6 @@ import { loopMenuItem } from './extra/iconsMap';
 import RightContent from '@/components/RightContent';
 import type { RequestOptionsInit } from 'umi-request';
 import defaultSettings from '../config/defaultSettings';
-import type { MenuDataItem } from '@ant-design/pro-layout';
 import type { RequestConfig, RunTimeLayoutConfig } from 'umi';
 import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 import { PageLoading, SettingDrawer } from '@ant-design/pro-layout';
@@ -30,7 +29,6 @@ export async function getInitialState(): Promise<{
     currentUser?: API.CurrentUser;
     settings?: Partial<LayoutSettings>;
     fetchUserInfo?: (params: { id: string }) => Promise<API.CurrentUser | undefined>;
-    fetchUserMenu?: (params: Record<string, any>) => Promise<MenuDataItem[] | undefined>;
 }> {
     /* 获取当前用户信息 */
     const fetchUserInfo = async (params: { id: string }) => {
@@ -40,10 +38,6 @@ export async function getInitialState(): Promise<{
             history.push(loginPath);
         }
         return undefined;
-    };
-    /* 获取当前用户菜单 */
-    const fetchUserMenu = async (params: Record<string, any>) => {
-        return await currentUserMenu(params).then(res => loopMenuItem(res?.data?.list));
     };
     /* 如果不是登录页面 */
     if (history.location.pathname !== loginPath) {
@@ -55,7 +49,6 @@ export async function getInitialState(): Promise<{
         };
     }
     return {
-        fetchUserMenu,
         fetchUserInfo,
         settings: defaultSettings,
     };
@@ -78,7 +71,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         },
         menu: {
             params: { id: initialState?.currentUser?.id },
-            request: async params => await initialState?.fetchUserMenu?.(params) ?? [],
+            request: async params => await currentUserMenu(params).then(res => loopMenuItem(res?.data?.list)),
         },
         links: isDev
             ? [
