@@ -7,9 +7,9 @@ import { postData } from '@/services/ant-design-pro/api';
 export const RecordSwitch: React.FC<{
     url: string;
     fieldKey?: string;
-    statusField?: number;
     echoChecked?: string;
     echoUnChecked?: string;
+    statusField?: number | boolean;
     record: { id?: number | string; status?: number | string };
 }> = props => {
     const fieldKey: string = props?.fieldKey ?? 'status';
@@ -20,7 +20,7 @@ export const RecordSwitch: React.FC<{
     // loading...
     const [loadings, setLoadings] = useState<boolean>(false);
     // statusField
-    const statusField: number | string | undefined = props?.statusField ?? props.record.status;
+    const statusField: number | string | boolean | undefined = props?.statusField ?? props.record.status;
     /**
      * 设置栏目状态
      * @param e 事件
