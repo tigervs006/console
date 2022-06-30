@@ -61,6 +61,7 @@ export default {
     'menu.user': 'User',
     'menu.user.login': 'UserLogin',
     'menu.user.list': 'UserList',
-    'menu.user.auth': 'AuthList',
+    'menu.user.auth': 'AuthMenu',
     'menu.user.group': 'AuthGroup',
+    'menu.top': 'Top Menu',
 };
