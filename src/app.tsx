@@ -34,15 +34,15 @@ export async function getInitialState(): Promise<{
 }> {
     /* 判断是否为登录页 */
     const isLogin: boolean = loginPath === history.location.pathname;
-    /* 获取当前用户菜单 */
-    const fetchUserMenu = async (params: { id: string }) => await queryUserMenu(params).then(res => res?.data?.list);
     /* 获取当前用户信息 */
     const fetchUserInfo = async (params: { id: string }) => await queryCurrentUser(params).then(res => res.data?.info);
+    /* 获取当前用户菜单 */
+    const fetchUserMenu = async (params: { id: string; status: number }) => await queryUserMenu(params).then(res => res?.data?.list);
     return {
         isLoginPage: isLogin,
         settings: defaultSettings,
-        useMenuItem: isLogin ? [] : await fetchUserMenu({ id: localStorage.getItem('uid') || '0' }),
         currentUser: isLogin ? undefined : await fetchUserInfo({ id: localStorage.getItem('uid') || '0' }),
+        useMenuItem: isLogin ? [] : await fetchUserMenu({ id: localStorage.getItem('uid') || '0', status: 1 }),
     };
 }
 
