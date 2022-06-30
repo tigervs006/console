@@ -12,7 +12,7 @@ import {
     UserOutlined,
 } from '@ant-design/icons';
 
-const IconMap = {
+export const IconMap = {
     team: <TeamOutlined />,
     user: <UserOutlined />,
     setting: <SettingOutlined />,
