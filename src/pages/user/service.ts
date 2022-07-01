@@ -15,7 +15,7 @@ export async function saveUser(data: tableDataItem) {
 
 // 单个/批量删除
 export async function remove(data: Record<'id', number | number[]>) {
-    return postData('/user/del', { ...data });
+    return postData('/auth/del', { ...data });
 }
 
 /* 新增/编辑菜单 */
