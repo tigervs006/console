@@ -77,9 +77,9 @@ export default () => {
 
     // pathToArray
     const pathToArray = (data: tableDataItem[]) => {
-        data.forEach((item: Record<string, any>) => {
+        data.forEach((item: tableDataItem) => {
             // 拆分为数组后再转换成数字数组
-            item.path = item.path.split('-').map(Number);
+            item.path = 'string' === typeof item?.path ? item?.path!.split('-').map(Number) : item?.path;
             if (item.children) pathToArray(item.children);
         });
     };
