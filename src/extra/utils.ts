@@ -16,6 +16,32 @@ export const waitTime = (time: number = 100) => {
 };
 
 /**
+ * 指定属性值升序
+ * @return number
+ * @param property 属性
+ */
+export const sortAsc = (property: string) => {
+    return function (a: number, b: number) {
+        const v1 = a[property];
+        const v2 = b[property];
+        return v1 - v2;
+    };
+};
+
+/**
+ * 指定属性值降序
+ * @return number
+ * @param property 属性
+ */
+export const sortDesc = (property: string) => {
+    return function (a: number, b: number) {
+        const v1 = a[property];
+        const v2 = b[property];
+        return v2 - v1;
+    };
+};
+
+/**
  * 提取文章图片
  * @return array
  * @param content
