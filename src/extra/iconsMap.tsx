@@ -4,9 +4,9 @@ import type { MenuDataItem } from '@ant-design/pro-layout';
 
 import {
     UnorderedListOutlined,
+    UserSwitchOutlined,
     AlignLeftOutlined,
     DashboardOutlined,
-    UserSwitchOutlined,
     BarcodeOutlined,
     SettingOutlined,
     TeamOutlined,
@@ -23,6 +23,8 @@ export const IconMap = {
     'user-switch': <UserSwitchOutlined />,
     'unordered-list': <UnorderedListOutlined />,
 };
+
+/* 通过举枚方式渲染菜单icon */
 export const loopMenuItem = (menus: MenuDataItem[]): MenuDataItem[] => {
     return menus.map(({ icon, routes, ...item }) => ({
         ...item,
