@@ -3,6 +3,7 @@
 import { notification } from 'antd';
 import { history, Link } from 'umi';
 import Footer from '@/components/Footer';
+import { sortDesc } from '@/extra/utils';
 import { loopMenuItem } from './extra/iconsMap';
 import RightContent from '@/components/RightContent';
 import type { RequestOptionsInit } from 'umi-request';
@@ -37,7 +38,10 @@ export async function getInitialState(): Promise<{
     /* 获取当前用户信息 */
     const fetchUserInfo = async (params: { id: string }) => await queryCurrentUser(params).then(res => res.data?.info);
     /* 获取当前用户菜单 */
-    const fetchUserMenu = async (params: { id: string; status: number }) => await queryUserMenu(params).then(res => res?.data?.list);
+    const fetchUserMenu = async (params: { id: string; status: number }) =>
+        await queryUserMenu(params).then(res => {
+            return res?.data?.list.sort(sortDesc('sort'));
+        });
     return {
         isLoginPage: isLogin,
         settings: defaultSettings,
