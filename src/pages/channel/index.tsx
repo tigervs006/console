@@ -359,7 +359,8 @@ export default () => {
                     record: {
                         pid: 0,
                         sort: 50,
-                        status: '1',
+                        path: [0],
+                        status: 1,
                         name: 'ename',
                         cname: '栏目名称',
                         id: randomString(6),
