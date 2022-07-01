@@ -152,7 +152,7 @@ export default () => {
             resList && pathToArray(resList);
             // 存储菜单在选择菜单时用
             setMenuData(() => {
-                /* 深度拷贝一份数据以实现改变对象值时而不影响原数据 */
+                /* 拷贝一份数据以实现改变对象值时而不影响原数据 */
                 return nameToLocale(lodash.cloneDeep(defaultOption.concat(resList)));
             });
             // 存储存在子项的菜单id
@@ -232,7 +232,7 @@ export default () => {
                     options={menuData}
                     onChange={(value: any) => setPid(value)}
                     fieldNames={{ label: 'name', value: 'id' }}
-                    displayRender={(labels: string[]) => (labels.length > 1 ? labels.at(-2) : labels.at(-1))}
+                    displayRender={(labels: string[]) => labels.at(-1)}
                 />
             ),
             formItemProps: () => ({ rules: [{ required: true, message: '上级菜单为必选项' }] }),
