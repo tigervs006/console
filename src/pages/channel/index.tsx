@@ -138,7 +138,10 @@ export default () => {
         await saveChannel(post).then(res => {
             message.success(res.msg);
             setExpandByClick(true);
-            waitTime(1000).then(() => ref.current?.reload());
+            waitTime(1000).then(() => {
+                setPid([0]);
+                ref.current?.reload();
+            });
         });
     };
 
