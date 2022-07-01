@@ -26,5 +26,6 @@ export type menuDataItem = {
     id?: number | string;
     authority?: string[];
     children?: menuDataItem[];
+    paths?: string | number[];
     hideChildrenInMenu?: number;
 };
