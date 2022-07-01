@@ -1,62 +1,102 @@
 /** @format */
 
+import lodash from 'lodash';
 import { useIntl } from 'umi';
-import { fetchMenuData, saveMenu } from '../service';
-import { randomString, recursiveQuery, waitTime } from '@/extra/utils';
-import React, { useRef, useState } from 'react';
+import { IconMap } from '@/extra/iconsMap';
 import type { menuDataItem } from '../data';
+import React, { useRef, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import type { ProColumns, EditableFormInstance } from '@ant-design/pro-table';
-import { RecordSwitch } from '@/pages/components/RecordSwitch';
-import { Button, message, Space, Table } from 'antd';
-import { DeleteOutlined, EditOutlined, MinusCircleOutlined, PlusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { EditableProTable } from '@ant-design/pro-table';
-import type { ActionType } from '@ant-design/pro-table';
+import { fetchMenuData, saveMenu, remove } from '../service';
+import { RecordSwitch } from '@/pages/components/RecordSwitch';
+import { Button, Cascader, message, Modal, Space, Table } from 'antd';
+import { queryChildId, randomString, recursiveQuery, waitTime } from '@/extra/utils';
+import type { EditableFormInstance, ActionType, ProColumns } from '@ant-design/pro-table';
+import { QuestionCircleOutlined, MinusCircleOutlined, PlusCircleOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 
 export default () => {
     const intl = useIntl();
+    const { confirm } = Modal;
+    // 预设数据
+    const createRecord = {
+        pid: 0,
+        sort: 50,
+        exact: 1,
+        status: 1,
+        paths: [0],
+        hideInMenu: 0,
+        locale: 'menu.',
+        hideChildrenInMenu: 0,
+        id: randomString(6),
+    };
     // 菜单路径
     const [pid, setPid] = useState<number[]>();
     // formRef
     const formRef = useRef<EditableFormInstance>();
-    // selectOption
-    const defaultOption = [{ id: 0, pid: 0, cname: '顶级栏目' }];
     // 存放子项的id
     const [expandedIds, setexpandedIds] = useState<number[]>([]);
-    // ModalForm 状态
-    const [modalVisit, setModalVisit] = useState<boolean>(false);
-    // ModalForm 栏目
-    const [channelData, setChannelData] = useState<menuDataItem[]>([]);
-    // ModalForm 标题
-    const [isCreate, setIsCreateMenu] = useState<boolean>(true);
+    // ModalForm 菜单
+    const [menuData, setMenuData] = useState<menuDataItem[]>([]);
     // 控制点击展开行
     const [expandByClick, setExpandByClick] = useState<boolean>(true);
-    // ModalForm 默认值
-    const [modalValues, setModallValues] = useState<menuDataItem>({});
     // 当前展开的行
     const [expandedRowKey, setExpandedRowKey] = useState<number[]>([]);
-    // ActionType
-    const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
+    // defalutOption
+    const defaultOption = [{ id: 0, pid: 0, name: '顶级菜单', locale: 'menu.top' }];
     // editableKeys
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
+    // ActionType
+    const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
 
     const handleDelete = (e: React.MouseEvent<HTMLElement>, record: menuDataItem | menuDataItem[]) => {
         e.stopPropagation();
-        console.log('record', record);
+        let ids: number[] = [];
+        const titles: string[] = [];
+        if (record instanceof Array) {
+            record.forEach(item => {
+                ids.push(item.id as number);
+                titles.push(item?.name ?? '');
+            });
+        } else {
+            ids = queryChildId([record]);
+        }
+        confirm({
+            centered: true,
+            cancelText: '算了',
+            title: '当真要删除?',
+            icon: <QuestionCircleOutlined />,
+            cancelButtonProps: { shape: 'round' },
+            okButtonProps: { danger: true, shape: 'round' },
+            content: record instanceof Array ? `${titles.slice(0, 3).join('，')} 等 ${titles.length} 个菜单` : `${record.name} 这个菜单`,
+            async onOk() {
+                await remove({ id: ids }).then(res => {
+                    ref.current?.reload();
+                    message.success(res?.msg);
+                    // 只在多选的情况下清除已选择的项
+                    record instanceof Array && ref.current?.clearSelected!();
+                });
+            },
+            onCancel() {
+                // 只在多选的情况下清除已选择的项
+                record instanceof Array && ref.current?.clearSelected!();
+            },
+        });
     };
     // 处理单行编辑保存
     const handleOnSave = async (data: menuDataItem) => {
         const post = {
             ...data,
-            single: true,
             pid: pid?.at(-1) ?? data.pid,
             // @ts-ignore
-            path: pid?.join('-') ?? data.path!.join('-'),
+            paths: pid?.join('-') ?? data.paths!.join('-'),
         };
         await saveMenu(post).then(res => {
-            message.success(res.msg);
+            message.success(res?.msg);
             setExpandByClick(true);
-            waitTime(1000).then(() => ref.current?.reload());
+            waitTime(1500).then(() => {
+                setPid([0]);
+                ref.current?.reload();
+            });
         });
     };
     // 处理展开/收缩状态的state
@@ -78,6 +118,22 @@ export default () => {
             }
         });
     };
+    /* pathToArray */
+    const pathToArray = (data: menuDataItem[]) => {
+        data.forEach((item: menuDataItem) => {
+            // 拆分为数组后再转换成数字数组
+            item.paths = 'string' === typeof item?.paths ? item?.paths!.split('-').map(Number) : item?.paths;
+            item.children && pathToArray(item.children);
+        });
+    };
+    /* nameToLocale */
+    const nameToLocale = (data: menuDataItem[]) => {
+        return data.map((item: menuDataItem) => {
+            item.name = intl.formatMessage({ id: item.locale });
+            item.children && nameToLocale(item.children);
+            return item;
+        });
+    };
     /**
      * 获取菜单列表
      * @param params 参数
@@ -92,9 +148,14 @@ export default () => {
         }
         return await fetchMenuData(paramData).then(res => {
             const resList = res?.data?.list;
-            // 存储栏目在选择栏目时用
-            setChannelData(defaultOption.concat(resList));
-            // 存储存在子项的栏目id
+            // 将对象中的path转换数组
+            resList && pathToArray(resList);
+            // 存储菜单在选择菜单时用
+            setMenuData(() => {
+                /* 深度拷贝一份数据以实现改变对象值时而不影响原数据 */
+                return nameToLocale(lodash.cloneDeep(defaultOption.concat(resList)));
+            });
+            // 存储存在子项的菜单id
             setexpandedIds(recursiveQuery(resList));
             return {
                 data: resList || [],
@@ -106,30 +167,100 @@ export default () => {
     const columns: ProColumns<menuDataItem>[] = [
         {
             width: 50,
+            fixed: 'left',
             editable: false,
         },
         {
             width: 150,
+            fixed: 'left',
             title: '菜单名称',
             dataIndex: 'name',
             tooltip: '显示在后台的菜单名称',
             render: (_, record) => intl.formatMessage({ id: record.locale }),
+            formItemProps: () => ({
+                rules: [
+                    { required: true, message: '菜单名称不得为空' },
+                    { type: 'string', pattern: /^\w{2,12}$/, message: '菜单名称只能是2~12个数字、字母与下划线的组合' },
+                ],
+            }),
         },
-		{
-			width: 150,
-			title: '上级菜单',
-			dataIndex: 'pname',
-			render: (_, record) => intl.formatMessage({ id: record?.plocale }),
-		},
         {
-            width: 200,
-            title: '菜单路径',
-            dataIndex: 'path',
+            width: 100,
+            title: '菜单图标',
+            dataIndex: 'icon',
+            fieldProps: { allowClear: false },
+            tooltip: 'Ant Design 不支持子菜单图标',
+            editable: (_, record) => !record.pid,
+            render: (_, record) => IconMap[record.icon as string],
+            formItemProps: () => ({
+                rules: [
+                    () => ({
+                        validator(_, value) {
+                            const rowData = formRef.current?.getRowData!(editableKeys.toString());
+                            if (!value && '0' === rowData.paths.at(-1).toString()) {
+                                return Promise.reject(new Error('顶级菜单必须设置图标'));
+                            }
+                            return Promise.resolve();
+                        },
+                    }),
+                    { type: 'string', pattern: /^[\w?:\-]+$/, message: '图标格式只能是英文字母、数字及下线线和破折号的组合' },
+                ],
+            }),
         },
         {
             width: 150,
+            title: '菜单排序',
+            dataIndex: 'sort',
+            tooltip: '仅支持顶级菜单排序',
+            editable: (_, record) => !record.pid,
+            formItemProps: () => ({
+                rules: [
+                    { required: true, message: '菜单排序为必填项' },
+                    { pattern: /^([1-9]|[1-9]\d{1,2})$/, message: '只能是1~999的正整数' },
+                ],
+            }),
+        },
+        {
+            width: 150,
+            title: '上级菜单',
+            dataIndex: 'paths',
+            renderFormItem: () => (
+                <Cascader
+                    showSearch
+                    changeOnSelect
+                    allowClear={false}
+                    options={menuData}
+                    onChange={(value: any) => setPid(value)}
+                    fieldNames={{ label: 'name', value: 'id' }}
+                    displayRender={(labels: string[]) => (labels.length > 1 ? labels.at(-2) : labels.at(-1))}
+                />
+            ),
+            formItemProps: () => ({ rules: [{ required: true, message: '上级菜单为必选项' }] }),
+            render: (_, record) => intl.formatMessage({ id: record?.plocale ?? record?.locale }),
+        },
+        {
+            width: 150,
+            ellipsis: true,
+            title: '菜单权限',
+            dataIndex: 'authority',
+            tooltip: '设置只对指定用户组访问',
+            render: (_, record) => record?.authority ?? '公共菜单',
+        },
+        {
+            width: 200,
+            ellipsis: true,
+            editable: false,
+            title: '菜单路径',
+            dataIndex: 'path',
+            tooltip: '菜单路径由系统自动生成',
+            formItemProps: () => ({ rules: [{ required: true, message: '菜单路径为必填项' }] }),
+        },
+        {
+            width: 150,
+            ellipsis: true,
             title: '多语言包',
             dataIndex: 'locale',
+            formItemProps: () => ({ rules: [{ required: true, message: '多语言包为必填项' }] }),
         },
         {
             width: 150,
@@ -169,29 +300,29 @@ export default () => {
             dataIndex: 'exact',
             valueType: 'select',
             valueEnum: {
-                1: {
-                    text: '是',
-                    status: 'true',
-                },
                 0: {
-                    text: '否',
+                    text: '禁用',
                     status: 'false',
+                },
+                1: {
+                    text: '启用',
+                    status: 'true',
                 },
             },
             fieldProps: {
                 allowClear: false,
                 options: [
-                    { label: '否', value: 0 },
-                    { label: '是', value: 1 },
+                    { label: '禁用', value: 0 },
+                    { label: '启用', value: 1 },
                 ],
             },
             render: (_, record) => {
                 return (
                     <RecordSwitch
                         record={record}
-                        echoChecked={'是'}
+                        echoChecked={'启用'}
                         fieldKey={'exact'}
-                        echoUnChecked={'否'}
+                        echoUnChecked={'禁用'}
                         url={'/auth/status'}
                         statusField={record.exact}
                     />
@@ -276,9 +407,20 @@ export default () => {
         },
         {
             title: '操作',
-            render: (text, record) => [
+            fixed: 'right',
+            valueType: 'option',
+            render: (text, record, _, action) => [
                 <Space size={4} key="operation">
-                    <Button size="small" shape="round" icon={<EditOutlined />} onClick={e => e.stopPropagation()}>
+                    <Button
+                        size="small"
+                        shape="round"
+                        icon={<EditOutlined />}
+                        onClick={e => {
+                            e?.stopPropagation();
+                            setExpandByClick(false);
+                            action?.startEditable?.(record.id as number);
+                        }}
+                    >
                         编辑
                     </Button>
                     <Button danger size="small" shape="round" type="primary" icon={<DeleteOutlined />} onClick={e => handleDelete(e, record)}>
@@ -298,6 +440,7 @@ export default () => {
                 pagination={false}
                 request={tableData}
                 editableFormRef={formRef}
+                scroll={{ x: 1300, y: 600 }}
                 editable={{
                     editableKeys,
                     type: 'multiple',
@@ -308,13 +451,8 @@ export default () => {
                 }}
                 recordCreatorProps={{
                     position: 'bottom',
+                    record: createRecord,
                     creatorButtonText: '新增菜单',
-                    record: {
-                        pid: 0,
-                        status: 1,
-                        name: 'ename',
-                        id: randomString(6),
-                    },
                 }}
                 expandable={{
                     expandRowByClick: expandByClick,
@@ -340,11 +478,7 @@ export default () => {
                         type="primary"
                         key="createMenu"
                         icon={<PlusOutlined />}
-                        onClick={() => {
-                            setModalVisit(true);
-                            setModallValues({});
-                            setIsCreateMenu(true);
-                        }}
+                        onClick={() => ref.current?.addEditRecord?.(createRecord)}
                     >
                         新建菜单
                     </Button>,
