@@ -29,3 +29,10 @@ export type menuDataItem = {
     paths?: string | number[];
     hideChildrenInMenu?: number;
 };
+
+export type groupDataItem = {
+    name?: string;
+    menu?: string;
+    status?: number;
+    id?: number | string;
+};
