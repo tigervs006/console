@@ -3,6 +3,7 @@
 import { useIntl } from 'umi';
 import { useModel } from 'umi';
 import { IconMap } from '@/extra/iconsMap';
+import { TreeSelector } from '../components';
 import { PageContainer } from '@ant-design/pro-layout';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { groupDataItem, menuDataItem } from '../data';
@@ -20,7 +21,7 @@ export default () => {
     const createRecord = {
         status: 1,
         name: '用户组名',
-        menu: '用户组权限',
+        menu: '1,2,3,4',
         id: randomString(6),
     };
     /* confirm */
@@ -160,6 +161,10 @@ export default () => {
         {
             title: '用户组权限',
             dataIndex: 'menu',
+            formItemProps: () => ({
+                rules: [{ require: true, message: '请为当前用户组设置合适的权限菜单' }],
+            }),
+            renderFormItem: () => <TreeSelector treeData={menuItem} />,
             render: (_, record) => {
                 const nameArr = localeMenu(menuItem, record.menu as string);
                 return nameArr.map(item => (
