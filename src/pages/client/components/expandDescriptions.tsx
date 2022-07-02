@@ -24,6 +24,7 @@ export const ExpandDescriptions: React.FC<{
         {
             title: '公司名称',
             ellipsis: true,
+            dataIndex: 'company',
             render: () => props.record?.company ?? '待完善',
         },
         {

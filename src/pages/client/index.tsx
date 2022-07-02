@@ -103,11 +103,13 @@ export default () => {
         },
         {
             title: '电话',
+            copyable: true,
             dataIndex: 'mobile',
         },
         {
             title: '邮箱',
             search: false,
+            copyable: true,
             dataIndex: 'email',
         },
         {
