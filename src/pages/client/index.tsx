@@ -10,7 +10,7 @@ import type { ProColumns } from '@ant-design/pro-table';
 import { CreateClient } from './components/createClient';
 import { message, Button, Modal, Space, Table, Tag } from 'antd';
 import { ExpandDescriptions } from './components/expandDescriptions';
-import { QuestionCircleOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined, CommentOutlined, DeleteOutlined, IdcardOutlined, EditOutlined, PlusOutlined, MailOutlined } from '@ant-design/icons';
 
 export default () => {
     const { confirm } = Modal;
@@ -144,19 +144,19 @@ export default () => {
                 switch (record.source) {
                     case 1:
                         return (
-                            <Tag key={record.id} color="magenta">
+                            <Tag key={record.id} color="magenta" icon={<MailOutlined />}>
                                 表单留言
                             </Tag>
                         );
                     case 2:
                         return (
-                            <Tag key={record.id} color="blue">
+                            <Tag key={record.id} color="blue" icon={<CommentOutlined />}>
                                 百度商桥
                             </Tag>
                         );
                     default:
                         return (
-                            <Tag key={record.id} color="green">
+                            <Tag key={record.id} color="green" icon={<IdcardOutlined />}>
                                 手动录入
                             </Tag>
                         );
