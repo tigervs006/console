@@ -32,7 +32,7 @@ export type menuDataItem = {
 
 export type groupDataItem = {
     name?: string;
-    menu?: string;
     status?: number;
     id?: number | string;
+    menu?: string | number[];
 };
