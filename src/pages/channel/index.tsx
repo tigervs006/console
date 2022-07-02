@@ -136,8 +136,8 @@ export default () => {
             path: pid?.join('-') ?? data.path!.join('-'),
         };
         await saveChannel(post).then(res => {
-            message.success(res.msg);
             setExpandByClick(true);
+            res?.msg && message.success(res.msg);
             waitTime(1000).then(() => {
                 setPid([0]);
                 ref.current?.reload();

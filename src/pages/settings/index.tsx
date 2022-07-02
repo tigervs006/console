@@ -52,7 +52,9 @@ export default () => {
                 }
             }
         }
-        await saveConfig(post).then(res => message.success(res?.msg));
+        await saveConfig(post).then(res => {
+            res?.msg && message.success(res.msg);
+        });
     };
 
     /** 监听窗口变化 */

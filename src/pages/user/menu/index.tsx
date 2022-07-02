@@ -91,8 +91,8 @@ export default () => {
             paths: pid?.join('-') ?? data.paths!.join('-'),
         };
         await saveMenu(post).then(res => {
-            message.success(res?.msg);
             setExpandByClick(true);
+            res?.msg && message.success(res.msg);
             waitTime(1500).then(() => {
                 setPid([0]);
                 ref.current?.reload();
