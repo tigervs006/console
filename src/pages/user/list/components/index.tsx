@@ -1,17 +1,18 @@
 /** @format */
 
+import md5 from 'md5';
+import { message } from 'antd';
+import { useRequest } from 'umi';
+import styles from '../../index.less';
 import { waitTime } from '@/extra/utils';
+import type { ForwardedRef } from 'react';
+import { fetchGroupData, saveUser } from '../../service';
+import type { UploadFile } from 'antd/es/upload/interface';
 import { CropUpload } from '@/pages/components/CropUpload';
 import type { ProFormInstance } from '@ant-design/pro-form';
-import { ModalForm, ProFormDependency, ProFormText } from '@ant-design/pro-form';
-import { message } from 'antd';
-import type { UploadFile } from 'antd/es/upload/interface';
-import md5 from 'md5';
-import type { ForwardedRef } from 'react';
-import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
-import type { tableDataItem } from '../../data';
-import styles from '../../index.less';
-import { saveUser } from '../../service';
+import type { tableDataItem, groupDataItem } from '../../data';
+import React, { useImperativeHandle, forwardRef, useState, useRef } from 'react';
+import { ProFormDependency, ProFormSelect, ProFormText, ModalForm } from '@ant-design/pro-form';
 
 export const CreateUser: React.FC<{
     modalVisit: boolean;
@@ -22,13 +23,31 @@ export const CreateUser: React.FC<{
     handleSetModalVisit: (status: boolean) => void;
 }> = forwardRef((props, ref) => {
     const formRef = useRef<ProFormInstance>();
+    const [userGroup, setUserGroup] = useState<
+        {
+            label: string;
+            value: number;
+        }[]
+    >([]);
     const [currentUser, setCurrentUser] = useState<string>();
     const modalTitle = props.isCreateUser ? '新增用户' : '编辑用户';
     const [passwordRequire, setPasswordRequire] = useState<boolean>(false);
     useImperativeHandle(ref, () => ({ setUser: (user: string) => setCurrentUser(user) }));
+    /* 获取用户组列表 */
+    useRequest(fetchGroupData, {
+        defaultParams: [{ status: 1 }],
+        onSuccess: (res: { list: groupDataItem[] }) => {
+            setUserGroup(() => {
+                return res?.list.map((item: groupDataItem) => ({
+                    label: item.name!,
+                    value: Number(item.id),
+                }));
+            });
+        },
+    });
     // 处理onFinish事件
     const handleFinish = async (data: tableDataItem) => {
-        await saveUser(Object.assign({ ...data }, { id: props?.record?.id ?? null, gid: 1 })).then(res => {
+        await saveUser(Object.assign({ ...data }, { id: props?.record?.id ?? null })).then(res => {
             res?.msg && message.success(res.msg);
             // 延时重载列表数据
             waitTime(1500).then(() => props.reloadTable());
@@ -126,6 +145,15 @@ export const CreateUser: React.FC<{
                         message: '用户姓名只能是中文',
                     },
                 ]}
+            />
+            <ProFormSelect
+                hasFeedback
+                name="gid"
+                label="用户组"
+                debounceTime={1000}
+                tooltip="当前用户所属的用户组"
+                fieldProps={{ allowClear: false, options: userGroup }}
+                rules={[{ required: true, message: '请选择当前用户所属的用户组' }]}
             />
             <ProFormText
                 hasFeedback

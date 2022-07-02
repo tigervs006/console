@@ -123,7 +123,7 @@ export default () => {
         },
         {
             title: '用户组',
-            dataIndex: 'gid',
+            dataIndex: ['group', 'name'],
         },
         {
             title: 'Email',
