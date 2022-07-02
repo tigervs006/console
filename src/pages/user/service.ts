@@ -1,7 +1,7 @@
 /** @format */
 
-import type { menuDataItem, tableDataItem } from '@/pages/user/data';
 import { getData, postData } from '@/services/ant-design-pro/api';
+import type { groupDataItem, menuDataItem, tableDataItem } from './data';
 
 // 获取用户列表
 export async function fetchData(params: API.PageParams) {
@@ -26,4 +26,19 @@ export async function saveMenu(data: menuDataItem) {
 /* 获取菜单列表 */
 export async function fetchMenuData(params: Record<string, any>) {
     return getData('/auth/list', { ...params });
+}
+
+/* 获取用户组列表 */
+export async function fetchGroupData(params: Record<string, any>) {
+    return getData('/group/list', { ...params });
+}
+
+/* 新增/编辑菜单 */
+export async function saveGroup(data: groupDataItem) {
+    return postData('/group/save', { ...data });
+}
+
+// 单个/批量删除
+export async function removeGroup(data: Record<'id', number | number[]>) {
+    return postData('/group/del', { ...data });
 }
