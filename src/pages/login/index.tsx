@@ -42,7 +42,7 @@ export default () => {
     };
 
     /* 查询用户菜单 */
-    const fetchUserMenu = async (params: { id: string }) => {
+    const fetchUserMenu = async (params: { id: string; status: number }) => {
         await queryUserMenu(params).then((res: any) => {
             setInitialState!(s => ({
                 ...s,
@@ -81,7 +81,7 @@ export default () => {
                     /* 查询用户信息 */
                     fetchUserInfo({ id: localStorage.getItem('uid') ?? '0' });
                     /* 查询用户菜单 */
-                    fetchUserMenu({ id: localStorage.getItem('uid') ?? '0' });
+                    fetchUserMenu({ id: localStorage.getItem('uid') ?? '0', status: 1 });
                 });
                 /** 登录成功后转到 redirect 参数所在的位置 */
                 if (!history) return;
