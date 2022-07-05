@@ -72,7 +72,7 @@ export default () => {
                 {
                     content: content,
                     id: history.location.query?.id ?? null,
-                    author: localStorage?.getItem('user') ?? 'anonymous',
+                    author: data?.author ?? localStorage.getItem('user'),
                 },
             ),
         ).then(res => {
