@@ -42,7 +42,7 @@ export const ApiSettings: React.FC<{
             onFinish={values => props.handleFinish(values)}
         >
             <ProFormRadio.Group
-                label="上传类型"
+                label="存储类型"
                 options={uploadOptions}
                 name={props.list.upload_type?.name}
                 tooltip="请根据实际情况选择文件上传类型"
