@@ -27,7 +27,7 @@ export default () => {
     const tabItem: Record<string, string>[] = [
         { key: '1', pane: '网站配置' },
         { key: '2', pane: '百度配置' },
-        { key: '3', pane: '接口配置' },
+        { key: '3', pane: '存储配置' },
         { key: '4', pane: '联络方式' },
         { key: '5', pane: '邮件配置' },
         { key: '6', pane: '其它配置' },
