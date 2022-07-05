@@ -40,26 +40,43 @@ export async function getInitialState(): Promise<{
     /* 获取当前用户菜单 */
     const fetchUserMenu = async (params: { id: string; status: number }) =>
         await queryUserMenu(params).then(res => {
-            return res?.data?.list.sort(sortDesc('sort'));
-        });
-    return {
-        isLoginPage: isLogin,
-        settings: defaultSettings,
-        currentUser: isLogin ? undefined : await fetchUserInfo({ id: localStorage.getItem('uid') || '0' }),
-        useMenuItem: isLogin ? [] : await fetchUserMenu({ id: localStorage.getItem('uid') || '0', status: 1 }),
-    };
+			return res?.data?.list.sort(sortDesc('sort'));
+		});
+	return {
+		isLoginPage: isLogin,
+		settings: defaultSettings,
+		currentUser: isLogin ? undefined : await fetchUserInfo({id: localStorage.getItem('uid') || '0'}),
+		useMenuItem: isLogin ? [] : await fetchUserMenu({id: localStorage.getItem('uid') || '0', status: 1}),
+	};
 }
 
-export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
-    if (initialState?.isLoginPage) {
-        return {
-            menuRender: false,
-            headerRender: false,
-        };
-    }
-    return {
-        rightContentRender: () => <RightContent />,
-        disableContentMargin: false,
+/* 监听路由变化 */
+export function onRouteChange({location}: { location: Record<string, any> }) {
+	switch (location.pathname) {
+		case '/dashboard':
+			history.push('/dashboard/analysis')
+			break;
+		case '/content':
+			history.push('/content/list')
+			break;
+		case '/user':
+			history.push('/user/list')
+			break;
+		default:
+	}
+}
+
+/* 设置全局layout */
+export const layout: RunTimeLayoutConfig = ({initialState, setInitialState}) => {
+	if (initialState?.isLoginPage) {
+		return {
+			menuRender: false,
+			headerRender: false,
+		};
+	}
+	return {
+		rightContentRender: () => <RightContent/>,
+		disableContentMargin: false,
         waterMarkProps: {
             content: initialState?.currentUser?.name,
         },
@@ -117,7 +134,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     };
 };
 
-// 请求前拦截器
+/* 请求前拦截器 */
 const authHeaderInterceptor = (url: string, options: RequestOptionsInit) => {
     const accessToken = localStorage.getItem('Authorization');
     const customHeader = { 'Content-Type': 'application/json; charset=utf-8' };
@@ -128,10 +145,10 @@ const authHeaderInterceptor = (url: string, options: RequestOptionsInit) => {
     };
 };
 
-// 响应后拦截器
+/* 响应后拦截器 */
 const ResponseInterceptors = async (response: Response) => {
     const result = await response.clone().json();
-    // 如果是Token验证失败则退出
+	/* Token验证失败跳转登录 */
     if (401 === result.status) {
         localStorage.clear();
         history.push(loginPath);
