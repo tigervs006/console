@@ -15,10 +15,8 @@ module.exports = {
 		'keyword-spacing': 1,
 		// 算术运算符空格
 		'space-infix-ops': 1,
-		// 禁止尾随的空格
-		'no-trailing-spaces': 2,
 		// 提示使用单引号
-		quotes: [1, 'single'],
+		'quotes': [1, 'single'],
 		// 可优化的三元表达式
 		'no-unneeded-ternary': 1,
 		// Switch语句冒号间距
@@ -27,16 +25,18 @@ module.exports = {
 		'comma-style': [1, 'last'],
 		// 允许最大的空行默认2
 		'no-multiple-empty-lines': 1,
-		// 要求点与属性位于同行
-		'dot-location': [1, 'property'],
 		// 超过每行最大行长度换行
 		'max-len': [1, { code: 150 }],
+		// 要求点与属性位于同一行
+		'dot-location': [1, 'property'],
 		// 箭头函数单个参数的括号
 		'arrow-parens': [1, 'as-needed'],
 		// 禁止对象的属性前带空格
 		'no-whitespace-before-property': 2,
 		// 运算符需在表达式的前面
 		'operator-linebreak': [1, 'before'],
+		// 花括号中的对象一致的空格
+		'object-curly-spacing': [1, 'always'],
 		// 对象键值冒号后面需带空格
 		'key-spacing': [1, { afterColon: true }],
 		// 每行允许的最大执行语句数
