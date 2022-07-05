@@ -2,84 +2,91 @@
 
 import md5 from 'md5';
 import styles from './index.less';
-import React, { useState } from 'react';
 import Footer from '@/components/Footer';
 import { waitTime } from '@/extra/utils';
-import { Alert, message, Tabs } from 'antd';
-import { getFakeCaptcha } from '@/services/ant-design-pro/login';
+import {Alert, message, Tabs} from 'antd';
+import React, {useEffect, useState} from 'react';
+import {getFakeCaptcha} from '@/services/ant-design-pro/login';
 import { FormattedMessage, history, SelectLang, useIntl, useModel } from 'umi';
 import { MobileOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { LoginForm, ProFormCaptcha, ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
 import { currentUser as queryCurrentUser, currentUserMenu as queryUserMenu, login } from '@/services/ant-design-pro/api';
 
 const LoginMessage: React.FC<{
-    content: string;
-}> = ({ content }) => (
-    <Alert
-        style={{
-            marginBottom: 24,
-        }}
-        message={content}
-        type="error"
-        showIcon
-    />
+	content: string;
+}> = ({content}) => (
+	<Alert
+		style={{
+			marginBottom: 24,
+		}}
+		message={content}
+		type="error"
+		showIcon
+	/>
 );
 
 export default () => {
-    const intl = useIntl();
-    const [type, setType] = useState<string>('account');
-    const { setInitialState } = useModel('@@initialState');
-    const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
+	const intl = useIntl();
+	const [type, setType] = useState<string>('account');
+	const {setInitialState} = useModel('@@initialState');
+	const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
 
-    /* 查询用户信息 */
-    const fetchUserInfo = async (params: { id: string }) => {
-        await queryCurrentUser(params).then((res: any) => {
-            setInitialState!(s => ({
-                ...s,
-                currentUser: res.data?.info,
-            }));
-        });
-    };
+	useEffect(() => {
+		setInitialState!(s => ({
+			...s,
+			isLoginPage: true,
+		}));
+	}, [setInitialState])
 
-    /* 查询用户菜单 */
-    const fetchUserMenu = async (params: { id: string; status: number }) => {
-        await queryUserMenu(params).then((res: any) => {
-            setInitialState!(s => ({
-                ...s,
-                useMenuItem: res?.data?.list,
-            }));
-        });
-    };
+	/* 查询用户信息 */
+	const fetchUserInfo = async (params: { id: string }) => {
+		await queryCurrentUser(params).then((res: any) => {
+			setInitialState!(s => ({
+				...s,
+				currentUser: res.data?.info,
+			}));
+		});
+	};
 
-    /** 处理用户登录 */
-    const handleSubmit = async (values: API.LoginParams) => {
-        await login({ ...values, type })
-            .then(async res => {
-                const localItem = [
-                    { uid: res.data?.info?.uid ?? '0' },
-                    { avatar: res.data?.info?.avatar ?? '' },
-                    { user: res.data?.info?.name ?? 'anonymous' },
-                    { Authorization: res.data?.info?.authorization ?? '' },
-                ];
-                /* 写入localStorage */
-                localItem.forEach(item => {
-                    for (const idx in item) {
-                        localStorage.setItem(idx, item[idx]);
-                    }
-                });
-                const defaultLoginSuccessMessage = intl.formatMessage({
-                    id: 'pages.login.success',
-                    defaultMessage: res?.msg,
-                });
-                message.success(defaultLoginSuccessMessage);
-                /* 延迟两秒是为了让token生效 */
-                await waitTime(2000).then(() => {
-                    setInitialState(s => ({
-                        ...s,
-                        isLoginPage: false,
-                    }));
-                    /* 查询用户信息 */
-                    fetchUserInfo({ id: localStorage.getItem('uid') ?? '0' });
+	/* 查询用户菜单 */
+	const fetchUserMenu = async (params: { id: string; status: number }) => {
+		await queryUserMenu(params).then((res: any) => {
+			setInitialState!(s => ({
+				...s,
+				useMenuItem: res?.data?.list,
+			}));
+		});
+	};
+
+	/** 处理用户登录 */
+	const handleSubmit = async (values: API.LoginParams) => {
+		await login({...values, type})
+			.then(async res => {
+				const localItem = [
+					{uid: res.data?.info?.uid ?? '0'},
+					{avatar: res.data?.info?.avatar ?? ''},
+					{user: res.data?.info?.name ?? 'anonymous'},
+					{Authorization: res.data?.info?.authorization ?? ''},
+				];
+				/* 写入localStorage */
+				localItem.forEach(item => {
+					for (const idx in item) {
+						localStorage.setItem(idx, item[idx]);
+					}
+				});
+				const defaultLoginSuccessMessage = intl.formatMessage({
+					id: 'pages.login.success',
+					defaultMessage: res?.msg,
+				});
+				message.success(defaultLoginSuccessMessage);
+				/* 延迟两秒是为了让token生效 */
+				await waitTime(2000).then(() => {
+					setInitialState(s => ({
+						...s,
+						isLoginPage: false,
+					}));
+					/* 查询用户信息 */
+					fetchUserInfo({id: localStorage.getItem('uid') ?? '0'});
                     /* 查询用户菜单 */
                     fetchUserMenu({ id: localStorage.getItem('uid') ?? '0', status: 1 });
                 });
