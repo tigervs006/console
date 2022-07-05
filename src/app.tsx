@@ -62,6 +62,9 @@ export function onRouteChange({location}: { location: Record<string, any> }) {
 		case '/user':
 			history.push('/user/list')
 			break;
+		case '/':
+			history.push('/dashboard/analysis')
+			break;
 		default:
 	}
 }
