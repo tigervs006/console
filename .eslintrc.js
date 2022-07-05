@@ -43,6 +43,8 @@ module.exports = {
 		'max-statements-per-line': [1, { max: 2 }],
 		// 参数的逗号后面用空格分隔
 		'comma-spacing': [1, { before: false, after: true }],
+		// 必须以关键字开头声明函数
+		'func-style': [2, 'expression', { 'allowArrowFunctions': true }],
 		// 数组或数组对象前后的空格
 		'array-bracket-spacing': [1, 'never', { objectsInArrays: false }],
 		// 强制类或方法的括号内的参数带空格间距
