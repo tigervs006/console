@@ -155,6 +155,21 @@ export const CreateUser: React.FC<{
                 fieldProps={{ allowClear: false, options: userGroup }}
                 rules={[{ required: true, message: '请选择当前用户所属的用户组' }]}
             />
+			<ProFormText
+				hasFeedback
+				name="mobile"
+				label="手机号"
+				tooltip="你的手机号"
+				placeholder="请输入手机号码"
+				fieldProps={{
+					maxLength: 11,
+					showCount: true,
+				}}
+				rules={[
+					{ required: true, message: '请输入用户的手机号' },
+					{ type: 'string', pattern: /^1[3456789]\d{9}$/, message: '请输入正确的手机号码' },
+				]}
+			/>
             <ProFormText
                 hasFeedback
                 name="email"

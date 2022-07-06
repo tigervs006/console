@@ -125,6 +125,10 @@ export default () => {
             title: '用户组',
             dataIndex: ['group', 'name'],
         },
+		{
+			title: '手机号',
+			dataIndex: 'mobile',
+		},
         {
             title: 'Email',
             dataIndex: 'email',
