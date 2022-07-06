@@ -7,3 +7,4 @@ dist
 .umi
 mock
 app.tsx
+service.ts
