@@ -53,6 +53,9 @@ export async function getInitialState(): Promise<{
 /* 监听路由变化 */
 export function onRouteChange({location}: { location: Record<string, any> }) {
 	switch (location.pathname) {
+		case '/':
+			history.push('/dashboard/analysis')
+			break;
 		case '/dashboard':
 			history.push('/dashboard/analysis')
 			break;
@@ -61,9 +64,6 @@ export function onRouteChange({location}: { location: Record<string, any> }) {
 			break;
 		case '/user':
 			history.push('/user/list')
-			break;
-		case '/':
-			history.push('/dashboard/analysis')
 			break;
 		default:
 	}
