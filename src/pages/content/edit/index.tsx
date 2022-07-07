@@ -103,9 +103,9 @@ export default () => {
                 // 提取值为1的属性名
                 for (const idx in info) {
                     if (
-                        (idx === 'is_head' && 1 === info[idx])
-                        || (idx === 'is_recom' && 1 === info[idx])
-                        || (idx === 'is_litpic' && 1 === info[idx])
+                        (idx === 'is_head' && 1 === info[idx]) ||
+                        (idx === 'is_recom' && 1 === info[idx]) ||
+                        (idx === 'is_litpic' && 1 === info[idx])
                     ) {
                         attribute.push(idx);
                     }
@@ -208,7 +208,7 @@ export default () => {
                     label="文档简述"
                     name="description"
                     tooltip="SEO优化很重要"
-                    placeholder="请输入名称文档简述"
+                    placeholder="请输入文档简述"
                     // 输入时去除首尾空格
                     getValueFromEvent={e => e.target.value.trim()}
                     fieldProps={{
