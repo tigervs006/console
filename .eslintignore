@@ -2,9 +2,8 @@
 /scripts
 /config
 .history
+app.tsx
 public
 dist
 .umi
 mock
-app.tsx
-service.ts
