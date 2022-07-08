@@ -4,13 +4,13 @@ import type { productDataItem } from '@/pages/product/data';
 import { getData, postData } from '@/services/ant-design-pro/api';
 
 /* 获取商品分类 */
-export const getCate = async () => getData('/product/cate');
+export const getCate = () => getData('/product/cate');
 
 /* 获取商品信息 */
-export const getInfo = async (params: { id?: string }) => getData('/product/list', params);
+export const getInfo = (params: { id?: string }) => getData('/product/list', params);
 
 /* 新增/编辑商品 */
-export const saveProduct = async (data: productDataItem) => postData('/product/save', data);
+export const saveProduct = (data: productDataItem) => postData('/product/save', data);
 
 /* 单个/批量删除 */
-export const remove = async (data: { id: number | number[] }) => postData('/product/del', data);
+export const remove = (data: { id: number | number[] }) => postData('/product/del', data);

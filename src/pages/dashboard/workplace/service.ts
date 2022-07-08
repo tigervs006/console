@@ -1,14 +1,10 @@
+/** @format */
+
 import { request } from 'umi';
 import type { NoticeType, ActivitiesType, AnalysisData } from './data';
 
-export async function queryProjectNotice(): Promise<{ data: NoticeType[] }> {
-  return request('/dashboard/notice');
-}
+export const fakeChartData = (): Promise<{ data: AnalysisData }> => request('/dashboard/workplace');
 
-export async function queryActivities(): Promise<{ data: ActivitiesType[] }> {
-  return request('/dashboard/activities');
-}
+export const queryProjectNotice = (): Promise<{ data: NoticeType[] }> => request('/dashboard/notice');
 
-export async function fakeChartData(): Promise<{ data: AnalysisData }> {
-  return request('/dashboard/workplace');
-}
+export const queryActivities = (): Promise<{ data: ActivitiesType[] }> => request('/dashboard/activities');
