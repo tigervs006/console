@@ -127,7 +127,7 @@ export default () => {
                     fieldProps={{ showCount: true, maxLength: 64 }}
                     rules={[
                         { required: true, message: '请输入关键词' },
-                        { min: 10, message: '再多来两个关键词' },
+                        { type: 'string', min: 10, message: '再多来两个关键词' },
                         {
                             type: 'string',
                             pattern: /^[^\u2018-\u2027\uff01-\uff0f\uff1a-\uff20\u3002]+$/,
@@ -151,7 +151,7 @@ export default () => {
                     }}
                     rules={[
                         { required: true, message: '请输入商品简述' },
-                        { min: 50, message: '再多几句商品简述', type: 'string' },
+                        { type: 'string', min: 50, message: '再多几句商品简述吧' },
                     ]}
                 />
                 <ProForm.Item
@@ -161,7 +161,13 @@ export default () => {
                     tooltip="输入提炼的商品卖点"
                     rules={[{ required: true, message: '请至少填写一个商品卖点' }]}
                 >
-                    <InputTagList ref={tagRef} addition={'商品卖点'} handleChange={value => formRef.current?.setFieldsValue({ special: value })} />
+                    <InputTagList
+                        ref={tagRef}
+                        addition={'商品卖点'}
+                        handleChange={value => {
+                            formRef.current?.setFieldsValue({ special: value });
+                        }}
+                    />
                 </ProForm.Item>
                 <CropUpload
                     maxUpload={5}
