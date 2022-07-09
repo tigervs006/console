@@ -179,7 +179,10 @@ export default () => {
                     formTooltip={'至少上传一张图片作为商品封面'}
                     extraData={{ field: 'album', path: 'images/product' }}
                     validateRules={[{ required: true, message: '请至少上传一张图像作为商品封面' }]}
-                    setFieldsValue={(fileList: UploadFile[]) => formRef.current?.setFieldsValue({ album: fileList })}
+                    setFieldsValue={(fileList: UploadFile[]) => {
+                        console.log('setFieldsValue', fileList);
+                        formRef.current?.setFieldsValue({ album: fileList });
+                    }}
                 />
                 <ProForm.Item
                     name="content"

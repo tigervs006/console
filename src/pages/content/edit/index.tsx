@@ -21,8 +21,8 @@ export default () => {
         return formRef.current?.getFieldValue('content') || null;
     });
     // 文件列表
-    const { setFileLists } = useModel('file', ret => ({
-        setFileLists: ret.setFileList,
+    const { setUploadList } = useModel('file', ret => ({
+        setUploadList: ret.setUploadList,
     }));
     // 新闻栏目
     const channel = async () => {
@@ -91,7 +91,7 @@ export default () => {
                 // 设置编辑器内容
                 setContent(info?.content?.content ?? null);
                 // 设置fileList
-                setFileLists([
+                setUploadList([
                     {
                         status: 'done',
                         url: info.litpic,
@@ -122,7 +122,7 @@ export default () => {
             });
         } else {
             // 清空fileList
-            setFileLists([]);
+            setUploadList([]);
             return {}; // 不是编辑文档直接返回空对象
         }
     };
@@ -247,7 +247,7 @@ export default () => {
                         onChange: () => {
                             // 只在编辑文档时清空fileList及litpic
                             if (!history.location.query?.id) {
-                                setFileLists([]);
+                                setUploadList([]);
                                 formRef.current?.setFieldsValue({ litpic: [] });
                             }
                         },

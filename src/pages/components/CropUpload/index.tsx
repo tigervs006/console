@@ -1,16 +1,16 @@
 /** @format */
 
-import { ImagePreview } from '@/pages/components/ImagePreview';
-import { removeFile } from '@/services/ant-design-pro/api';
-import { CloudUploadOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import ProForm from '@ant-design/pro-form';
-import { Button, message, Modal, notification, Upload } from 'antd';
-import ImgCrop from 'antd-img-crop';
 import 'antd/es/slider/style';
-import type { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
-import type { UploadFile, UploadListType } from 'antd/es/upload/interface';
-import React, { useRef } from 'react';
 import { useModel } from 'umi';
+import ImgCrop from 'antd-img-crop';
+import React, { useRef } from 'react';
+import ProForm from '@ant-design/pro-form';
+import { removeFile } from '@/services/ant-design-pro/api';
+import { ImagePreview } from '@/pages/components/ImagePreview';
+import { Button, message, Modal, notification, Upload } from 'antd';
+import type { UploadFile, UploadListType } from 'antd/es/upload/interface';
+import type { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
+import { CloudUploadOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 
 export const CropUpload: React.FC<
     API.uploadComponents & {
@@ -28,6 +28,8 @@ export const CropUpload: React.FC<
     const quality: number = props?.cropQuality ?? 0.6;
     // 裁剪比例
     const aspect: number = props?.cropAspect ?? 1 / 1!;
+    // 文件多选
+    const multiple: boolean = props?.multiple ?? false;
     // 图片宽度
     const imageWidth: number = props?.imageWidth ?? 750;
     // 图片预览
@@ -41,10 +43,11 @@ export const CropUpload: React.FC<
     // 文件后缀
     const acceptFile: string = props?.acceptFile ?? '.png, .jpg, .jpeg, .gif';
     // 文件列表
-    const { fileLists, setFileList } = useModel('file', ret => ({
-        fileLists: ret.fileList,
-        setFileList: ret.setFileList,
+    const { uploadList, setUploadList } = useModel('file', ret => ({
+        uploadList: ret.uploadList,
+        setUploadList: ret.setUploadList,
     }));
+
     // 文件格式
     const fileType: string[] = props?.fileType ?? ['image/png', 'image/jpeg', 'image/gif'];
 
@@ -77,17 +80,21 @@ export const CropUpload: React.FC<
 
     // 处理上传事件
     const handleChange: UploadProps['onChange'] = (info: UploadChangeParam) => {
-        const { fileList } = info;
-        setFileList(fileList.slice());
+        const { file, fileList } = info;
+        setUploadList(fileList.slice());
         const status = info.file.status;
         switch (status) {
             case 'uploading':
                 message.info!('File is uploading...');
                 break;
             case 'done':
-                setFileList([Object.assign({ ...info.file.response.data }, { status: info.file.response.success ? 'done' : 'error' })]);
-                props.setFieldsValue(fileList);
-                message.success!(info.file.response.msg);
+                setUploadList(pre => {
+                    const fileArr = pre.concat([{ ...file?.response?.data, status: 'done' }]);
+                    const filterArr = fileArr.filter(item => undefined === item?.response);
+                    props.setFieldsValue(filterArr);
+                    return filterArr;
+                });
+                message.success!(file.response.msg);
                 break;
             case 'success':
                 message.success!('File uploaded successfully');
@@ -98,12 +105,12 @@ export const CropUpload: React.FC<
             case 'error':
                 notification.error({
                     message: 'Error',
-                    description: info.file?.response?.msg ?? 'File upload failed',
+                    description: file?.response?.msg ?? 'File upload failed',
                 });
                 break;
             case undefined:
                 // 这里很重要
-                setFileList([]);
+                setUploadList([]);
                 break;
             default:
                 throw new Error('Not implemented yet: undefined case');
@@ -160,9 +167,10 @@ export const CropUpload: React.FC<
             >
                 <ImgCrop grid quality={quality} aspect={aspect} modalTitle="裁剪图像">
                     <Upload
+                        multiple={multiple}
                         accept={acceptFile}
                         listType={listType}
-                        fileList={fileLists}
+                        fileList={uploadList}
                         maxCount={maxUpload}
                         data={props.extraData}
                         onRemove={handleRemove}
@@ -187,7 +195,7 @@ export const CropUpload: React.FC<
                         }
                     >
                         {/*达到限定的上传数量时隐藏上传按钮*/}
-                        {maxUpload !== fileLists.length && (
+                        {maxUpload !== uploadList.length && (
                             <Button type="text" icon={<CloudUploadOutlined />}>
                                 {uploadText}
                             </Button>
@@ -195,7 +203,7 @@ export const CropUpload: React.FC<
                     </Upload>
                 </ImgCrop>
             </ProForm.Item>
-            <ImagePreview ref={previewRef} imgList={fileLists} />
+            <ImagePreview ref={previewRef} imgList={uploadList} />
         </>
     );
 };
