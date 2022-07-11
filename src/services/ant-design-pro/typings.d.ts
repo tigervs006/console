@@ -126,6 +126,7 @@ declare namespace API {
         formLabel?: string;
         className?: string;
         multiple?: boolean;
+        uploadUrl?: string;
         imageWidth?: number;
         acceptFile?: string;
         fileType?: string[];
@@ -134,6 +135,6 @@ declare namespace API {
         listType?: UploadListType;
         validateRules?: Record<string, any>[];
         extraData: { field: string; path: string };
-        useTransForm?: (value: string | UploadFile[]) => Record<string, string>;
+        useTransForm?: (value: string | UploadFile[]) => Record<string, any>;
     };
 }
