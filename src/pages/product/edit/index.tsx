@@ -129,10 +129,10 @@ export default () => {
                     name="keywords"
                     tooltip="请用空格分隔"
                     placeholder="请输入关键词"
-                    fieldProps={{ showCount: true, maxLength: 64 }}
+                    fieldProps={{ showCount: true, maxLength: 32 }}
                     rules={[
                         { required: true, message: '请输入关键词' },
-                        { type: 'string', min: 10, message: '再多来两个关键词' },
+                        { type: 'string', min: 8, message: '再多来两个关键词' },
                         {
                             type: 'string',
                             pattern: /^[^\u2018-\u2027\uff01-\uff0f\uff1a-\uff20\u3002]+$/,
