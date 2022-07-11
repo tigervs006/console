@@ -23,7 +23,7 @@ export const InputTagList: React.FC<{
         if (inputVisible) {
             inputRef.current?.focus();
         }
-        return props.handleChange(tags);
+        // return props.handleChange(tags);
     }, [tags, props, inputVisible]);
 
     /** 设置input输入框的可见性 */
@@ -33,12 +33,18 @@ export const InputTagList: React.FC<{
     const handleInputChange = (e: any) => setInputValue(e.target.value);
 
     /** 处理删除Tag标签时的事件 */
-    const handleClose = (removedTag: string) => setTags(tags.filter(tag => tag !== removedTag));
+    const handleClose = (removedTag: string) => {
+        const tagsArr = tags.filter(tag => tag !== removedTag);
+        props.handleChange(tagsArr);
+        setTags(tagsArr);
+    };
 
     /** 处理输入确认值时的事件 */
     const handleInputConfirm = () => {
         if (inputValue && -1 === tags.indexOf(inputValue)) {
-            setTags([...tags, inputValue]);
+            const tagsArr = [...tags, inputValue];
+            props.handleChange(tagsArr);
+            setTags(tagsArr);
         }
         setInputValue('');
         setInputVisible(false);
