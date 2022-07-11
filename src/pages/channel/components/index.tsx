@@ -7,7 +7,7 @@ import { waitTime, zh2Pinyin } from '@/extra/utils';
 import { fetchData, saveChannel } from '../service';
 import type { UploadFile } from 'antd/es/upload/interface';
 import type { ProFormInstance } from '@ant-design/pro-form';
-import { ProUploadButton } from '@/pages/components/UploadButton';
+import { UploadAdapter } from '@/pages/components/UploadAdapter';
 import { ProFormCascader, ProFormTextArea, ProFormText, ModalForm } from '@ant-design/pro-form';
 
 export const CreateModalForm: React.FC<{
@@ -65,12 +65,12 @@ export const CreateModalForm: React.FC<{
             autoFocusFirstInput
             submitTimeout={2000}
             visible={props.modalVisit}
-            initialValues={props.record}
             validateTrigger={['onBlur']}
             onVisibleChange={props.handleSetModalVisit}
+            initialValues={{ ...props.record, isCrop: 0 }}
             onFinish={values => handleFinish(values).then(() => true)}
         >
-            <ProUploadButton
+            <UploadAdapter
                 imageHeight={500}
                 imageWidth={1920}
                 formName={'banner'}
@@ -82,9 +82,10 @@ export const CreateModalForm: React.FC<{
                 useTransForm={value => {
                     if ('string' === typeof value) return { banner: value };
                     return {
-                        banner: value.map((item: UploadFile) => item?.response?.data?.url ?? '').toString(),
+                        banner: value.map((item: UploadFile) => item?.url).toString(),
                     };
                 }}
+                setFieldsValue={(fileList: UploadFile[]) => formRef.current?.setFieldsValue({ banner: fileList })}
             />
             <ProFormCascader
                 name="path"

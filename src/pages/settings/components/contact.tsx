@@ -4,22 +4,22 @@ import { Space } from 'antd';
 import React, { useEffect, useRef } from 'react';
 import { useModel } from '@@/plugin-model/useModel';
 import type { UploadFile } from 'antd/es/upload/interface';
-import { CropUpload } from '@/pages/components/CropUpload';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import ProForm, { ProFormText } from '@ant-design/pro-form';
 import { FormOutlined, UndoOutlined } from '@ant-design/icons';
+import { UploadAdapter } from '@/pages/components/UploadAdapter';
 
 export const ContactSettings: React.FC<{
     list: Record<string, any>;
     handleFinish: (data: Record<string, any>) => Promise<void>;
 }> = props => {
     const formRef = useRef<ProFormInstance>();
-    // 文件列表
-    const { setFileLists } = useModel('file', ret => ({
-        setFileLists: ret.setFileList,
+    /* 文件列表 */
+    const { setUploadList } = useModel('file', ret => ({
+        setUploadList: ret.setUploadList,
     }));
     useEffect(() => {
-        setFileLists([
+        setUploadList([
             {
                 status: 'done',
                 url: props.list.qrcode?.value,
@@ -48,17 +48,18 @@ export const ContactSettings: React.FC<{
                 resetButtonProps: { shape: 'round', icon: <UndoOutlined /> },
                 submitButtonProps: { type: 'primary', shape: 'round', icon: <FormOutlined /> },
             }}
-            // 失焦校验数据
+            /* 失焦校验数据 */
             validateTrigger={['onBlur']}
+            initialValues={{ isCrop: 1 }}
             onFinish={values => props.handleFinish(values)}
         >
-            <CropUpload
+            <UploadAdapter
                 imageWidth={200}
                 imageHeight={200}
                 formLabel={'二维码'}
                 extraData={{
                     field: 'qrcode',
-                    path: `images/system/qrcode`,
+                    path: 'images/system/qrcode',
                 }}
                 formTitle={'上传二维码'}
                 formName={props.list.qrcode?.name}
@@ -66,7 +67,7 @@ export const ContactSettings: React.FC<{
                 useTransForm={value => {
                     if ('string' === typeof value) return { qrcode: value };
                     return {
-                        qrcode: value.map((item: UploadFile) => item?.response?.data?.url ?? '').toString(),
+                        qrcode: value.map((item: UploadFile) => item?.url).toString(),
                     };
                 }}
                 setFieldsValue={(fileList: UploadFile[]) => formRef.current?.setFieldsValue({ qrcode: fileList })}

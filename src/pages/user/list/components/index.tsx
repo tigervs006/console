@@ -8,9 +8,9 @@ import { waitTime } from '@/extra/utils';
 import type { ForwardedRef } from 'react';
 import { fetchGroupData, saveUser } from '../../service';
 import type { UploadFile } from 'antd/es/upload/interface';
-import { CropUpload } from '@/pages/components/CropUpload';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import type { tableDataItem, groupDataItem } from '../../data';
+import { UploadAdapter } from '@/pages/components/UploadAdapter';
 import React, { useImperativeHandle, forwardRef, useState, useRef } from 'react';
 import { ProFormDependency, ProFormSelect, ProFormText, ModalForm } from '@ant-design/pro-form';
 
@@ -80,16 +80,16 @@ export const CreateUser: React.FC<{
             title={modalTitle}
             submitTimeout={2000}
             visible={props.modalVisit}
-            initialValues={props.record}
             validateTrigger={['onBlur']}
             onVisibleChange={props.handleSetModalVisit}
+            initialValues={{ ...props.record, isCrop: 1 }}
             onFinish={values => handleFinish(values).then(() => true)}
         >
             <ProFormDependency name={['name']}>
                 {({ name }) => {
                     if (name) {
                         return (
-                            <CropUpload
+                            <UploadAdapter
                                 imageWidth={200}
                                 imageHeight={200}
                                 formName={'avatar'}
@@ -103,7 +103,7 @@ export const CreateUser: React.FC<{
                                 useTransForm={value => {
                                     if ('string' === typeof value) return { avatar: value };
                                     return {
-                                        avatar: value.map((item: UploadFile) => item?.response?.data?.url ?? '').toString(),
+                                        avatar: value.map((item: UploadFile) => item?.url).toString(),
                                     };
                                 }}
                                 setFieldsValue={(fileList: UploadFile[]) => formRef.current?.setFieldsValue({ avatar: fileList })}
@@ -155,21 +155,21 @@ export const CreateUser: React.FC<{
                 fieldProps={{ allowClear: false, options: userGroup }}
                 rules={[{ required: true, message: '请选择当前用户所属的用户组' }]}
             />
-			<ProFormText
-				hasFeedback
-				name="mobile"
-				label="手机号"
-				tooltip="你的手机号"
-				placeholder="请输入手机号码"
-				fieldProps={{
-					maxLength: 11,
-					showCount: true,
-				}}
-				rules={[
-					{ required: true, message: '请输入用户的手机号' },
-					{ type: 'string', pattern: /^1[3456789]\d{9}$/, message: '请输入正确的手机号码' },
-				]}
-			/>
+            <ProFormText
+                hasFeedback
+                name="mobile"
+                label="手机号"
+                tooltip="你的手机号"
+                placeholder="请输入手机号码"
+                fieldProps={{
+                    maxLength: 11,
+                    showCount: true,
+                }}
+                rules={[
+                    { required: true, message: '请输入用户的手机号' },
+                    { type: 'string', pattern: /^1[3456789]\d{9}$/, message: '请输入正确的手机号码' },
+                ]}
+            />
             <ProFormText
                 hasFeedback
                 name="email"

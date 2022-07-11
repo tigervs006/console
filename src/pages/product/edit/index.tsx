@@ -1,22 +1,26 @@
 /** @format */
 
-import { history } from 'umi';
 import { message, Space } from 'antd';
+import { useModel, history } from 'umi';
 import React, { useState, useRef } from 'react';
 import Ckeditor from '@/pages/components/Ckeditor';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { UploadFile } from 'antd/es/upload/interface';
-import { CropUpload } from '@/pages/components/CropUpload';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import { FormOutlined, UndoOutlined } from '@ant-design/icons';
 import { InputTagList } from '@/pages/components/InputTagList';
 import type { productDataItem, channelDataItem } from '../data';
+import { UploadAdapter } from '@/pages/components/UploadAdapter';
 import { saveProduct, getCate, getInfo } from '@/pages/product/service';
 import ProForm, { ProFormSelect, ProFormText, ProFormTextArea } from '@ant-design/pro-form';
 
 export default () => {
     const formRef = useRef<ProFormInstance>();
     const tagRef: React.ForwardedRef<any> = useRef();
+    /* 文件列表 */
+    const { setUploadList } = useModel('file', ret => ({
+        setUploadList: ret.setUploadList,
+    }));
     /* 文档内容 */
     const [content, setContent] = useState<string>(() => {
         return formRef.current?.getFieldValue('content') || null;
@@ -58,6 +62,7 @@ export default () => {
                 return { ...info, content: info?.content?.content ?? null };
             });
         }
+        setUploadList([]);
         return {};
     };
     return (
@@ -70,9 +75,9 @@ export default () => {
                     lg: { span: 16 },
                     xl: { span: 8 },
                 }}
-                /* select默认值 */
                 initialValues={{
                     pid: 1,
+                    isCrop: 1,
                 }}
                 submitter={{
                     render: (_, doms) => {
@@ -144,9 +149,9 @@ export default () => {
                     /* 输入时去除首尾空格 */
                     getValueFromEvent={e => e.target.value.trim()}
                     fieldProps={{
-                        allowClear: true,
-                        showCount: true,
                         maxLength: 256,
+                        showCount: true,
+                        allowClear: true,
                         autoSize: { minRows: 5, maxRows: 8 },
                     }}
                     rules={[
@@ -169,7 +174,7 @@ export default () => {
                         }}
                     />
                 </ProForm.Item>
-                <CropUpload
+                <UploadAdapter
                     maxUpload={5}
                     imageWidth={600}
                     imageHeight={600}
@@ -179,10 +184,8 @@ export default () => {
                     formTooltip={'至少上传一张图片作为商品封面'}
                     extraData={{ field: 'album', path: 'images/product' }}
                     validateRules={[{ required: true, message: '请至少上传一张图像作为商品封面' }]}
-                    setFieldsValue={(fileList: UploadFile[]) => {
-                        console.log('setFieldsValue', fileList);
-                        formRef.current?.setFieldsValue({ album: fileList });
-                    }}
+                    useTransForm={value => ({ album: 'string' === typeof value ? value : value.map(item => item.url) })}
+                    setFieldsValue={(fileList: UploadFile[]) => formRef.current?.setFieldsValue({ album: fileList })}
                 />
                 <ProForm.Item
                     name="content"

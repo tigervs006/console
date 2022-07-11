@@ -25,8 +25,8 @@ export default () => {
     // ModalForm 标题
     const [isCreateUser, setIsCreateUser] = useState<boolean>(false);
     // 文件列表
-    const { setFileLists } = useModel('file', ret => ({
-        setFileLists: ret.setFileList,
+    const { setUploadList } = useModel('file', ret => ({
+        setUploadList: ret.setUploadList,
     }));
     // ActionType
     const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
@@ -50,7 +50,7 @@ export default () => {
     };
 
     const handleCreate = () => {
-        setFileLists([]);
+        setUploadList([]);
         setUserValues({});
         setModalVisit(true);
         setIsCreateUser(true);
@@ -61,7 +61,7 @@ export default () => {
         setModalVisit(true);
         setIsCreateUser(false);
         childRef.current?.setUser(record.name as string);
-        setFileLists([
+        setUploadList([
             {
                 status: 'done',
                 url: record.avatar,
@@ -125,10 +125,10 @@ export default () => {
             title: '用户组',
             dataIndex: ['group', 'name'],
         },
-		{
-			title: '手机号',
-			dataIndex: 'mobile',
-		},
+        {
+            title: '手机号',
+            dataIndex: 'mobile',
+        },
         {
             title: 'Email',
             dataIndex: 'email',
