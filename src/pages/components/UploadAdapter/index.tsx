@@ -4,15 +4,16 @@ import 'antd/es/slider/style';
 import { useModel } from 'umi';
 import ImgCrop from 'antd-img-crop';
 import React, { useRef } from 'react';
-import ProForm from '@ant-design/pro-form';
+import type { NamePath } from 'antd/es/form/interface';
 import { removeFile } from '@/services/ant-design-pro/api';
 import { ImagePreview } from '@/pages/components/ImagePreview';
+import ProForm, { ProFormDependency } from '@ant-design/pro-form';
 import { Button, message, Modal, notification, Upload } from 'antd';
 import type { UploadFile, UploadListType } from 'antd/es/upload/interface';
 import type { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
 import { CloudUploadOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 
-export const CropUpload: React.FC<
+export const UploadAdapter: React.FC<
     API.uploadComponents & {
         cropAspect?: number;
         cropQuality?: number;
@@ -20,42 +21,54 @@ export const CropUpload: React.FC<
     }
 > = props => {
     const { confirm } = Modal;
-    // 大小限制
+    /* 是否裁剪 */
+    const isCrop: NamePath[] = ['isCrop'];
+    /* 大小限制 */
     const fileSize: number = props?.fileSize ?? 2;
-    // 数量限制
+    /* 数量限制 */
     const maxUpload: number = props?.maxUpload ?? 1;
-    // 裁剪质量
+    /* 裁剪质量 */
     const quality: number = props?.cropQuality ?? 0.6;
-    // 裁剪比例
+    /* 裁剪比例 */
     const aspect: number = props?.cropAspect ?? 1 / 1!;
-    // 文件多选
+    /* 文件多选 */
     const multiple: boolean = props?.multiple ?? false;
-    // 图片宽度
+    /* 图片宽度 */
     const imageWidth: number = props?.imageWidth ?? 750;
-    // 图片预览
+    /* 图片预览 */
     const previewRef: React.ForwardedRef<any> = useRef();
-    // 图片高度
+    /* 图片高度 */
     const imageHeight: number = props?.imageHeight ?? 422;
-    // 按钮文字
+    /* 按钮文字 */
     const uploadText: string = props?.formTitle ?? '上传图像';
-    // 展示方式
+    /* 展示方式 */
     const listType: UploadListType = props?.listType ?? 'picture-card';
-    // 文件后缀
+    /* 上传路径 */
+    const uploadUrl: string = props?.uploadUrl ?? '/console/public/upload';
+    /* 文件后缀 */
     const acceptFile: string = props?.acceptFile ?? '.png, .jpg, .jpeg, .gif';
-    // 文件列表
+    /* 文件列表 */
     const { uploadList, setUploadList } = useModel('file', ret => ({
         uploadList: ret.uploadList,
         setUploadList: ret.setUploadList,
     }));
-
-    // 文件格式
+    /* 文件格式 */
     const fileType: string[] = props?.fileType ?? ['image/png', 'image/jpeg', 'image/gif'];
 
-    // 处理文件删除状态
+    /* 上传按钮 */
+    const showButton = () => {
+        return maxUpload !== uploadList.length ? (
+            <Button type="link" icon={<CloudUploadOutlined />}>
+                {uploadText}
+            </Button>
+        ) : null;
+    };
+
+    /* 处理文件删除状态 */
     const handleRemove: UploadProps['onRemove'] = (file: UploadFile) => {
         return new Promise<boolean>((resolve, reject) => {
             const url = file?.url ?? '';
-            // 从网址中截取文件的相对路径
+            /* 从网址中截取文件的相对路径 */
             const idx = url.lastIndexOf('.cn/');
             const filePath = url.substring(idx + 4, url.length);
             confirm({
@@ -68,7 +81,7 @@ export const CropUpload: React.FC<
                 content: url.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)?.[1],
                 onOk() {
                     removeFile({ filePath: filePath }).then(res => {
-                        res.success ? resolve(true) : reject('Failed');
+                        res.success ? resolve(true) : reject('error');
                     });
                 },
                 onCancel() {
@@ -78,7 +91,7 @@ export const CropUpload: React.FC<
         });
     };
 
-    // 处理上传事件
+    /* 处理上传事件 */
     const handleChange: UploadProps['onChange'] = (info: UploadChangeParam) => {
         const { file, fileList } = info;
         setUploadList(fileList.slice());
@@ -88,18 +101,18 @@ export const CropUpload: React.FC<
                 message.info!('File is uploading...');
                 break;
             case 'done':
-                setUploadList(pre => {
-                    const fileArr = pre.concat([{ ...file?.response?.data, status: 'done' }]);
-                    const filterArr = fileArr.filter(item => undefined === item?.response);
-                    props.setFieldsValue(filterArr);
-                    return filterArr;
-                });
+                /* 设置表单字段值 */
+                props.setFieldsValue(fileList.concat([{ ...file?.response?.data, status: 'done' }]).filter(item => !item?.response));
+                /* 设置uploadList值 */
+                setUploadList(pre => pre.concat([{ ...file?.response?.data, status: 'done' }]).filter(item => !item?.response));
                 message.success!(file.response.msg);
                 break;
             case 'success':
                 message.success!('File uploaded successfully');
                 break;
             case 'removed':
+                setUploadList(fileList);
+                props.setFieldsValue(fileList);
                 message.success!('File removed successfully');
                 break;
             case 'error':
@@ -109,7 +122,7 @@ export const CropUpload: React.FC<
                 });
                 break;
             case undefined:
-                // 这里很重要
+                /* 这里很重要 */
                 setUploadList([]);
                 break;
             default:
@@ -117,7 +130,7 @@ export const CropUpload: React.FC<
         }
     };
 
-    // 处理上传前的文件
+    /* 处理上传前的文件 */
     const handleBeforeUpload = (file: RcFile) => {
         const UNIT = 1024 * 1024;
         const curType = file.type;
@@ -163,45 +176,80 @@ export const CropUpload: React.FC<
                 label={props?.formLabel}
                 tooltip={props?.formTooltip}
                 rules={props?.validateRules}
-                transform={value => props?.useTransForm!(value)}
+                transform={value => props?.useTransForm?.(value) ?? { [props.formName]: value }}
             >
-                <ImgCrop grid quality={quality} aspect={aspect} modalTitle="裁剪图像">
-                    <Upload
-                        multiple={multiple}
-                        accept={acceptFile}
-                        listType={listType}
-                        fileList={uploadList}
-                        maxCount={maxUpload}
-                        data={props.extraData}
-                        onRemove={handleRemove}
-                        onChange={handleChange}
-                        name={props.extraData.field}
-                        progress={{
-                            strokeColor: {
-                                '0%': '#108ee9',
-                                '100%': '#87d068',
-                            },
-                            strokeWidth: 3,
-                            showInfo: false,
-                        }}
-                        className={props?.className}
-                        action="/console/public/upload"
-                        onPreview={() => previewRef.current?.imagePreview(true)}
-                        headers={{ Authorization: localStorage.getItem('Authorization') || '' }}
-                        beforeUpload={(file: RcFile) =>
-                            handleBeforeUpload(file)
-                                .then((res: boolean) => res)
-                                .catch(() => false)
+                <ProFormDependency name={isCrop} ignoreFormListField>
+                    {depValues => {
+                        if (depValues.isCrop) {
+                            return (
+                                <ImgCrop grid quality={quality} aspect={aspect} modalTitle="裁剪图像">
+                                    <Upload
+                                        action={uploadUrl}
+                                        multiple={multiple}
+                                        accept={acceptFile}
+                                        listType={listType}
+                                        maxCount={maxUpload}
+                                        fileList={uploadList}
+                                        data={props.extraData}
+                                        onRemove={handleRemove}
+                                        onChange={handleChange}
+                                        name={props.extraData.field}
+                                        progress={{
+                                            strokeColor: {
+                                                '0%': '#108ee9',
+                                                '100%': '#87d068',
+                                            },
+                                            strokeWidth: 3,
+                                            showInfo: false,
+                                        }}
+                                        className={props?.className}
+                                        onPreview={() => previewRef.current?.imagePreview(true)}
+                                        headers={{ Authorization: localStorage.getItem('Authorization') || '' }}
+                                        beforeUpload={(file: RcFile) =>
+                                            handleBeforeUpload(file)
+                                                .then((res: boolean) => res)
+                                                .catch(() => false)
+                                        }
+                                    >
+                                        {showButton()}
+                                    </Upload>
+                                </ImgCrop>
+                            );
                         }
-                    >
-                        {/*达到限定的上传数量时隐藏上传按钮*/}
-                        {maxUpload !== uploadList.length && (
-                            <Button type="text" icon={<CloudUploadOutlined />}>
-                                {uploadText}
-                            </Button>
-                        )}
-                    </Upload>
-                </ImgCrop>
+                        return (
+                            <Upload
+                                action={uploadUrl}
+                                multiple={multiple}
+                                accept={acceptFile}
+                                listType={listType}
+                                maxCount={maxUpload}
+                                fileList={uploadList}
+                                data={props.extraData}
+                                onRemove={handleRemove}
+                                onChange={handleChange}
+                                name={props.extraData.field}
+                                progress={{
+                                    strokeColor: {
+                                        '0%': '#108ee9',
+                                        '100%': '#87d068',
+                                    },
+                                    strokeWidth: 3,
+                                    showInfo: false,
+                                }}
+                                className={props?.className}
+                                onPreview={() => previewRef.current?.imagePreview(true)}
+                                headers={{ Authorization: localStorage.getItem('Authorization') || '' }}
+                                beforeUpload={(file: RcFile) =>
+                                    handleBeforeUpload(file)
+                                        .then((res: boolean) => res)
+                                        .catch(() => false)
+                                }
+                            >
+                                {showButton()}
+                            </Upload>
+                        );
+                    }}
+                </ProFormDependency>
             </ProForm.Item>
             <ImagePreview ref={previewRef} imgList={uploadList} />
         </>
