@@ -25,9 +25,9 @@ export default () => {
     const { confirm } = Modal;
     // selectOption
     const defaultOption = [{ id: 0, pid: 0, cname: '顶级栏目' }];
-    // setFileList
-    const { setFileList } = useModel('file', ret => ({
-        setFileList: ret.setFileList,
+    // setUploadList
+    const { setUploadList } = useModel('file', ret => ({
+        setUploadList: ret.setUploadList,
     }));
     // 栏目路径
     const [pid, setPid] = useState<number[]>();
@@ -60,7 +60,7 @@ export default () => {
         setModalVisit(true);
         setExpandByClick(false);
         setIsCreateChannel(false);
-        setFileList(() => {
+        setUploadList(() => {
             if (record?.banner) {
                 return [
                     {
@@ -394,7 +394,7 @@ export default () => {
                         key="createChannel"
                         icon={<PlusOutlined />}
                         onClick={() => {
-                            setFileList([]);
+                            setUploadList([]);
                             setModalVisit(true);
                             setModallValues({});
                             setIsCreateChannel(true);
