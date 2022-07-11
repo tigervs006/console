@@ -185,8 +185,8 @@ export default () => {
                     formTooltip={'至少上传一张图片作为商品封面'}
                     extraData={{ field: 'album', path: 'images/product' }}
                     validateRules={[{ required: true, message: '请至少上传一张图像作为商品封面' }]}
-                    useTransForm={value => ({ album: 'string' === typeof value ? value : value.map(item => item.url) })}
                     setFieldsValue={(fileList: UploadFile[]) => formRef.current?.setFieldsValue({ album: fileList })}
+                    useTransForm={value => ({ album: 'string' === typeof value ? value : value.map(item => item?.url ?? item) })}
                 />
                 <ProForm.Item
                     name="content"
