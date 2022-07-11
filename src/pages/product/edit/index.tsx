@@ -176,6 +176,7 @@ export default () => {
                 </ProForm.Item>
                 <UploadAdapter
                     maxUpload={5}
+                    multiple={true}
                     imageWidth={600}
                     imageHeight={600}
                     formName={'album'}
