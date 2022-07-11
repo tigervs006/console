@@ -103,9 +103,10 @@ export default () => {
                 // 提取值为1的属性名
                 for (const idx in info) {
                     if (
-                        (idx === 'is_head' && 1 === info[idx]) ||
-                        (idx === 'is_recom' && 1 === info[idx]) ||
-                        (idx === 'is_litpic' && 1 === info[idx])
+                        // prettier-ignore
+                        (idx === 'is_head' && 1 === info[idx])
+                        || (idx === 'is_recom' && 1 === info[idx])
+                        || (idx === 'is_litpic' && 1 === info[idx])
                     ) {
                         attribute.push(idx);
                     }
