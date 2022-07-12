@@ -1,29 +1,28 @@
 /** @format */
 
+import React from 'react';
 import styles from './index.less';
 import { Input, Tag } from 'antd';
 import type { InputRef } from 'antd';
-import type { ForwardedRef } from 'react';
 import { TweenOneGroup } from 'rc-tween-one';
 import { useEffect, useState, useRef } from 'react';
-import React, { useImperativeHandle, forwardRef } from 'react';
 import { PlusOutlined, UserOutlined } from '@ant-design/icons';
 
 export const InputTagList: React.FC<{
     addition: string;
-    ref: ForwardedRef<any>;
+    tagsList: string[];
     handleChange: (value: string[]) => void;
-}> = forwardRef((props, ref) => {
+}> = props => {
     const inputRef = useRef<InputRef>(null);
-    const [tags, setTags] = useState<string[]>([]);
     const [inputValue, setInputValue] = useState('');
+    const [tags, setTags] = useState<string[]>(() => {
+        return props?.tagsList ?? [];
+    });
     const [inputVisible, setInputVisible] = useState(false);
-    useImperativeHandle(ref, () => ({ setTagList: (value: string[]) => setTags(value) }));
     useEffect(() => {
         if (inputVisible) {
             inputRef.current?.focus();
         }
-        // return props.handleChange(tags);
     }, [tags, props, inputVisible]);
 
     /** 设置input输入框的可见性 */
@@ -119,4 +118,4 @@ export const InputTagList: React.FC<{
             )}
         </>
     );
-});
+};
