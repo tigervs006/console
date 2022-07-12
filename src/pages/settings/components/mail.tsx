@@ -1,21 +1,17 @@
 /** @format */
 
+import { Space } from 'antd';
+import React, { useRef } from 'react';
+import type { ProFormInstance } from '@ant-design/pro-form';
 import { InputTagList } from '@/pages/components/InputTagList';
 import { FormOutlined, UndoOutlined } from '@ant-design/icons';
-import type { ProFormInstance } from '@ant-design/pro-form';
 import ProForm, { ProFormDependency, ProFormDigit, ProFormSwitch, ProFormText } from '@ant-design/pro-form';
-import { Space } from 'antd';
-import React, { useEffect, useRef } from 'react';
 
 export const MailSettings: React.FC<{
     list: Record<string, any>;
     handleFinish: (data: Record<string, any>) => Promise<void>;
 }> = props => {
     const formRef = useRef<ProFormInstance>();
-    const tagRef: React.ForwardedRef<any> = useRef();
-    useEffect(() => {
-        tagRef.current?.setTagList(props.list.mail_receiver?.value.split(','));
-    }, [props]);
     return (
         <ProForm
             formRef={formRef}
@@ -62,13 +58,13 @@ export const MailSettings: React.FC<{
                                     rules={[{ required: true, message: '请至少填写一个收件人' }]}
                                 >
                                     <InputTagList
-                                        ref={tagRef}
                                         addition={'收件人'}
                                         handleChange={value =>
                                             formRef.current?.setFieldsValue({
                                                 mail_receiver: value.join(','),
                                             })
                                         }
+                                        tagsList={props.list.mail_receiver?.value.split(',')}
                                     />
                                 </ProForm.Item>
                                 <ProFormDigit
