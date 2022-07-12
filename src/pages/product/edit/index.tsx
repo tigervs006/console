@@ -2,6 +2,7 @@
 
 import { message, Space } from 'antd';
 import { useModel, history } from 'umi';
+import { waitTime } from '@/extra/utils';
 import React, { useState, useRef } from 'react';
 import Ckeditor from '@/pages/components/Ckeditor';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -49,7 +50,7 @@ export default () => {
         }).then(res => {
             res?.msg && message.success(res.msg);
             /* 延时跳转到列表页 */
-            // waitTime(2000).then(() => history.push({ pathname: '/product/list' }));
+            waitTime(2000).then(() => history.push({ pathname: '/product/list' }));
         });
     };
     /* 处理Request请求 */
@@ -164,7 +165,14 @@ export default () => {
                     label="商品卖点"
                     name={'special'}
                     tooltip="输入提炼的商品卖点"
-                    rules={[{ required: true, message: '请至少填写一个商品卖点' }]}
+                    rules={[
+                        { required: true, message: '请至少填写一个商品卖点' },
+                        () => ({
+                            validator(_, value: string[]) {
+                                return 3 > value.length ? Promise.resolve() : Promise.reject(new Error('商品卖点只需要3个就行了'));
+                            },
+                        }),
+                    ]}
                 >
                     <InputTagList
                         ref={tagRef}
@@ -184,7 +192,7 @@ export default () => {
                     formLabel={'商品相册'}
                     formTooltip={'至少上传一张图片作为商品封面'}
                     extraData={{ field: 'album', path: 'images/product' }}
-                    validateRules={[{ required: true, message: '请至少上传一张图像作为商品封面' }]}
+                    validateRules={[{ type: 'array', min: 1, message: '请至少上传一张图像作为商品封面' }]}
                     setFieldsValue={(fileList: UploadFile[]) => formRef.current?.setFieldsValue({ album: fileList })}
                     useTransForm={value => ({ album: 'string' === typeof value ? value : value.map(item => item?.url ?? item) })}
                 />
