@@ -27,7 +27,7 @@ export const RecordSwitch: React.FC<{
      * @param checked 状态
      * @param record 当前记录
      */
-    const handleChange = async (checked: boolean, e: MouseEvent, record: Record<string, any>) => {
+    const handleChange = async (checked: boolean, e: React.MouseEvent<HTMLButtonElement, MouseEvent>, record: Record<string, any>) => {
         // 阻止事件冒泡
         e.stopPropagation();
         setLoadings(true);
