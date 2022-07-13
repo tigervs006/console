@@ -10,7 +10,7 @@ import { fetchData, getCate, remove } from '../service';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
 import type { channelDataItem, productDataItem } from '../data';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
-import { Typography, message, Button, Space, Table, Image, Modal, Tag } from 'antd';
+import { Typography, InputNumber, message, Button, Space, Table, Image, Modal, Tag } from 'antd';
 import { QuestionCircleOutlined, CheckCircleOutlined, DeleteOutlined, SearchOutlined, EditOutlined } from '@ant-design/icons';
 
 const ImagePreview: React.FC<{ album: string[] }> = props => {
@@ -100,8 +100,10 @@ export default () => {
     const columns: ProColumns<productDataItem>[] = [
         {
             title: 'ID',
-            search: false,
             dataIndex: 'id',
+            renderFormItem: (_, { defaultRender, ...rest }) => {
+                return <InputNumber {...rest} placeholder="请输入文档ID" formatter={value => value.replace(/^(0+)|\D+/g, '')} />;
+            },
         },
         {
             search: false,
@@ -111,10 +113,11 @@ export default () => {
         {
             title: '商品名称',
             dataIndex: 'title',
+            fieldProps: { placeholder: '请输入大致的商品名称' },
         },
         {
             title: '商品分类',
-            dataIndex: ['pid'],
+            dataIndex: 'pid',
             valueType: 'select',
             request: () => category(),
             fieldProps: { mode: 'multiple', maxTagCount: 3 },
