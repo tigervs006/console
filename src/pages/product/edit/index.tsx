@@ -122,7 +122,7 @@ export default () => {
                     fieldProps={{ allowClear: false }}
                     rules={[{ required: true, message: '选择商品发布的分类' }]}
                 />
-                <ProFormMoney width="sm" label="售价" hasFeedback name="price" rules={[{ required: true, message: '请为商品设置售价' }]} />
+                <ProFormMoney min={0} width="sm" hasFeedback label="售价" name="price" rules={[{ required: true, message: '请为商品设置售价' }]} />
                 <ProFormText
                     hasFeedback
                     width="sm"
