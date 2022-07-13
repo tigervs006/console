@@ -1,6 +1,6 @@
 /** @format */
 
-import type { productDataItem } from '@/pages/product/data';
+import type { productDataItem } from './data';
 import { getData, postData } from '@/services/ant-design-pro/api';
 
 /* 获取商品分类 */
