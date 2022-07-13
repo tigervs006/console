@@ -36,7 +36,6 @@ export default () => {
     /** 设置tab模式 */
     const setTabMode = (resize: number) => {
         requestAnimationFrame(() => {
-            // eslint-disable-next-line
             768 > resize ? setPosition('top') : setPosition('left');
         });
     };
