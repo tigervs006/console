@@ -2,14 +2,21 @@
 
 export type productDataItem = {
     pid?: number;
+    click: number;
+    stock?: number;
+    price?: number;
+    sales?: number;
     title?: string;
     status?: number;
     litpic?: string;
     content?: string;
     keywords?: string;
+    special: string[];
+    inquiries?: number;
     description?: string;
+    id?: string | string[];
     album?: Record<string, any>;
-    id?: string | string[] | null;
+    channel: Record<string, any>;
 };
 export type channelDataItem = {
     id: number;
