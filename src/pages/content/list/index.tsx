@@ -8,40 +8,9 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import { fetchData, getAuthor, getChannel, remove } from '../service';
-import type { authorData, valueEnumData, tableDataItem, channelOptions, channelDataItem } from '../data';
+import type { authorData, valueEnumData, tableDataItem, channelDataItem } from '../data';
+import { Typography, InputNumber, Modal, Button, message, Space, Table, Tag } from 'antd';
 import { EditOutlined, SearchOutlined, DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { Typography, InputNumber, Input, Modal, Button, message, Select, Space, Table, Tag } from 'antd';
-
-const SelectChannel: React.FC<Record<string, any>> = props => {
-    const [channelOptions, setChannelOptions] = useState<channelOptions[]>();
-    /** 获取新闻栏目 */
-    useRequest(getChannel, {
-        onSuccess: (res: { list: channelDataItem[] }) => {
-            const channel = res?.list.map((item: channelDataItem) => ({
-                label: item.cname,
-                value: item.id,
-            }));
-            setChannelOptions(channel);
-        },
-    });
-    return <Select showArrow allowClear {...props} mode="multiple" maxTagCount={3} options={channelOptions} placeholder="请选择栏目..." />;
-};
-
-const InputSearch: React.FC<Record<string, any>> = props => {
-    return (
-        <Input
-            showCount
-            allowClear
-            {...props}
-            maxLength={30}
-            placeholder="请输入文档标题"
-            /** 失焦时清除字符串首尾的空格 */
-            onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
-                props.onChange(e.target.value.trim());
-            }}
-        />
-    );
-};
 
 export default () => {
     const { confirm } = Modal;
@@ -53,6 +22,15 @@ export default () => {
     /** ActionType */
     const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
 
+    /**获 取新闻栏目 */
+    const channel = async () => {
+        return await getChannel().then(res =>
+            res?.data?.list.map((item: channelDataItem) => ({
+                value: item.id,
+                label: item.cname,
+            })),
+        );
+    };
     /** 获取文档作者 */
     useRequest(getAuthor, {
         onSuccess: (res: { list: authorData[] }) => {
@@ -142,13 +120,7 @@ export default () => {
     const columns: ProColumns<tableDataItem>[] = [
         {
             title: 'ID',
-            search: false,
             dataIndex: 'id',
-        },
-        {
-            title: 'ID',
-            dataIndex: 'id',
-            hideInTable: true,
             renderFormItem: (_, { defaultRender, ...rest }) => {
                 return <InputNumber {...rest} placeholder="请输入文档ID" formatter={value => value.replace(/^(0+)|\D+/g, '')} />;
             },
@@ -164,31 +136,17 @@ export default () => {
             valueEnum: { ...authorEnum },
         },
         {
-            search: false,
-            copyable: true,
             title: '文档标题',
             dataIndex: 'title',
-        },
-        {
-            title: '文档标题',
-            dataIndex: 'title',
-            hideInTable: true,
-            renderFormItem: (_, { defaultRender, ...rest }) => {
-                return <InputSearch {...rest} />;
-            },
-        },
-        {
-            search: false,
-            title: '所属栏目',
-            dataIndex: ['channel', 'cname'],
+            fieldProps: { placeholder: '请输入大致的文档标题' },
         },
         {
             title: '所属栏目',
             dataIndex: 'cid',
-            hideInTable: true,
-            renderFormItem: (_, { defaultRender, ...rest }) => {
-                return <SelectChannel {...rest} />;
-            },
+            valueType: 'select',
+            request: () => channel(),
+            fieldProps: { mode: 'multiple', maxTagCount: 3 },
+            render: (_, record) => record.channel.cname,
         },
         {
             sorter: true,
