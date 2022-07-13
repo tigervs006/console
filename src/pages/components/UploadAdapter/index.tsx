@@ -3,7 +3,7 @@
 import 'antd/es/slider/style';
 import { useModel } from 'umi';
 import ImgCrop from 'antd-img-crop';
-import React, { useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import type { NamePath } from 'antd/es/form/interface';
 import { removeFile } from '@/services/ant-design-pro/api';
 import { ImagePreview } from '@/pages/components/ImagePreview';
@@ -39,6 +39,8 @@ export const UploadAdapter: React.FC<
     const previewRef: React.ForwardedRef<any> = useRef();
     /* 图片高度 */
     const imageHeight: number = props?.imageHeight ?? 422;
+    /* 预览索引 */
+    const [curId, setCurId] = useState<number>(0);
     /* 按钮文字 */
     const uploadText: string = props?.formTitle ?? '上传图像';
     /* 展示方式 */
@@ -62,6 +64,14 @@ export const UploadAdapter: React.FC<
                 {uploadText}
             </Button>
         ) : null;
+    };
+
+    /* 处理图片预览 */
+    const handlePreview = (file: UploadFile) => {
+        uploadList.forEach((item, index) => {
+            item.uid === file.uid && setCurId(index);
+        });
+        previewRef.current?.imagePreview(true);
     };
 
     /* 处理文件删除状态 */
@@ -203,7 +213,7 @@ export const UploadAdapter: React.FC<
                                             showInfo: false,
                                         }}
                                         className={props?.className}
-                                        onPreview={() => previewRef.current?.imagePreview(true)}
+                                        onPreview={file => handlePreview(file)}
                                         headers={{ Authorization: localStorage.getItem('Authorization') || '' }}
                                         beforeUpload={(file: RcFile) =>
                                             handleBeforeUpload(file)
@@ -237,7 +247,7 @@ export const UploadAdapter: React.FC<
                                     showInfo: false,
                                 }}
                                 className={props?.className}
-                                onPreview={() => previewRef.current?.imagePreview(true)}
+                                onPreview={file => handlePreview(file)}
                                 headers={{ Authorization: localStorage.getItem('Authorization') || '' }}
                                 beforeUpload={(file: RcFile) =>
                                     handleBeforeUpload(file)
@@ -251,7 +261,7 @@ export const UploadAdapter: React.FC<
                     }}
                 </ProFormDependency>
             </ProForm.Item>
-            <ImagePreview ref={previewRef} imgList={uploadList} />
+            <ImagePreview curIdx={curId} ref={previewRef} imgList={uploadList} />
         </>
     );
 };
