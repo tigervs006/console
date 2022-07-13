@@ -179,6 +179,35 @@ export const UploadAdapter: React.FC<
         });
     };
 
+    /* uploadProps */
+    const uploadProps = {
+        action: uploadUrl,
+        multiple: multiple,
+        accept: acceptFile,
+        listType: listType,
+        maxCount: maxUpload,
+        fileList: uploadList,
+        data: props.extraData,
+        onRemove: handleRemove,
+        onChange: handleChange,
+        name: props.extraData.field,
+        progress: {
+            strokeColor: {
+                '0%': '#108ee9',
+                '100%': '#87d068',
+            },
+            strokeWidth: 3,
+            showInfo: false,
+        },
+        className: props?.className,
+        onPreview: file => handlePreview(file),
+        headers: { Authorization: localStorage.getItem('Authorization') || '' },
+        beforeUpload: (file: RcFile) =>
+            handleBeforeUpload(file)
+                .then((res: boolean) => res)
+                .catch(() => false),
+    };
+
     return (
         <>
             <ProForm.Item
@@ -193,71 +222,11 @@ export const UploadAdapter: React.FC<
                         if (depValues.isCrop) {
                             return (
                                 <ImgCrop grid quality={quality} aspect={aspect} modalTitle="裁剪图像">
-                                    <Upload
-                                        action={uploadUrl}
-                                        multiple={multiple}
-                                        accept={acceptFile}
-                                        listType={listType}
-                                        maxCount={maxUpload}
-                                        fileList={uploadList}
-                                        data={props.extraData}
-                                        onRemove={handleRemove}
-                                        onChange={handleChange}
-                                        name={props.extraData.field}
-                                        progress={{
-                                            strokeColor: {
-                                                '0%': '#108ee9',
-                                                '100%': '#87d068',
-                                            },
-                                            strokeWidth: 3,
-                                            showInfo: false,
-                                        }}
-                                        className={props?.className}
-                                        onPreview={file => handlePreview(file)}
-                                        headers={{ Authorization: localStorage.getItem('Authorization') || '' }}
-                                        beforeUpload={(file: RcFile) =>
-                                            handleBeforeUpload(file)
-                                                .then((res: boolean) => res)
-                                                .catch(() => false)
-                                        }
-                                    >
-                                        {showButton()}
-                                    </Upload>
+                                    <Upload {...uploadProps}>{showButton()}</Upload>
                                 </ImgCrop>
                             );
                         }
-                        return (
-                            <Upload
-                                action={uploadUrl}
-                                multiple={multiple}
-                                accept={acceptFile}
-                                listType={listType}
-                                maxCount={maxUpload}
-                                fileList={uploadList}
-                                data={props.extraData}
-                                onRemove={handleRemove}
-                                onChange={handleChange}
-                                name={props.extraData.field}
-                                progress={{
-                                    strokeColor: {
-                                        '0%': '#108ee9',
-                                        '100%': '#87d068',
-                                    },
-                                    strokeWidth: 3,
-                                    showInfo: false,
-                                }}
-                                className={props?.className}
-                                onPreview={file => handlePreview(file)}
-                                headers={{ Authorization: localStorage.getItem('Authorization') || '' }}
-                                beforeUpload={(file: RcFile) =>
-                                    handleBeforeUpload(file)
-                                        .then((res: boolean) => res)
-                                        .catch(() => false)
-                                }
-                            >
-                                {showButton()}
-                            </Upload>
-                        );
+                        return <Upload {...uploadProps}>{showButton()}</Upload>;
                     }}
                 </ProFormDependency>
             </ProForm.Item>
