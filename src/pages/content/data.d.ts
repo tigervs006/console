@@ -50,9 +50,4 @@ export type channelDataItem = {
     cname: string;
 };
 
-export type channelOptions = {
-    label: string;
-    value: number;
-};
-
 export type valueEnumData = Record<string, { text: string; status: string }>;
