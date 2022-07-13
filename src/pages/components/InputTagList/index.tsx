@@ -9,21 +9,23 @@ import { useEffect, useState, useRef } from 'react';
 import { PlusOutlined, UserOutlined } from '@ant-design/icons';
 
 export const InputTagList: React.FC<{
+    color?: string;
     addition: string;
     tagsList: string[];
+    tagIcon?: JSX.Element;
     handleChange: (value: string[]) => void;
 }> = props => {
+    const color = props?.color ?? 'processing';
     const inputRef = useRef<InputRef>(null);
     const [inputValue, setInputValue] = useState('');
     const [tags, setTags] = useState<string[]>(() => {
         return props?.tagsList ?? [];
     });
+    const tagIcon: JSX.Element = props?.tagIcon ?? <UserOutlined />;
     const [inputVisible, setInputVisible] = useState(false);
     useEffect(() => {
-        if (inputVisible) {
-            inputRef.current?.focus();
-        }
-    }, [tags, props, inputVisible]);
+        inputVisible && inputRef.current?.focus();
+    }, [inputVisible]);
 
     /** 设置input输入框的可见性 */
     const showInput = () => setInputVisible(true);
@@ -53,12 +55,12 @@ export const InputTagList: React.FC<{
         const tagElem = (
             <Tag
                 closable
+                color={color}
+                icon={tagIcon}
                 onClose={e => {
                     e.preventDefault();
                     handleClose(tag);
                 }}
-                color="processing"
-                icon={<UserOutlined />}
             >
                 {tag}
             </Tag>
