@@ -3,21 +3,22 @@
 import { message, Space } from 'antd';
 import { useModel, history } from 'umi';
 import { waitTime } from '@/extra/utils';
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import Ckeditor from '@/pages/components/Ckeditor';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { UploadFile } from 'antd/es/upload/interface';
 import type { ProFormInstance } from '@ant-design/pro-form';
-import { FormOutlined, UndoOutlined } from '@ant-design/icons';
 import { InputTagList } from '@/pages/components/InputTagList';
 import type { productDataItem, channelDataItem } from '../data';
 import { UploadAdapter } from '@/pages/components/UploadAdapter';
 import { saveProduct, getCate, getInfo } from '@/pages/product/service';
-import ProForm, { ProFormSelect, ProFormText, ProFormTextArea } from '@ant-design/pro-form';
+import { CheckCircleOutlined, FormOutlined, UndoOutlined } from '@ant-design/icons';
+import ProForm, { ProFormMoney, ProFormSelect, ProFormText, ProFormTextArea } from '@ant-design/pro-form';
 
 export default () => {
     const formRef = useRef<ProFormInstance>();
-    const tagRef: React.ForwardedRef<any> = useRef();
+    /* 商品卖点 */
+    const [special, setSpecial] = useState<string[]>([]);
     /* 文件列表 */
     const { setUploadList } = useModel('file', ret => ({
         setUploadList: ret.setUploadList,
@@ -46,7 +47,7 @@ export default () => {
         await saveProduct({
             ...data,
             content: content,
-            id: history.location.query?.id ?? null,
+            id: history.location.query?.id ?? '0',
         }).then(res => {
             res?.msg && message.success(res.msg);
             /* 延时跳转到列表页 */
@@ -58,9 +59,20 @@ export default () => {
         if (params?.id) {
             return await getInfo(params).then(res => {
                 const info = res?.data?.info ?? {};
+                /* 设置商品卖点 */
+                setSpecial(info?.special);
                 /* 设置编辑器内容 */
-                setContent(info?.content?.content ?? null);
-                return { ...info, content: info?.content?.content ?? null };
+                setContent(info?.detail?.content ?? null);
+                /* 设置文件列表 */
+                setUploadList(
+                    info?.album.map((item: string) => ({
+                        url: item,
+                        status: 'done',
+                        uid: Math.floor(Math.random() * 100).toString(),
+                        name: item.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)?.[1] || '',
+                    })) ?? [],
+                );
+                return { ...info, content: info?.detail?.content ?? null };
             });
         }
         setUploadList([]);
@@ -110,6 +122,19 @@ export default () => {
                     fieldProps={{ allowClear: false }}
                     rules={[{ required: true, message: '选择商品发布的分类' }]}
                 />
+                <ProFormMoney width="sm" label="售价" hasFeedback name="price" rules={[{ required: true, message: '请为商品设置售价' }]} />
+                <ProFormText
+                    hasFeedback
+                    width="sm"
+                    label="库存"
+                    name="stock"
+                    tooltip="根据实际情况设置库存"
+                    fieldProps={{ allowClear: false }}
+                    rules={[
+                        { required: true, message: '请为商品设置库存' },
+                        { pattern: /^\d+$/, message: '商品库存必需为正整数' },
+                    ]}
+                />
                 <ProFormText
                     hasFeedback
                     label="商品名"
@@ -120,8 +145,8 @@ export default () => {
                     getValueFromEvent={e => e.target.value.trim()}
                     fieldProps={{ maxLength: 32, showCount: true }}
                     rules={[
-                        { required: true, message: '请输入商品名作为标题' },
-                        { min: 15, message: '商品标题不宜太短' },
+                        { required: true, message: '请完善商品名' },
+                        { min: 15, message: '商品名不宜太短' },
                     ]}
                 />
                 <ProFormText
@@ -163,28 +188,27 @@ export default () => {
                 <ProForm.Item
                     hasFeedback
                     label="商品卖点"
-                    name={'special'}
-                    tooltip="输入提炼的商品卖点"
+                    name="special"
+                    tooltip="提炼商品卖点"
                     rules={[
                         { required: true, message: '请至少填写一个商品卖点' },
                         () => ({
                             validator(_, value: string[]) {
-                                return 3 > value.length ? Promise.resolve() : Promise.reject(new Error('商品卖点只需要3个就行了'));
+                                return 3 >= value.length ? Promise.resolve() : Promise.reject(new Error('商品卖点只需要3个就行了'));
                             },
                         }),
                     ]}
                 >
                     <InputTagList
-                        ref={tagRef}
+                        color={'red'}
+                        tagsList={special}
                         addition={'商品卖点'}
-                        handleChange={value => {
-                            formRef.current?.setFieldsValue({ special: value });
-                        }}
+                        tagIcon={<CheckCircleOutlined />}
+                        handleChange={value => formRef.current?.setFieldsValue({ special: value })}
                     />
                 </ProForm.Item>
                 <UploadAdapter
                     maxUpload={5}
-                    multiple={true}
                     imageWidth={600}
                     imageHeight={600}
                     formName={'album'}
@@ -192,7 +216,7 @@ export default () => {
                     formLabel={'商品相册'}
                     formTooltip={'至少上传一张图片作为商品封面'}
                     extraData={{ field: 'album', path: 'images/product' }}
-                    validateRules={[{ type: 'array', min: 1, message: '请至少上传一张图像作为商品封面' }]}
+                    validateRules={[{ required: true, type: 'array', min: 1, message: '请至少上传一张图像作为商品封面' }]}
                     setFieldsValue={(fileList: UploadFile[]) => formRef.current?.setFieldsValue({ album: fileList })}
                     useTransForm={value => ({ album: 'string' === typeof value ? value : value.map(item => item?.url ?? item) })}
                 />
