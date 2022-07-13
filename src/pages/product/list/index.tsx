@@ -105,7 +105,7 @@ export default () => {
         },
         {
             search: false,
-            title: '商品图片',
+            title: '商品图',
             render: (_, record) => <ImagePreview album={record.album as string[]} />,
         },
         {
