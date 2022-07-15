@@ -3,7 +3,7 @@
 // https://umijs.org/config/
 import { join } from 'path';
 import proxy from './proxy';
-// import routes from './routes';
+import routes from './routes';
 import { defineConfig } from 'umi';
 import defaultSettings from './defaultSettings';
 
@@ -37,7 +37,7 @@ export default defineConfig({
         ie: 11,
     },
     // umi routes: https://umijs.org/docs/routing
-    // routes,
+    routes,
     // Theme for antd: https://ant.design/docs/react/customize-theme-cn
     theme: {
         // 如果不想要 configProvide 动态设置主题需要把这个设置为 default
