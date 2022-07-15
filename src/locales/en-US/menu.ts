@@ -54,6 +54,8 @@ export default {
     'menu.content.list': 'Article List',
     'menu.channel': 'Channel',
     'menu.settings': 'Settings',
+    'menu.settings.system': 'Config',
+    'menu.settings.region': 'Region',
     'menu.product': 'Product',
     'menu.product.edit': 'Product Edit',
     'menu.product.list': 'Product List',
