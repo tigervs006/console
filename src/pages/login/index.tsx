@@ -2,12 +2,12 @@
 
 import md5 from 'md5';
 import styles from './index.less';
+import React, { useState } from 'react';
 import Footer from '@/components/Footer';
-import { waitTime } from '@/extra/utils';
+import { sortDesc, waitTime } from '@/extra/utils';
 import { Alert, message, Tabs } from 'antd';
-import React, { useEffect, useState } from 'react';
 import { getFakeCaptcha } from '@/services/ant-design-pro/login';
-import { FormattedMessage, history, SelectLang, useIntl, useModel } from 'umi';
+import { FormattedMessage, SelectLang, useModel, useIntl, history } from 'umi';
 import { MobileOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { LoginForm, ProFormCaptcha, ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
 import { currentUser as queryCurrentUser, currentUserMenu as queryUserMenu, login } from '@/services/ant-design-pro/api';
@@ -31,15 +31,8 @@ export default () => {
     const { setInitialState } = useModel('@@initialState');
     const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
 
-    useEffect(() => {
-        setInitialState!(s => ({
-            ...s,
-            isLoginPage: true,
-        }));
-    }, [setInitialState]);
-
     /* 查询用户信息 */
-    const fetchUserInfo = async (params: { id: string }) => {
+    const fetchUserInfo = async (params: { id: string | null }) => {
         await queryCurrentUser(params).then((res: any) => {
             setInitialState!(s => ({
                 ...s,
@@ -49,11 +42,11 @@ export default () => {
     };
 
     /* 查询用户菜单 */
-    const fetchUserMenu = async (params: { id: string; status: number }) => {
+    const fetchUserMenu = async (params: { id: string | null; status: number }) => {
         await queryUserMenu(params).then((res: any) => {
             setInitialState!(s => ({
                 ...s,
-                useMenuItem: res?.data?.list,
+                userMenuItem: res?.data?.list.sort(sortDesc('sort')),
             }));
         });
     };
@@ -63,10 +56,10 @@ export default () => {
         await login({ ...values, type })
             .then(async res => {
                 const localItem = [
-                    { uid: res.data?.info?.uid ?? '0' },
-                    { avatar: res.data?.info?.avatar ?? '' },
-                    { user: res.data?.info?.name ?? 'anonymous' },
-                    { Authorization: res.data?.info?.authorization ?? '' },
+                    { uid: res.data?.info?.uid ?? null },
+                    { user: res.data?.info?.name ?? null },
+                    { avatar: res.data?.info?.avatar ?? null },
+                    { Authorization: res.data?.info?.authorization ?? null },
                 ];
                 /* 写入localStorage */
                 localItem.forEach(item => {
@@ -79,23 +72,15 @@ export default () => {
                     defaultMessage: res?.msg,
                 });
                 message.success(defaultLoginSuccessMessage);
-                /* 延迟两秒是为了让token生效 */
-                await waitTime(2000).then(() => {
-                    setInitialState(s => ({
-                        ...s,
-                        isLoginPage: false,
-                    }));
-                    /* 查询用户信息 */
-                    fetchUserInfo({ id: localStorage.getItem('uid') ?? '0' });
-                    /* 查询用户菜单 */
-                    fetchUserMenu({ id: localStorage.getItem('uid') ?? '0', status: 1 });
+                /* 查询用户信息 */
+                await fetchUserInfo({ id: localStorage.getItem('uid') });
+                /* 查询用户菜单 */
+                await fetchUserMenu({ id: localStorage.getItem('uid'), status: 1 });
+                waitTime().then(() => {
+                    const { query } = history.location;
+                    const { redirect } = query as { redirect: string };
+                    history.push(redirect || '/dashboard/analysis');
                 });
-                /** 登录成功后转到 redirect 参数所在的位置 */
-                if (!history) return;
-                const { query } = history.location;
-                const { redirect } = query as { redirect: string };
-                history.push(redirect || '/dashboard/analysis');
-                return;
             })
             .catch(() => {
                 /* 设置错误信息 */

@@ -27,59 +27,29 @@ export const initialStateConfig = {
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
  * */
 export async function getInitialState(): Promise<{
-    loading?: boolean;
-    isLoginPage?: boolean;
-    useMenuItem?: MenuDataItem[];
+    userMenuItem?: MenuDataItem[];
     currentUser?: API.CurrentUser;
     settings?: Partial<LayoutSettings>;
 }> {
-    /* 判断是否为登录页 */
-    const isLogin: boolean = loginPath === history.location.pathname;
     /* 获取当前用户信息 */
-    const fetchUserInfo = async (params: { id: string }) => await queryCurrentUser(params).then(res => res.data?.info);
+    const fetchUserInfo = async (params: { id: string | null }) => await queryCurrentUser(params).then(res => res.data?.info);
     /* 获取当前用户菜单 */
-    const fetchUserMenu = async (params: { id: string; status: number }) =>
+    const fetchUserMenu = async (params: { id: string | null; status: number }) =>
         await queryUserMenu(params).then(res => {
             return res?.data?.list.sort(sortDesc('sort'));
         });
-    return {
-        isLoginPage: isLogin,
-        settings: defaultSettings,
-        currentUser: isLogin ? undefined : await fetchUserInfo({ id: localStorage.getItem('uid') || '0' }),
-        useMenuItem: isLogin ? [] : await fetchUserMenu({ id: localStorage.getItem('uid') || '0', status: 1 }),
-    };
-}
-
-/* 监听路由变化 */
-export function onRouteChange({ location }: { location: Record<string, any> }) {
-    switch (location.pathname) {
-        case '/':
-            history.push('/dashboard/analysis');
-            break;
-        case '/dashboard':
-            history.push('/dashboard/analysis');
-            break;
-        case '/content':
-            history.push('/content/list');
-            break;
-        case '/product':
-            history.push('/product/list');
-            break;
-        case '/user':
-            history.push('/user/list');
-            break;
-        default:
+    if (loginPath === history.location.pathname) {
+        return { settings: defaultSettings };
     }
+    return {
+        settings: defaultSettings,
+        currentUser: await fetchUserInfo({ id: localStorage.getItem('uid') }),
+        userMenuItem: await fetchUserMenu({ id: localStorage.getItem('uid'), status: 1 }),
+    };
 }
 
 /* 设置全局layout */
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
-    if (initialState?.isLoginPage) {
-        return {
-            menuRender: false,
-            headerRender: false,
-        };
-    }
     return {
         rightContentRender: () => <RightContent />,
         disableContentMargin: false,
@@ -91,15 +61,10 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
             const { location } = history;
             /* 如果没有登录，重定向到 login */
             if (!initialState?.currentUser && loginPath !== location.pathname) {
-                setInitialState(s => ({
-                    ...s,
-                    isLoginPage: true,
-                })).then(() => {
-                    history.push(loginPath);
-                });
+                history.push(loginPath);
             }
         },
-        menuDataRender: () => loopMenuItem(initialState?.useMenuItem ?? []),
+        menuDataRender: () => loopMenuItem(initialState?.userMenuItem ?? []),
         links: isDev
             ? [
                   <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
