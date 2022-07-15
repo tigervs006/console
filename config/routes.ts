@@ -2,29 +2,26 @@
 
 export default [
     {
-        path: '/dashboard',
         name: 'dashboard',
-        icon: 'dashboard',
+        path: '/dashboard',
         routes: [
             {
                 path: '/dashboard',
                 redirect: '/dashboard/analysis',
             },
             {
-                name: 'analysis',
-                icon: 'smile',
+                path: '/dashboard',
+                redirect: '/dashboard/analysis',
+            },
+            {
                 path: '/dashboard/analysis',
                 component: './dashboard/analysis',
             },
             {
-                name: 'monitor',
-                icon: 'smile',
                 path: '/dashboard/monitor',
                 component: './dashboard/monitor',
             },
             {
-                name: 'workplace',
-                icon: 'smile',
                 path: '/dashboard/workplace',
                 component: './dashboard/workplace',
             },
@@ -33,79 +30,99 @@ export default [
     {
         name: 'content',
         path: '/content',
-        icon: 'align-left',
         routes: [
             {
-                name: 'list',
+                path: '/content',
+                redirect: '/content/list',
+            },
+            {
                 path: '/content/list',
                 component: './content/list',
             },
             {
-                name: 'edit',
                 path: '/content/edit',
                 component: './content/edit',
-            },
-            {
-                component: '404',
             },
         ],
     },
     {
-        name: 'channel',
+        name: 'product',
+        path: '/product',
+        routes: [
+            {
+                path: '/product',
+                redirect: '/product/list',
+            },
+            {
+                path: '/product/list',
+                component: './product/list',
+            },
+            {
+                path: '/product/edit',
+                component: './product/edit',
+            },
+        ],
+    },
+    {
         path: '/channel',
-        icon: 'unordered-list',
         component: './channel',
     },
     {
-        name: 'client',
         path: '/client',
-        icon: 'user-switch',
         component: './client',
     },
     {
         name: 'user',
-        icon: 'team',
         path: '/user',
         routes: [
             {
-                name: 'login',
-                layout: false,
-                hideInMenu: true,
-                path: '/user/login',
-                component: './user/Login',
+                path: '/user',
+                redirect: '/user/list',
             },
             {
-                name: 'list',
                 path: '/user/list',
                 component: './user/list',
             },
             {
-                name: 'auth-list',
-                path: '/user/authlist',
-                component: './user/auth-list',
+                path: '/user/menu',
+                component: './user/menu',
             },
             {
-                name: 'group-list',
-                path: '/user/grouplist',
-                component: './user/group-list',
+                path: '/user/group',
+                component: './user/group',
             },
         ],
     },
     {
-        name: 'account',
-        icon: 'user',
+        layout: false,
+        path: '/login',
+        component: './login',
+    },
+    {
         path: '/account',
-        component: './account/settings',
+        component: './account',
     },
     {
         name: 'settings',
         path: '/settings',
-        icon: 'setting',
-        component: './settings',
+        routes: [
+            {
+                path: '/settings',
+                redirect: '/settings/system',
+            },
+            {
+                path: '/settings/system',
+                component: './settings/system',
+            },
+            {
+                path: '/settings/region',
+                component: './settings/region',
+            },
+        ],
     },
     {
         path: '/',
-        redirect: '/dashboard',
+        redirect: '/dashboard/analysis',
     },
     {
         component: './404',
