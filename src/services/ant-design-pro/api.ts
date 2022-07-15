@@ -13,7 +13,7 @@ export const currentUserMenu = (params: Record<string, any>, options?: Record<st
 };
 
 /** 获取当前的用户 GET /user */
-export const currentUser = (params: { id: string }, options?: Record<string, any>) => {
+export const currentUser = (params: { id: string | null }, options?: Record<string, any>) => {
     return request<{ data: API.CurrentUser }>('/user', {
         method: 'GET',
         params: { ...params },
