@@ -2,7 +2,7 @@
 
 import { useRequest } from 'umi';
 import { message, Tabs } from 'antd';
-import { list, saveConfig } from './service';
+import { list, saveConfig } from '../service';
 import { ApiSettings } from './components/cloud';
 import { SiteSettings } from './components/site';
 import { useLayoutEffect, useState } from 'react';
@@ -10,7 +10,7 @@ import { BaiduSettings } from './components/baidu';
 import { OtherSettings } from './components/other';
 import { ContactSettings } from './components/contact';
 import { PageContainer } from '@ant-design/pro-layout';
-import { MailSettings } from '@/pages/settings/components/mail';
+import { MailSettings } from '@/pages/settings/system/components/mail';
 
 export default () => {
     const { TabPane } = Tabs;

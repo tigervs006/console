@@ -38,7 +38,7 @@ export default () => {
     const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
 
     useEffect(() => {
-        setMenuItem(() => initialState?.useMenuItem);
+        setMenuItem(() => initialState?.userMenuItem);
     }, [initialState]);
 
     /* 根据id获取到locale */
