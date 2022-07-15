@@ -5,10 +5,10 @@ import { pinyin } from 'pinyin-pro';
 /**
  * 延时返回结果
  * @return Promise
- * @param time 毫秒
+ * @param time 500毫秒
  */
-export const waitTime = (time: number = 100) => {
-    return new Promise(resolve => {
+export const waitTime = (time: number = 500) => {
+    return new Promise<boolean>(resolve => {
         setTimeout(() => {
             resolve(true);
         }, time);
