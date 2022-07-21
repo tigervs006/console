@@ -295,44 +295,6 @@ export default () => {
             width: 150,
             filters: true,
             onFilter: true,
-            title: '严格匹配',
-            filterMode: 'tree',
-            dataIndex: 'exact',
-            valueType: 'select',
-            valueEnum: {
-                0: {
-                    text: '禁用',
-                    status: 'false',
-                },
-                1: {
-                    text: '启用',
-                    status: 'true',
-                },
-            },
-            fieldProps: {
-                allowClear: false,
-                options: [
-                    { label: '禁用', value: 0 },
-                    { label: '启用', value: 1 },
-                ],
-            },
-            render: (_, record) => {
-                return (
-                    <RecordSwitch
-                        record={record}
-                        echoChecked={'启用'}
-                        fieldKey={'exact'}
-                        echoUnChecked={'禁用'}
-                        url={'/auth/status'}
-                        statusField={record.exact}
-                    />
-                );
-            },
-        },
-        {
-            width: 150,
-            filters: true,
-            onFilter: true,
             title: '显示菜单',
             filterMode: 'tree',
             dataIndex: 'hideInMenu',
