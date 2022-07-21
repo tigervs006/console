@@ -21,7 +21,6 @@ export default () => {
     const createRecord = {
         pid: 0,
         sort: 50,
-        exact: 1,
         status: 1,
         paths: [0],
         hideInMenu: 0,
