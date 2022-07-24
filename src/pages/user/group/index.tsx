@@ -177,12 +177,6 @@ export default () => {
         {
             width: 200,
             editable: false,
-            title: '创建时间',
-            dataIndex: 'create_time',
-        },
-        {
-            width: 200,
-            editable: false,
             title: '更新时间',
             dataIndex: 'update_time',
         },
