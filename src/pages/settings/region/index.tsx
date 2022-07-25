@@ -3,32 +3,42 @@
 import React, { useRef, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { EditableProTable } from '@ant-design/pro-table';
-import { Button, message, Modal, Space, Table } from 'antd';
 import type { regionDataItem } from '@/pages/settings/data';
+import { refreshCache } from '@/services/ant-design-pro/api';
 import { fetchRegionData, remove, saveRegion } from '../service';
+import { Button, message, Modal, Space, Table, TreeSelect } from 'antd';
 import { queryChildId, randomString, recursiveQuery, waitTime } from '@/extra/utils';
 import type { ActionType, EditableFormInstance, ProColumns } from '@ant-design/pro-table';
-import { QuestionCircleOutlined, MinusCircleOutlined, PlusCircleOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+    QuestionCircleOutlined,
+    MinusCircleOutlined,
+    PlusCircleOutlined,
+    DeleteOutlined,
+    EditOutlined,
+    PlusOutlined,
+    RedoOutlined,
+} from '@ant-design/icons';
 
 export default () => {
     const { confirm } = Modal;
     // 预设数据
     const createRecord = {
         pid: 0,
+        cid: 0,
         code: 0,
         status: 1,
         name: '中国',
-        id: randomString(6),
+        id: randomString(4),
     };
-    // 地区路径
-    const [pid, setPid] = useState<number[]>();
     // formRef
     const formRef = useRef<EditableFormInstance>();
+    // defalutOption
+    const defaultOption = [{ id: 0, cid: 0, pid: 0, name: '中国' }];
     // 存放子项的id
     const [expandedIds, setexpandedIds] = useState<number[]>([]);
     // 控制点击展开行
     const [expandByClick, setExpandByClick] = useState<boolean>(true);
-    // 存放表单数据
+    // 存放所有地区
     const [dataSource, setDataSource] = useState<regionDataItem[]>([]);
     // 当前展开的行
     const [expandedRowKey, setExpandedRowKey] = useState<number[]>([]);
@@ -36,25 +46,28 @@ export default () => {
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
     // ActionType
     const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
-    // 懒加载子节点
-    const [childProps, setChildProps] = useState<{ id?: number; cid?: number }>({});
+
+    // 处理刷新地区缓存
+    const handleRefreshCache = (data: { key: string }) => {
+        refreshCache(data).then(res => {
+            res?.msg && message.success(res.msg);
+            res?.status && waitTime(2000).then(() => ref.current?.reload());
+        });
+    };
 
     // 处理单行编辑保存
     const handleOnSave = async (data: regionDataItem) => {
-        const post = {
-            ...data,
-            pid: pid?.at(-1) ?? data.pid,
-            // @ts-ignore
-            paths: pid?.join('-') ?? data.paths!.join('-'),
-        };
-        await saveRegion(post).then(res => {
-            setExpandByClick(true);
-            res?.msg && message.success(res.msg);
-            waitTime(1500).then(() => {
-                setPid([0]);
-                ref.current?.reload();
-            });
-        });
+        await saveRegion(data)
+            .then(res => {
+                res?.msg && message.success(res.msg);
+                res?.status && message.info('正在刷新缓存...');
+                res?.status &&
+                    refreshCache({ key: 'region' }).then(status => {
+                        status?.msg && message.success(status.msg);
+                        waitTime(2000).then(() => ref.current?.reload());
+                    });
+            })
+            .finally(() => setExpandByClick(true));
     };
 
     const handleDelete = (e: React.MouseEvent<HTMLElement>, record: regionDataItem | regionDataItem[]) => {
@@ -79,10 +92,14 @@ export default () => {
             content: record instanceof Array ? `${titles.slice(0, 3).join('，')} 等 ${titles.length} 个地区` : `${record.name} 这个地区`,
             async onOk() {
                 await remove({ id: ids }).then(res => {
-                    ref.current?.reload();
-                    message.success(res?.msg);
-                    // 只在多选的情况下清除已选择的项
+                    res?.msg && message.success(res.msg);
+                    res?.status && message.info('正在刷新缓存...');
                     record instanceof Array && ref.current?.clearSelected!();
+                    res?.status &&
+                        refreshCache({ key: 'region' }).then(status => {
+                            status?.msg && message.success(status.msg);
+                            waitTime(2000).then(() => ref.current?.reload());
+                        });
                 });
             },
             onCancel() {
@@ -97,10 +114,6 @@ export default () => {
         setExpandedRowKey(rowKey => {
             // 如果是展开状态且有下级地区，合并返回
             if (expanded && record.children) {
-                setChildProps({
-                    id: Number(record?.id),
-                    cid: record?.cid,
-                });
                 return rowKey.concat(record.id as number);
                 // 如果是展开状态且没有子地区，则返回原始rowKey
             } else if (expanded && !record.children) {
@@ -129,26 +142,12 @@ export default () => {
             ('' === paramData[idx] || null === paramData[idx] || undefined === paramData[idx]) && delete paramData[idx];
         }
         return await fetchRegionData(paramData).then(res => {
-            let resList;
-            if (childProps.cid) {
-                const queryParentId = (data: regionDataItem[]) => {
-                    data.forEach(item => {
-                        if (item.id === childProps.id) {
-                            item.children = res?.data?.list;
-                        }
-                        item.children?.length && queryParentId(item.children);
-                    });
-                    return data;
-                };
-                resList = queryParentId(dataSource);
-            } else {
-                resList = res?.data?.list;
-                setDataSource(resList);
-            }
-            setexpandedIds(recursiveQuery(resList));
+            const resList = res?.data?.list;
+            setDataSource(defaultOption.concat(resList));
             // 存储存在子项的地区id
+            setexpandedIds(recursiveQuery(resList));
             return {
-                data: resList,
+                data: resList || [],
                 total: res?.data?.total ?? 0,
                 success: res?.success ?? true,
             };
@@ -156,22 +155,42 @@ export default () => {
     };
     const columns: ProColumns<regionDataItem>[] = [
         {
-            width: 80,
-            title: '编号',
-            dataIndex: 'id',
+            width: 50,
             editable: false,
         },
         {
             title: '地区名称',
             dataIndex: 'name',
+            formItemProps: () => ({
+                rules: [
+                    { required: true, message: '地区名称不得为空' },
+                    { type: 'string', pattern: /^[\u4e00-\u9fa5]+$/, message: '地区名称只能是中文' },
+                ],
+            }),
         },
         {
             title: '所属地区',
-            dataIndex: 'pname',
+            dataIndex: 'pid',
+            renderFormItem: () => (
+                <TreeSelect showSearch allowClear treeData={dataSource} treeNodeFilterProp={'name'} fieldNames={{ label: 'name', value: 'cid' }} />
+            ),
+            render: (_, record) => record.pname,
+            formItemProps: () => ({
+                rules: [{ required: true, message: '请选择所属地区' }],
+            }),
         },
         {
             title: '地区编码',
             dataIndex: 'code',
+            formItemProps: () => ({
+                rules: [
+                    {
+                        type: 'string',
+                        pattern: /^[^0]\d{11}$/,
+                        message: '地区编码应为非0开头的12位整数',
+                    },
+                ],
+            }),
         },
         {
             editable: false,
@@ -214,7 +233,6 @@ export default () => {
                 request={tableData}
                 editableFormRef={formRef}
                 scroll={{ x: 1300, y: 600 }}
-                params={{ pid: childProps.cid }}
                 editable={{
                     editableKeys,
                     type: 'multiple',
@@ -246,6 +264,15 @@ export default () => {
                         onClick={() => setExpandedRowKey(expandedRowKey?.length ? [] : expandedIds)}
                     >
                         {expandedRowKey?.length ? '收起所有' : '展开所有'}
+                    </Button>,
+                    <Button
+                        shape="round"
+                        type="default"
+                        key="clearCache"
+                        icon={<RedoOutlined />}
+                        onClick={() => handleRefreshCache({ key: 'region' })}
+                    >
+                        刷新缓存
                     </Button>,
                     <Button
                         shape="round"
