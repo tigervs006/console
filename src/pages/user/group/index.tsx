@@ -87,7 +87,7 @@ export default () => {
             async onOk() {
                 await removeGroup({ id: ids }).then(res => {
                     ref.current?.reload();
-                    message.success(res?.msg);
+                    res?.msg && message.success(res?.msg);
                     record instanceof Array && ref.current?.clearSelected!();
                 });
             },

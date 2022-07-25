@@ -70,7 +70,7 @@ export default () => {
             async onOk() {
                 await remove({ id: ids }).then(res => {
                     ref.current?.reload();
-                    message.success(res?.msg);
+                    res?.msg && message.success(res?.msg);
                     // 只在多选的情况下清除已选择的项
                     record instanceof Array && ref.current?.clearSelected!();
                 });
@@ -92,10 +92,11 @@ export default () => {
         await saveMenu(post).then(res => {
             setExpandByClick(true);
             res?.msg && message.success(res.msg);
-            waitTime(1500).then(() => {
-                setPid([0]);
-                ref.current?.reload();
-            });
+            // prettier-ignore
+            res?.status && waitTime(1500).then(() => {
+                    setPid([0]);
+                    ref.current?.reload();
+                });
         });
     };
     // 处理展开/收缩状态的state

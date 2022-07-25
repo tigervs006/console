@@ -51,7 +51,7 @@ export default () => {
         }).then(res => {
             res?.msg && message.success(res.msg);
             /* 延时跳转到列表页 */
-            waitTime(2000).then(() => history.push({ pathname: '/product/list' }));
+            res?.status && waitTime(2000).then(() => history.push({ pathname: '/product/list' }));
         });
     };
     /* 处理Request请求 */

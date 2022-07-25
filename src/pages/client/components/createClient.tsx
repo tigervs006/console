@@ -24,7 +24,7 @@ export const CreateClient: React.FC<{
         await saveClient({ ...data, id: props?.record?.id ?? null }).then(res => {
             res?.msg && message.success(res.msg);
             // 延时重载列表数据
-            waitTime(2000).then(() => props.reloadTable());
+            res?.status && waitTime(2000).then(() => props.reloadTable());
         });
     };
     return (

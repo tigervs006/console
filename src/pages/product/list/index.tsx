@@ -86,7 +86,7 @@ export default () => {
             async onOk() {
                 await remove({ id: record instanceof Array ? ids : (record.id as string) }).then(res => {
                     ref.current?.reload();
-                    message.success(res.msg);
+                    res?.msg && message.success(res.msg);
                     /* 只在多选的情况下清除已选择的项 */
                     record instanceof Array && ref.current?.clearSelected!();
                 });

@@ -69,7 +69,7 @@ export default () => {
                 });
                 const defaultLoginSuccessMessage = intl.formatMessage({
                     id: 'pages.login.success',
-                    defaultMessage: res?.msg,
+                    defaultMessage: res?.msg ?? '登录成功',
                 });
                 message.success(defaultLoginSuccessMessage);
                 /* 查询用户信息 */
