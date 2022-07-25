@@ -81,3 +81,6 @@ export const postData = (path: string, data: Record<string, any>, options?: Reco
 
 /** 文件删除 POST /public/remove */
 export const removeFile = async (file: { filePath: string }) => await postData('/public/remove', file);
+
+/** 刷新缓存 POST /public/refresh_cache */
+export const refreshCache = async (data: { key: string }) => await postData('/public/refresh_cache', data);
