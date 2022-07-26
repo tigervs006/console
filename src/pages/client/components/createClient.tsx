@@ -1,12 +1,13 @@
 /** @format */
 
+import './index.less';
 import { message } from 'antd';
 import React, { useRef } from 'react';
-import { saveClient } from '../service';
 import { waitTime } from '@/extra/utils';
 import type { tableDataItem } from '../data';
+import { fetchRegion, saveClient } from '../service';
 import type { ProFormInstance } from '@ant-design/pro-form';
-import { ProFormTextArea, ProFormText, ModalForm } from '@ant-design/pro-form';
+import { ProFormDependency, ProFormTextArea, ProFormSelect, ProFormGroup, ProFormText, ModalForm } from '@ant-design/pro-form';
 
 export const CreateClient: React.FC<{
     record: tableDataItem;
@@ -18,6 +19,11 @@ export const CreateClient: React.FC<{
     const formRef = useRef<ProFormInstance>();
     /** modal标题 */
     const modalTitle = props.isCreateClient ? '新增客户' : '编辑客户';
+
+    /** 获取行政区域列表 */
+    const queryRegion = async (params: { pid?: number }) => {
+        return await fetchRegion(params).then(res => res?.data?.list);
+    };
 
     /** 处理onFinish事件 */
     const handleFinish = async (data: tableDataItem) => {
@@ -114,18 +120,54 @@ export const CreateClient: React.FC<{
                 }}
                 rules={[{ required: true, message: '请输入客户的公司名' }]}
             />
-            <ProFormText
-                hasFeedback
-                label="所在地区"
-                name="address"
-                tooltip="客户所在地区"
-                placeholder="请输入客户所在地区"
-                fieldProps={{
-                    maxLength: 50,
-                    showCount: true,
-                }}
-                rules={[{ required: true, message: '请输入客户客户所在地区' }]}
-            />
+            <ProFormGroup size={2} label="所在地区">
+                <ProFormSelect
+                    name="province"
+                    params={{ pid: 0 }}
+                    request={params => queryRegion(params)}
+                    fieldProps={{
+                        fieldNames: { label: 'name', value: 'cid' },
+                        onChange: () => {
+                            formRef.current?.setFieldsValue({ city: undefined, district: undefined });
+                        },
+                    }}
+                    rules={[{ required: true, message: '请输入您的所在的省份' }]}
+                />
+                <ProFormDependency name={['province']}>
+                    {({ province }) => {
+                        return (
+                            <ProFormSelect
+                                name="city"
+                                disabled={!province}
+                                params={{ pid: province }}
+                                request={params => queryRegion(params)}
+                                fieldProps={{
+                                    fieldNames: { label: 'name', value: 'cid' },
+                                    onChange: value => console.log('city', value),
+                                }}
+                                rules={[{ required: true, message: '请输入您的所在的城市' }]}
+                            />
+                        );
+                    }}
+                </ProFormDependency>
+                <ProFormDependency name={['city']}>
+                    {({ city }) => {
+                        return (
+                            <ProFormSelect
+                                name="district"
+                                disabled={!city}
+                                params={{ pid: city }}
+                                request={params => queryRegion(params)}
+                                fieldProps={{
+                                    fieldNames: { label: 'name', value: 'cid' },
+                                    onChange: value => console.log('district', value),
+                                }}
+                                rules={[{ required: true, message: '请输入您的所在的区域' }]}
+                            />
+                        );
+                    }}
+                </ProFormDependency>
+            </ProFormGroup>
             <ProFormTextArea
                 hasFeedback
                 label="客户需求"
