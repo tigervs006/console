@@ -131,7 +131,7 @@ export const CreateClient: React.FC<{
                             formRef.current?.setFieldsValue({ city: undefined, district: undefined });
                         },
                     }}
-                    rules={[{ required: true, message: '请选择您的所在的省份' }]}
+                    rules={[{ required: true, message: '请选择您所在的省份' }]}
                 />
                 <ProFormDependency name={['province']}>
                     {({ province }) => {
@@ -144,7 +144,7 @@ export const CreateClient: React.FC<{
                                 fieldProps={{
                                     fieldNames: { label: 'name', value: 'cid' },
                                 }}
-                                rules={[{ required: true, message: '请选择您的所在的城市' }]}
+                                rules={[{ required: true, message: '请选择您所在的城市' }]}
                             />
                         );
                     }}
@@ -160,7 +160,7 @@ export const CreateClient: React.FC<{
                                 fieldProps={{
                                     fieldNames: { label: 'name', value: 'cid' },
                                 }}
-                                rules={[{ required: true, message: '请选择您的所在的区域' }]}
+                                rules={[{ required: true, message: '请选择您所在的区域' }]}
                             />
                         );
                     }}
