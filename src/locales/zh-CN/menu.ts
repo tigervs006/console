@@ -50,7 +50,7 @@ export default {
     'menu.editor.flow': '流程编辑器',
     'menu.editor.mind': '脑图编辑器',
     'menu.editor.koni': '拓扑编辑器',
-    'menu.content': '内容管理',
+    'menu.content': '文档管理',
     'menu.content.edit': '文档编辑',
     'menu.content.list': '文档列表',
     'menu.channel': '网站栏目',
