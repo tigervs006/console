@@ -94,6 +94,10 @@ export default [
         ],
     },
     {
+        path: '/link',
+        component: './link',
+    },
+    {
         layout: false,
         path: '/login',
         component: './login',
