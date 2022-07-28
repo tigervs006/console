@@ -159,6 +159,13 @@ export default () => {
             }),
         },
         {
+            width: 150,
+            sorter: true,
+            editable: false,
+            title: '创建时间',
+            dataIndex: 'create_time',
+        },
+        {
             width: 100,
             filters: true,
             onFilter: true,
@@ -184,13 +191,6 @@ export default () => {
                 ],
             },
             render: (_, record) => <RecordSwitch record={record} url={'/link/status'} />,
-        },
-        {
-            width: 150,
-            sorter: true,
-            editable: false,
-            title: '创建时间',
-            dataIndex: 'create_time',
         },
         {
             title: '操作',
