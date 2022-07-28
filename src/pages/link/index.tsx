@@ -217,11 +217,11 @@ export default () => {
                 rowKey="id"
                 actionRef={ref}
                 columns={columns}
-                pagination={false}
                 request={tableData}
                 headerTitle="友链管理"
                 editableFormRef={formRef}
                 scroll={{ x: 1300, y: 600 }}
+                pagination={{ pageSize: 15 }}
                 editable={{
                     editableKeys,
                     type: 'multiple',
