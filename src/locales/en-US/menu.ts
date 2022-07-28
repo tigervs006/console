@@ -60,6 +60,7 @@ export default {
     'menu.product.edit': 'Product Edit',
     'menu.product.list': 'Product List',
     'menu.client': 'Client',
+    'menu.link': 'Link',
     'menu.user': 'User',
     'menu.user.login': 'UserLogin',
     'menu.user.list': 'UserList',
