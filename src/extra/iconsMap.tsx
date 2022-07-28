@@ -1,20 +1,21 @@
 /** @format */
 
-import type { MenuDataItem } from '@ant-design/pro-layout';
-
 import {
     UnorderedListOutlined,
     UserSwitchOutlined,
     AlignLeftOutlined,
     DashboardOutlined,
-	AppstoreOutlined,
+    AppstoreOutlined,
     SettingOutlined,
     TeamOutlined,
     UserOutlined,
+    LinkOutlined,
 } from '@ant-design/icons';
+import type { MenuDataItem } from '@ant-design/pro-layout';
 
 export const IconMap = {
     team: <TeamOutlined />,
+    link: <LinkOutlined />,
     user: <UserOutlined />,
     setting: <SettingOutlined />,
     product: <AppstoreOutlined />,
