@@ -8,8 +8,8 @@ import { Button, message, Modal, Space, Table } from 'antd';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
 import { queryChildId, randomString, waitTime } from '@/extra/utils';
 import { fetchLink, removeLink, saveLink } from '@/pages/link/service';
-import { QuestionCircleOutlined, DeleteOutlined, SearchOutlined, EditOutlined } from '@ant-design/icons';
 import type { EditableFormInstance, ActionType, ProColumns } from '@ant-design/pro-table';
+import { QuestionCircleOutlined, DeleteOutlined, SearchOutlined, EditOutlined } from '@ant-design/icons';
 
 export default () => {
     const { confirm } = Modal;
