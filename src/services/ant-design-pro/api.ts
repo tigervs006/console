@@ -3,14 +3,8 @@
 import { request } from 'umi';
 import { stringify } from 'qs';
 
-/** 获取当前用户菜单 GET /auth/list */
-export const currentUserMenu = (params: Record<string, any>, options?: Record<string, any>) => {
-    return request<Record<string, any>>('/account/menu', {
-        method: 'GET',
-        params: { ...params },
-        ...(options || {}),
-    });
-};
+/** 获取当前用户菜单 GET /account/menu */
+export const currentUserMenu = () => request<Record<string, any>>('/account/menu');
 
 /** 获取当前的用户 GET /user */
 export const currentUser = (params: { id: string | null }, options?: Record<string, any>) => {
