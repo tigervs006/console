@@ -168,7 +168,7 @@ export default () => {
             render: (_, record) => {
                 const nameArr = localeMenu(menuItem, record.menu as string);
                 return nameArr.map(item => (
-                    <Tag color="blue" icon={IconMap[item.icon as string]} key={randomString(4)}>
+                    <Tag color="blue" style={{ marginTop: '8px' }} icon={IconMap[item.icon as string]} key={randomString(4)}>
                         {intl.formatMessage({ id: item.name })}
                     </Tag>
                 ));
