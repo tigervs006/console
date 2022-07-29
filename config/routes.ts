@@ -10,10 +10,6 @@ export default [
                 redirect: '/dashboard/analysis',
             },
             {
-                path: '/dashboard',
-                redirect: '/dashboard/analysis',
-            },
-            {
                 path: '/dashboard/analysis',
                 component: './dashboard/analysis',
             },
