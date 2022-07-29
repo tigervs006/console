@@ -5,7 +5,7 @@ import { stringify } from 'qs';
 
 /** 获取当前用户菜单 GET /auth/list */
 export const currentUserMenu = (params: Record<string, any>, options?: Record<string, any>) => {
-    return request<Record<string, any>>('/auth/list', {
+    return request<Record<string, any>>('/account/menu', {
         method: 'GET',
         params: { ...params },
         ...(options || {}),
