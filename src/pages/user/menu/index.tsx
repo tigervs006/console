@@ -176,7 +176,7 @@ export default () => {
             editable: false,
         },
         {
-            width: 100,
+            width: 150,
             fixed: 'left',
             title: '菜单名称',
             dataIndex: 'name',
@@ -190,7 +190,7 @@ export default () => {
             }),
         },
         {
-            width: 100,
+            width: 150,
             title: '菜单图标',
             dataIndex: 'icon',
             fieldProps: { allowClear: false },
@@ -213,7 +213,7 @@ export default () => {
             }),
         },
         {
-            width: 100,
+            width: 150,
             title: '菜单排序',
             dataIndex: 'sort',
             tooltip: '仅支持顶级菜单排序',
