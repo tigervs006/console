@@ -37,8 +37,8 @@ export const TreeSelector: React.FC<{
             allowClear={true}
             treeCheckable={true}
             placeholder="请选择..."
-            style={{ width: '100%' }}
             fieldNames={fieldNames}
+            style={{ width: '100%' }}
             showCheckedStrategy={SHOW_ALL}
             treeData={nameToLocale(treeData)}
             onChange={newValue => handleChange(newValue)}
