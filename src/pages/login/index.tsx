@@ -42,8 +42,8 @@ export default () => {
     };
 
     /* 查询用户菜单 */
-    const fetchUserMenu = async (params: { gid: string | null }) => {
-        await queryUserMenu(params).then((res: any) => {
+    const fetchUserMenu = async () => {
+        await queryUserMenu().then(res => {
             setInitialState!(s => ({
                 ...s,
                 userMenuItem: res?.data?.list.sort(sortDesc('sort')),
@@ -57,7 +57,6 @@ export default () => {
             .then(async res => {
                 const localItem = [
                     { uid: res.data?.info?.uid ?? null },
-                    { gid: res.data?.info?.gid ?? null },
                     { user: res.data?.info?.name ?? null },
                     { avatar: res.data?.info?.avatar ?? null },
                     { Authorization: res.data?.info?.authorization ?? null },
@@ -73,10 +72,10 @@ export default () => {
                     defaultMessage: res?.msg ?? '登录成功',
                 });
                 message.success(defaultLoginSuccessMessage);
+                /* 查询用户菜单 */
+                await fetchUserMenu();
                 /* 查询用户信息 */
                 await fetchUserInfo({ id: localStorage.getItem('uid') });
-                /* 查询用户菜单 */
-                await fetchUserMenu({ gid: localStorage.getItem('gid') });
                 waitTime().then(() => {
                     const { query } = history.location;
                     const { redirect } = query as { redirect: string };
