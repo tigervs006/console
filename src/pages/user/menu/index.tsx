@@ -99,9 +99,9 @@ export default () => {
             res?.msg && message.success(res.msg);
             // prettier-ignore
             res?.status && waitTime(1500).then(() => {
-                    setPid([0]);
-                    ref.current?.reload();
-                });
+				setPid([]);
+				ref.current?.reload();
+			});
         });
     };
     // 处理展开/收缩状态的state
