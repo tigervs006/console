@@ -1,10 +1,10 @@
 /** @format */
 
-import { notification } from 'antd';
 import { history, Link } from 'umi';
 import Footer from '@/components/Footer';
 import { sortDesc } from '@/extra/utils';
 import { loopMenuItem } from './extra/iconsMap';
+import { notification, Button, Result } from 'antd';
 import RightContent from '@/components/RightContent';
 import type { RequestOptionsInit } from 'umi-request';
 import defaultSettings from '../config/defaultSettings';
@@ -76,7 +76,18 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
             : [],
         menuHeaderRender: undefined,
         /* 自定义 403 页面 */
-        unAccessible: <div>unAccessible</div>,
+        unAccessible: (
+            <Result
+                status="403"
+                title="Access Denied"
+                subTitle="You are not authorized to access this page"
+                extra={
+                    <Button shape="round" type="primary" onClick={() => history.push('/dashboard/analysis')} danger>
+                        Back Home
+                    </Button>
+                }
+            />
+        ),
         /* 增加一个 loading 的状态 */
         childrenRender: (children, props) => {
             return (
