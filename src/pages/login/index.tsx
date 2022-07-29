@@ -42,7 +42,7 @@ export default () => {
     };
 
     /* 查询用户菜单 */
-    const fetchUserMenu = async (params: { id: string | null; status: number }) => {
+    const fetchUserMenu = async (params: { gid: string | null }) => {
         await queryUserMenu(params).then((res: any) => {
             setInitialState!(s => ({
                 ...s,
@@ -57,6 +57,7 @@ export default () => {
             .then(async res => {
                 const localItem = [
                     { uid: res.data?.info?.uid ?? null },
+                    { gid: res.data?.info?.gid ?? null },
                     { user: res.data?.info?.name ?? null },
                     { avatar: res.data?.info?.avatar ?? null },
                     { Authorization: res.data?.info?.authorization ?? null },
@@ -75,7 +76,7 @@ export default () => {
                 /* 查询用户信息 */
                 await fetchUserInfo({ id: localStorage.getItem('uid') });
                 /* 查询用户菜单 */
-                await fetchUserMenu({ id: localStorage.getItem('uid'), status: 1 });
+                await fetchUserMenu({ gid: localStorage.getItem('gid') });
                 waitTime().then(() => {
                     const { query } = history.location;
                     const { redirect } = query as { redirect: string };

@@ -34,7 +34,7 @@ export async function getInitialState(): Promise<{
     /* 获取当前用户信息 */
     const fetchUserInfo = async (params: { id: string | null }) => await queryCurrentUser(params).then(res => res.data?.info);
     /* 获取当前用户菜单 */
-    const fetchUserMenu = async (params: { id: string | null; status: number }) =>
+    const fetchUserMenu = async (params: { gid: string | null }) =>
         await queryUserMenu(params).then(res => {
             return res?.data?.list.sort(sortDesc('sort'));
         });
@@ -44,7 +44,7 @@ export async function getInitialState(): Promise<{
     return {
         settings: defaultSettings,
         currentUser: await fetchUserInfo({ id: localStorage.getItem('uid') }),
-        userMenuItem: await fetchUserMenu({ id: localStorage.getItem('uid'), status: 1 }),
+        userMenuItem: await fetchUserMenu({ gid: localStorage.getItem('gid') }),
     };
 }
 
