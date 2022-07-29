@@ -26,7 +26,6 @@ declare namespace API {
         data?: {
             info?: {
                 uid: string;
-                gid: string;
                 name: string;
                 avatar?: string;
                 authorization: string;
