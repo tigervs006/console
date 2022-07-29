@@ -159,10 +159,10 @@ export default () => {
             },
         },
         {
-            title: '用户组权限',
+            title: '用户组菜单',
             dataIndex: 'menu',
             formItemProps: () => ({
-                rules: [{ require: true, message: '请为当前用户组设置合适的权限菜单' }],
+                rules: [{ require: true, message: '请为当前用户组设置菜单' }],
             }),
             renderFormItem: () => <TreeSelector treeData={menuItem} />,
             render: (_, record) => {
