@@ -34,17 +34,14 @@ export async function getInitialState(): Promise<{
     /* 获取当前用户信息 */
     const fetchUserInfo = async (params: { id: string | null }) => await queryCurrentUser(params).then(res => res.data?.info);
     /* 获取当前用户菜单 */
-    const fetchUserMenu = async (params: { gid: string | null }) =>
-        await queryUserMenu(params).then(res => {
-            return res?.data?.list.sort(sortDesc('sort'));
-        });
+    const fetchUserMenu = async () => await queryUserMenu().then(res => res?.data?.list.sort(sortDesc('sort')));
     if (loginPath === history.location.pathname) {
         return { settings: defaultSettings };
     }
     return {
         settings: defaultSettings,
+        userMenuItem: await fetchUserMenu(),
         currentUser: await fetchUserInfo({ id: localStorage.getItem('uid') }),
-        userMenuItem: await fetchUserMenu({ gid: localStorage.getItem('gid') }),
     };
 }
 
