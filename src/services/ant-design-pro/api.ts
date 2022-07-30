@@ -8,7 +8,7 @@ export const currentUserMenu = () => request<Record<string, any>>('/account/menu
 
 /** 获取当前的用户 GET /user */
 export const currentUser = (params: { id: string | null }, options?: Record<string, any>) => {
-    return request<{ data: API.CurrentUser }>('/user', {
+    return request<{ data: { info: API.CurrentUser } }>('/user', {
         method: 'GET',
         params: { ...params },
         ...(options || {}),
