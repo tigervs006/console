@@ -98,10 +98,7 @@ export default () => {
             setExpandByClick(true);
             res?.msg && message.success(res.msg);
             // prettier-ignore
-            res?.status && waitTime(1500).then(() => {
-				setPid([]);
-				ref.current?.reload();
-			});
+            res?.status && waitTime(2000).then(() => ref.current?.reload());
         });
     };
     // 处理展开/收缩状态的state
@@ -418,6 +415,7 @@ export default () => {
                         onClick={e => {
                             e?.stopPropagation();
                             setExpandByClick(false);
+                            setPid(record.paths as number[]);
                             action?.startEditable?.(record.id as number);
                         }}
                     >
