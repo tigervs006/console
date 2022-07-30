@@ -1,9 +1,8 @@
 /** @format */
 
-import React, { useRef } from 'react';
+import React from 'react';
 import { Divider, Space } from 'antd';
 import type { SliderMarks } from 'antd/lib/slider';
-import type { ProFormInstance } from '@ant-design/pro-form';
 import { FormOutlined, UndoOutlined } from '@ant-design/icons';
 import ProForm, { ProFormSlider, ProFormSwitch, ProFormText } from '@ant-design/pro-form';
 
@@ -11,7 +10,6 @@ export const OtherSettings: React.FC<{
     list: Record<string, any>;
     handleFinish: (data: Record<string, any>) => Promise<void>;
 }> = props => {
-    const formRef = useRef<ProFormInstance>();
     const marks: SliderMarks = {
         1: '1小时',
         12: '12小时',
@@ -25,7 +23,6 @@ export const OtherSettings: React.FC<{
     };
     return (
         <ProForm
-            formRef={formRef}
             layout="vertical"
             wrapperCol={{
                 md: { span: 16 },
@@ -101,14 +98,14 @@ export const OtherSettings: React.FC<{
                 }}
             />
             <ProFormSlider
+                min={1}
+                max={48}
+                marks={marks}
                 label="Token时效"
                 name={props.list.token_expire_time?.name}
                 initialValue={props.list.token_expire_time?.value}
                 tooltip={props.list.token_expire_time?.description}
                 fieldProps={{
-                    min: 1,
-                    max: 48,
-                    marks: marks,
                     tooltipVisible: true,
                     tipFormatter: value => `${value} 小时`,
                 }}
