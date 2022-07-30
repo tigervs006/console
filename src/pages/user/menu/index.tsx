@@ -280,6 +280,7 @@ export default () => {
                     </Tag>
                 );
             },
+            formItemProps: () => ({ rules: [{ required: true, message: '菜单权限为必选项' }] }),
         },
         {
             width: 200,
