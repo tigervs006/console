@@ -173,7 +173,7 @@ export const CreateClient: React.FC<{
                 tooltip="客户的简要需求"
                 placeholder="请输入客户的简要需求"
                 fieldProps={{
-                    maxLength: 256,
+                    maxLength: 100,
                     showCount: true,
                     allowClear: true,
                     autoSize: { minRows: 5, maxRows: 8 },
