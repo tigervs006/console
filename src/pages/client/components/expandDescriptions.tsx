@@ -12,25 +12,33 @@ export const ExpandDescriptions: React.FC<{
     const columns: ProDescriptionsItemProps<tableDataItem>[] = [
         {
             title: 'IP地址',
-            ellipsis: true,
             render: () => _int2ip(props.record.ipaddress as number),
         },
         {
             title: '来源网址',
-            ellipsis: true,
             copyable: true,
             dataIndex: 'page',
         },
         {
             title: '公司名称',
-            ellipsis: true,
-            render: () => props.record?.company ?? '-',
+            copyable: true,
+            dataIndex: 'company',
         },
         {
+            span: 3,
             title: '需求描述',
             copyable: true,
             dataIndex: 'message',
         },
     ];
-    return <ProDescriptions title="客户详情" layout="vertical" columns={columns} dataSource={props.record} labelStyle={{ fontWeight: 'bold' }} />;
+    return (
+        <ProDescriptions
+            title="客户详情"
+            layout="vertical"
+            columns={columns}
+            dataSource={props.record}
+            labelStyle={{ fontWeight: 'bold' }}
+            column={{ xs: 1, sm: 2, md: 3, lg: 4 }}
+        />
+    );
 };
