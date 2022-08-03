@@ -24,24 +24,13 @@ export const ExpandDescriptions: React.FC<{
         {
             title: '公司名称',
             ellipsis: true,
-            dataIndex: 'company',
-            render: () => props.record?.company ?? '待完善',
+            render: () => props.record?.company ?? '-',
         },
         {
             title: '需求描述',
-            ellipsis: true,
             copyable: true,
             dataIndex: 'message',
         },
     ];
-    return (
-        <ProDescriptions
-            title="客户详情"
-            layout="vertical"
-            columns={columns}
-            dataSource={props.record}
-            labelStyle={{ fontWeight: 'bold' }}
-            column={{ xs: 1, sm: 2, md: 3, lg: 4 }}
-        />
-    );
+    return <ProDescriptions title="客户详情" layout="vertical" columns={columns} dataSource={props.record} labelStyle={{ fontWeight: 'bold' }} />;
 };
