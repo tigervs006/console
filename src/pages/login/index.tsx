@@ -84,7 +84,7 @@ export default () => {
             })
             .catch(() => {
                 /* 设置错误信息 */
-                setUserLoginState({ status: 400, type: 'account' });
+                setUserLoginState({ status: 401, type: 'account' });
             });
     };
 
@@ -98,21 +98,21 @@ export default () => {
             <div className={styles.content}>
                 <LoginForm
                     title="Ant Design"
-                    logo={<img alt="logo" src="/manage/logo.svg" />}
-                    subTitle={intl.formatMessage({ id: 'pages.layouts.userLayout.title' })}
                     initialValues={{
                         autoLogin: true,
                     }}
+                    logo={<img alt="logo" src="/manage/logo.svg" />}
                     onFinish={async values => {
                         await handleSubmit(values as API.LoginParams);
                     }}
+                    subTitle={intl.formatMessage({ id: 'pages.layouts.userLayout.title' })}
                 >
                     <Tabs activeKey={type} onChange={setType}>
                         <Tabs.TabPane
                             key="account"
                             tab={intl.formatMessage({
                                 id: 'pages.login.accountLogin.tab',
-                                defaultMessage: '账户密码登录',
+                                defaultMessage: '密码登录',
                             })}
                         />
                         <Tabs.TabPane
@@ -123,7 +123,7 @@ export default () => {
                             })}
                         />
                     </Tabs>
-                    {400 === status && loginType === 'account' && (
+                    {401 === status && loginType === 'account' && (
                         <LoginMessage
                             content={intl.formatMessage({
                                 id: 'pages.login.accountLogin.errorMessage',
@@ -171,7 +171,7 @@ export default () => {
                             />
                         </>
                     )}
-                    {400 === status && loginType === 'mobile' && <LoginMessage content="验证码错误" />}
+                    {401 === status && loginType === 'mobile' && <LoginMessage content="验证码错误" />}
                     {type === 'mobile' && (
                         <>
                             <ProFormText
@@ -190,7 +190,7 @@ export default () => {
                                         message: <FormattedMessage id="pages.login.phoneNumber.required" defaultMessage="请输入手机号！" />,
                                     },
                                     {
-                                        pattern: /^1\d{10}$/,
+                                        pattern: /^1[3456789]\d{9}$/,
                                         message: <FormattedMessage id="pages.login.phoneNumber.invalid" defaultMessage="手机号格式错误！" />,
                                     },
                                 ]}
