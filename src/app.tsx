@@ -48,12 +48,14 @@ export async function getInitialState(): Promise<{
 /* 设置全局layout */
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
     return {
-        rightContentRender: () => <RightContent />,
+        ...initialState?.settings,
         disableContentMargin: false,
+        menuHeaderRender: undefined,
+        footerRender: () => <Footer />,
+        rightContentRender: () => <RightContent />,
         waterMarkProps: {
             content: initialState?.currentUser?.name,
         },
-        footerRender: () => <Footer />,
         onPageChange: () => {
             const { location } = history;
             /* 如果没有登录，重定向到 login */
@@ -74,7 +76,6 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
                   </Link>,
               ]
             : [],
-        menuHeaderRender: undefined,
         /* 自定义 403 页面 */
         unAccessible: (
             <Result
@@ -109,7 +110,6 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
                 </>
             );
         },
-        ...initialState?.settings,
     };
 };
 
