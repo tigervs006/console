@@ -27,7 +27,6 @@ export const CreateModalForm: React.FC<{
     const handleFinish = async (data: tableDataItem) => {
         const post = {
             ...data,
-            single: true,
             id: props?.record?.id ?? '',
             pid: pid ?? props?.record?.pid,
         };
