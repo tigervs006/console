@@ -1,15 +1,15 @@
 /** @format */
 
 import lodash from 'lodash';
-import { useRequest, useIntl } from 'umi';
+import { useIntl } from 'umi';
 import { IconMap } from '@/extra/iconsMap';
+import type { menuDataItem } from '../data';
 import React, { useRef, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { EditableProTable } from '@ant-design/pro-table';
-import type { groupDataItem, menuDataItem } from '../data';
+import { fetchMenuData, saveMenu, remove } from '../service';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
-import { Button, Cascader, message, Modal, Space, Table, Tag } from 'antd';
-import { fetchMenuData, saveMenu, remove, fetchGroupData } from '../service';
+import { Button, Cascader, message, Modal, Space, Table } from 'antd';
 import { queryChildId, randomString, recursiveQuery, waitTime } from '@/extra/utils';
 import type { EditableFormInstance, ActionType, ProColumns } from '@ant-design/pro-table';
 import { QuestionCircleOutlined, MinusCircleOutlined, PlusCircleOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
@@ -47,9 +47,6 @@ export default () => {
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
     // ActionType
     const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
-
-    /* 获取用户组列表 */
-    const { data: groupData } = useRequest(fetchGroupData, { defaultParams: [{ status: 1 }] });
 
     /* 处理单个/批量删除 */
     const handleDelete = (e: React.MouseEvent<HTMLElement>, record: menuDataItem | menuDataItem[]) => {
@@ -239,48 +236,6 @@ export default () => {
             ),
             formItemProps: () => ({ rules: [{ required: true, message: '上级菜单为必选项' }] }),
             render: (_, record) => intl.formatMessage({ id: record?.plocale ?? record?.locale }),
-        },
-        {
-            width: 300,
-            ellipsis: true,
-            title: '菜单权限',
-            valueType: 'select',
-            dataIndex: 'authority',
-            tooltip: '设置只对指定用户组访问',
-            fieldProps: {
-                mode: 'multiple',
-                defaultValue: ['0'],
-                options: [{ label: '公共菜单', value: '0' }].concat(
-                    groupData?.list?.map((item: groupDataItem) => ({
-                        label: item.name,
-                        value: item.id!.toString(),
-                    })),
-                ),
-            },
-            render: (_, record) => {
-                const authorityItem: string[] = [];
-                if (record?.authority instanceof Array) {
-                    groupData?.list?.forEach((item: groupDataItem) => {
-                        record?.authority!.forEach(gid => {
-                            if (item.id == gid) {
-                                authorityItem.push(item.name as string);
-                            }
-                        });
-                    });
-                }
-                return authorityItem.length ? (
-                    authorityItem.map(item => (
-                        <Tag key={randomString(4)} color="blue">
-                            {item}
-                        </Tag>
-                    ))
-                ) : (
-                    <Tag key={randomString(4)} color="blue">
-                        公共菜单
-                    </Tag>
-                );
-            },
-            formItemProps: () => ({ rules: [{ required: true, message: '菜单权限为必选项' }] }),
         },
         {
             width: 200,
