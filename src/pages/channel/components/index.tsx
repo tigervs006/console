@@ -1,8 +1,8 @@
 /** @format */
 
 import { message } from 'antd';
-import React, { useRef, useState } from 'react';
 import type { tableDataItem } from '../data';
+import React, { useRef, useState } from 'react';
 import { waitTime, zh2Pinyin } from '@/extra/utils';
 import { fetchData, saveChannel } from '../service';
 import type { UploadFile } from 'antd/es/upload/interface';
@@ -18,23 +18,23 @@ export const CreateModalForm: React.FC<{
     setExpandByClick: (value: boolean) => void;
     handleSetModalVisit: (value: boolean) => void;
 }> = props => {
+    /* 上级栏目 */
+    const [pid, setPid] = useState<number>();
     const formRef = useRef<ProFormInstance>();
     const defaultOption = [{ id: 0, cname: '顶级栏目' }];
-    // 上级栏目
-    const [pid, setPid] = useState<number[]>([]);
     const modalTitle = props.isCreateChannel ? '新增栏目' : '编辑栏目';
-    // 处理onFinish事件
+    /* 处理onFinish事件 */
     const handleFinish = async (data: tableDataItem) => {
         const post = {
             ...data,
             single: true,
             id: props?.record?.id ?? '',
-            pid: pid || props.record.pid,
+            pid: pid ?? props?.record?.pid,
         };
         await saveChannel(post).then(res => {
             res?.msg && message.success(res.msg);
             props.setExpandByClick(true);
-            // 延时重载列表数据
+            /* 延时重载列表数据 */
             waitTime(1500).then(() => props.reloadTable());
         });
     };
