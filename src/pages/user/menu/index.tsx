@@ -34,10 +34,9 @@ export default () => {
         sort: 50,
         status: 1,
         paths: [0],
-        method: 'GET',
         hideInMenu: 0,
+        method: 'GET',
         locale: 'menu.',
-        authority: ['0'],
         hideChildrenInMenu: 0,
         id: randomString(6),
     };

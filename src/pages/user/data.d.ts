@@ -26,7 +26,6 @@ export type menuDataItem = {
     plocale?: string;
     hideInMenu?: number;
     id?: number | string;
-    authority?: string[];
     children?: menuDataItem[];
     paths?: string | number[];
     hideChildrenInMenu?: number;
