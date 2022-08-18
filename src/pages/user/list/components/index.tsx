@@ -193,9 +193,9 @@ export const CreateUser: React.FC<{
                     maxLength: 18,
                     readOnly: true,
                     showCount: true,
-                    onChange: () => setPasswordRequire(true),
                     onFocus: e => e.target.removeAttribute('readonly'),
                     onBlur: e => e.target.setAttribute('readonly', 'true'),
+                    onChange: e => (e.target.value ? setPasswordRequire(true) : setPasswordRequire(false)),
                 }}
                 rules={[
                     { required: props.isCreateUser, message: '请为用户设置密码' },
