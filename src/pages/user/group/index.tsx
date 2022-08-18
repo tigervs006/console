@@ -1,19 +1,26 @@
 /** @format */
 
-import { useIntl } from 'umi';
-import { useModel } from 'umi';
+import { useRequest, useIntl } from 'umi';
 import { IconMap } from '@/extra/iconsMap';
 import { TreeSelector } from '../components';
+import React, { useState, useRef } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { groupDataItem, menuDataItem } from '../data';
-import React, { useEffect, useState, useRef } from 'react';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
 import { Button, message, Modal, Space, Table, Tag } from 'antd';
 import { queryChildId, randomString, waitTime } from '@/extra/utils';
-import { fetchGroupData, removeGroup, saveGroup } from '@/pages/user/service';
+import { fetchGroupData, fetchMenuData, removeGroup, saveGroup } from '@/pages/user/service';
 import type { ActionType, ProColumns, EditableFormInstance } from '@ant-design/pro-table';
-import { QuestionCircleOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+    QuestionCircleOutlined,
+    AppstoreAddOutlined,
+    MenuUnfoldOutlined,
+    DeleteOutlined,
+    EditOutlined,
+    PlusOutlined,
+    ApiOutlined,
+} from '@ant-design/icons';
 
 export default () => {
     const intl = useIntl();
@@ -28,8 +35,12 @@ export default () => {
     const { confirm } = Modal;
     /* formRef */
     const formRef = useRef<EditableFormInstance>();
-    /* initialState */
-    const { initialState } = useModel('@@initialState');
+    /* 菜单类型 */
+    const menuType = {
+        1: <MenuUnfoldOutlined />,
+        2: <AppstoreAddOutlined />,
+        3: <ApiOutlined />,
+    };
     /* menuDataItem */
     const [menuItem, setMenuItem] = useState<menuDataItem[] | any>([]);
     /* editableKeys */
@@ -37,17 +48,18 @@ export default () => {
     /* ActionType */
     const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
 
-    useEffect(() => {
-        setMenuItem(() => initialState?.userMenuItem);
-    }, [initialState]);
+    /* 获取所有权限列表 */
+    useRequest(fetchMenuData, {
+        onSuccess: (res: { list: menuDataItem[] }) => setMenuItem(() => res?.list),
+    });
 
     /* 根据id获取到locale */
-    const localeMenu = (data: menuDataItem[], menuStr: string | number[], record: Record<string, string>[] = []) => {
+    const localeMenu = (data: menuDataItem[], menuStr: string | number[], record: Record<string, any>[] = []) => {
         const menuArr = menuStr instanceof Array ? menuStr : menuStr.split(',').map(Number);
         data?.forEach((item: menuDataItem) => {
             menuArr.forEach((id: number) => {
                 if (id === item.id) {
-                    record.push({ icon: item.icon as string, name: item.locale as string });
+                    record.push({ icon: item.icon as string, name: item.locale as string, type: item.type as number });
                 }
             });
             item.children && localeMenu(item.children, menuArr, record);
@@ -169,7 +181,7 @@ export default () => {
             render: (_, record) => {
                 const nameArr = localeMenu(menuItem, record.menu as string);
                 return nameArr.map(item => (
-                    <Tag color="blue" icon={IconMap[item.icon as string]} key={randomString(4)}>
+                    <Tag color="blue" icon={item?.icon ? IconMap[item.icon as string] : menuType[item.type]} key={randomString(4)}>
                         {intl.formatMessage({ id: item.name })}
                     </Tag>
                 ));
