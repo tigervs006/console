@@ -32,10 +32,12 @@ export default [
                 redirect: '/content/list',
             },
             {
+                access: 'authFilter',
                 path: '/content/list',
                 component: './content/list',
             },
             {
+                access: 'authFilter',
                 path: '/content/edit',
                 component: './content/edit',
             },
@@ -50,10 +52,12 @@ export default [
                 redirect: '/product/list',
             },
             {
+                access: 'authFilter',
                 path: '/product/list',
                 component: './product/list',
             },
             {
+                access: 'authFilter',
                 path: '/product/edit',
                 component: './product/edit',
             },
@@ -61,10 +65,12 @@ export default [
     },
     {
         path: '/channel',
+        access: 'authFilter',
         component: './channel',
     },
     {
         path: '/client',
+        access: 'authFilter',
         component: './client',
     },
     {
@@ -76,14 +82,17 @@ export default [
                 redirect: '/user/list',
             },
             {
+                access: 'authFilter',
                 path: '/user/list',
                 component: './user/list',
             },
             {
+                access: 'authFilter',
                 path: '/user/menu',
                 component: './user/menu',
             },
             {
+                access: 'authFilter',
                 path: '/user/group',
                 component: './user/group',
             },
@@ -91,6 +100,7 @@ export default [
     },
     {
         path: '/link',
+        access: 'authFilter',
         component: './link',
     },
     {
@@ -100,6 +110,7 @@ export default [
     },
     {
         path: '/account',
+        access: 'authFilter',
         component: './account',
     },
     {
@@ -111,10 +122,12 @@ export default [
                 redirect: '/settings/system',
             },
             {
+                access: 'authFilter',
                 path: '/settings/system',
                 component: './settings/system',
             },
             {
+                access: 'authFilter',
                 path: '/settings/region',
                 component: './settings/region',
             },
