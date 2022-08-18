@@ -40,8 +40,8 @@ export const TreeSelector: React.FC<{
             fieldNames={fieldNames}
             treeNodeFilterProp="name"
             style={{ width: '100%' }}
+            treeExpandedKeys={values}
             showCheckedStrategy={SHOW_ALL}
-            treeDefaultExpandedKeys={values}
             treeData={nameToLocale(treeData)}
             onChange={newValue => handleChange(newValue)}
         />
