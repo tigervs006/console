@@ -3,6 +3,8 @@
 import { getData, postData } from '@/services/ant-design-pro/api';
 import type { groupDataItem, menuDataItem, tableDataItem } from './data';
 
+/* 获取后台路由 */
+export const fetchRules = () => getData('/auth/routes');
 /* 新增/编辑用户 */
 export const saveUser = (data: tableDataItem) => postData('/user/save', data);
 
