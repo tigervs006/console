@@ -41,6 +41,7 @@ export const TreeSelector: React.FC<{
             treeNodeFilterProp="name"
             style={{ width: '100%' }}
             showCheckedStrategy={SHOW_ALL}
+            treeDefaultExpandedKeys={values}
             treeData={nameToLocale(treeData)}
             onChange={newValue => handleChange(newValue)}
         />
