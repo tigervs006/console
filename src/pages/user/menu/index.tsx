@@ -3,16 +3,26 @@
 import lodash from 'lodash';
 import { useIntl } from 'umi';
 import { IconMap } from '@/extra/iconsMap';
-import type { menuDataItem } from '../data';
 import React, { useRef, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { EditableProTable } from '@ant-design/pro-table';
-import { fetchMenuData, saveMenu, remove } from '../service';
+import type { menuDataItem, routesDataItem } from '../data';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
-import { Button, Cascader, message, Modal, Space, Table } from 'antd';
+import { fetchMenuData, saveMenu, remove, fetchRules } from '../service';
+import { Button, Cascader, message, Modal, Space, Table, Tag } from 'antd';
 import { queryChildId, randomString, recursiveQuery, waitTime } from '@/extra/utils';
 import type { EditableFormInstance, ActionType, ProColumns } from '@ant-design/pro-table';
-import { QuestionCircleOutlined, MinusCircleOutlined, PlusCircleOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+    QuestionCircleOutlined,
+    MinusCircleOutlined,
+    AppstoreAddOutlined,
+    PlusCircleOutlined,
+    MenuUnfoldOutlined,
+    DeleteOutlined,
+    EditOutlined,
+    PlusOutlined,
+    ApiOutlined,
+} from '@ant-design/icons';
 
 export default () => {
     const intl = useIntl();
@@ -20,19 +30,29 @@ export default () => {
     // 预设数据
     const createRecord = {
         pid: 0,
+        type: 1,
         sort: 50,
         status: 1,
         paths: [0],
+        method: 'GET',
         hideInMenu: 0,
         locale: 'menu.',
         authority: ['0'],
         hideChildrenInMenu: 0,
         id: randomString(6),
     };
+    /* 菜单类型 */
+    const menuType = {
+        1: { name: '菜单', icon: <MenuUnfoldOutlined />, color: 'blue' },
+        2: { name: '按钮', icon: <AppstoreAddOutlined />, color: 'magenta' },
+        3: { name: '接口', icon: <ApiOutlined />, color: 'volcano' },
+    };
     // 菜单路径
     const [pid, setPid] = useState<number[]>();
     // formRef
     const formRef = useRef<EditableFormInstance>();
+    // 菜单类型
+    const [displayType, setDisplayType] = useState<number>(1);
     // 存放子项的id
     const [expandedIds, setexpandedIds] = useState<number[]>([]);
     // ModalForm 菜单
@@ -88,8 +108,7 @@ export default () => {
         const post = {
             ...data,
             pid: pid?.at(-1) ?? data.pid,
-            // @ts-ignore
-            paths: pid?.join('-') ?? data.paths!.join('-'),
+            paths: data?.paths instanceof Array ? data?.paths.join('-') : data?.paths,
         };
         await saveMenu(post).then(res => {
             setExpandByClick(true);
@@ -98,7 +117,7 @@ export default () => {
             res?.status && waitTime(2000).then(() => ref.current?.reload());
         });
     };
-    // 处理展开/收缩状态的state
+    /* 展开/收缩状态 */
     const handleExpand = (expanded: boolean, record: menuDataItem) => {
         setExpandedRowKey(rowKey => {
             // 如果是展开状态且有子菜单，合并后返回
@@ -132,6 +151,15 @@ export default () => {
             item.children && nameToLocale(item.children);
             return item;
         });
+    };
+    /* 获取后台路由规则 */
+    const getRules = async () => {
+        return await fetchRules().then(res =>
+            res.data.list.map((item: routesDataItem) => ({
+                label: `[${item.method}] ${item.rule}`,
+                value: item.rule,
+            })),
+        );
     };
     /**
      * 获取菜单列表
@@ -179,17 +207,43 @@ export default () => {
             formItemProps: () => ({
                 rules: [
                     { required: true, message: '菜单名称不得为空' },
-                    { type: 'string', pattern: /^\w{2,12}$/, message: '菜单名称只能是2~12个数字、字母与下划线的组合' },
+                    { type: 'string', pattern: /^\w{2,35}$/, message: '菜单名称只能是2~35个数字、字母与下划线的组合' },
                 ],
             }),
         },
         {
             width: 150,
+            title: '显示类型',
+            dataIndex: 'type',
+            valueType: 'select',
+            fieldProps: {
+                allowClear: false,
+                options: [
+                    { label: '菜单', value: 1 },
+                    { label: '按钮', value: 2 },
+                    { label: '接口', value: 3 },
+                ],
+                onChange: (value: number) => {
+                    setDisplayType(value);
+                    formRef.current?.setRowData!(editableKeys.toString(), { hideInMenu: 1 < value ? 1 : 0, hideChildrenInMenu: 1 < value ? 1 : 0 });
+                },
+            },
+            render: (_, record) => {
+                return (
+                    <Tag icon={menuType[record.type!].icon} color={menuType[record.type!].color}>
+                        {menuType[record.type!].name}
+                    </Tag>
+                );
+            },
+        },
+        {
+            width: 150,
             title: '菜单图标',
             dataIndex: 'icon',
+            tooltip: '仅支持配置顶级菜单图标',
             fieldProps: { allowClear: false },
-            tooltip: 'Ant Design 不支持子菜单图标',
-            editable: (_, record) => !record.pid,
+            /* 仅顶级菜单可以配置图标 */
+            editable: () => 1 == displayType && 0 == pid?.at(-1),
             render: (_, record) => IconMap[record.icon as string],
             formItemProps: () => ({
                 rules: [
@@ -202,7 +256,7 @@ export default () => {
                             return Promise.resolve();
                         },
                     }),
-                    { type: 'string', pattern: /^[\w?:\-]+$/, message: '图标格式只能是英文字母、数字及下线线和破折号的组合' },
+                    { type: 'string', pattern: /^[a-zA-Z0-9\-]+$/, message: '图标格式只能是英文字母、数字及下线线和破折号的组合' },
                 ],
             }),
         },
@@ -229,8 +283,8 @@ export default () => {
                     changeOnSelect
                     allowClear={false}
                     options={menuData}
-                    onChange={(value: any) => setPid(value)}
                     fieldNames={{ label: 'name', value: 'id' }}
+                    onChange={value => setPid(value as number[])}
                     displayRender={(labels: string[]) => labels.at(-1)}
                 />
             ),
@@ -247,7 +301,34 @@ export default () => {
             formItemProps: () => ({ rules: [{ required: true, message: '菜单路径为必填项' }] }),
         },
         {
-            width: 150,
+            width: 200,
+            ellipsis: true,
+            title: '路由规则',
+            dataIndex: 'routes',
+            valueType: 'select',
+            tooltip: '后台路由规则',
+            request: () => getRules(),
+            editable: () => 3 == displayType,
+            fieldProps: {
+                showSearch: true,
+                allowClear: false,
+            },
+            formItemProps: () => ({
+                rules: [
+                    () => ({
+                        validator(_, value) {
+                            const rowData = formRef.current?.getRowData!(editableKeys.toString());
+                            if (!value && 1 < rowData.type) {
+                                return Promise.reject(new Error('接口/按钮必须设置后台接口路径'));
+                            }
+                            return Promise.resolve();
+                        },
+                    }),
+                ],
+            }),
+        },
+        {
+            width: 200,
             ellipsis: true,
             title: '多语言包',
             dataIndex: 'locale',
@@ -302,6 +383,7 @@ export default () => {
             },
             fieldProps: {
                 allowClear: false,
+                disabled: 1 < displayType,
                 options: [
                     { label: '显示', value: 0 },
                     { label: '隐藏', value: 1 },
@@ -315,6 +397,7 @@ export default () => {
                         url={'/auth/status'}
                         echoUnChecked={'隐藏'}
                         fieldKey={'hideInMenu'}
+                        disabled={1 < record.type!}
                         statusField={!record.hideInMenu}
                     />
                 );
@@ -340,6 +423,7 @@ export default () => {
             },
             fieldProps: {
                 allowClear: false,
+                disabled: 1 < displayType,
                 options: [
                     { label: '显示', value: 0 },
                     { label: '隐藏', value: 1 },
@@ -352,6 +436,7 @@ export default () => {
                         echoChecked={'显示'}
                         url={'/auth/status'}
                         echoUnChecked={'隐藏'}
+                        disabled={1 < record.type!}
                         fieldKey={'hideChildrenInMenu'}
                         statusField={!record.hideChildrenInMenu}
                     />
@@ -397,8 +482,11 @@ export default () => {
                 scroll={{ x: 1300, y: 600 }}
                 editable={{
                     editableKeys,
-                    type: 'multiple',
-                    onChange: setEditableRowKeys,
+                    type: 'single',
+                    onChange: (currentKeys, editableRows) => {
+                        setEditableRowKeys(currentKeys);
+                        setDisplayType(editableRows?.[0]?.type ?? 1);
+                    },
                     onSave: (_, data) => handleOnSave(data),
                     onCancel: async () => setExpandByClick(true),
                     actionRender: (row, config, dom) => [dom.save, dom.cancel],
@@ -434,7 +522,7 @@ export default () => {
                         icon={<PlusOutlined />}
                         onClick={() => ref.current?.addEditRecord?.(createRecord)}
                     >
-                        新建菜单
+                        新增菜单
                     </Button>,
                 ]}
                 tableAlertRender={({ selectedRowKeys, onCleanSelected }) => (
