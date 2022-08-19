@@ -1,33 +1,36 @@
 /** @format */
 
-import { useIntl } from 'umi';
 import { TreeSelect } from 'antd';
 import React, { useState } from 'react';
 import type { menuDataItem } from '@/pages/user/data';
 
 export const TreeSelector: React.FC<{
+    value?: string;
     treeData: menuDataItem[];
-    value?: string | number[];
     onChange?: (newValue: string) => void;
 }> = ({ value, onChange, treeData }) => {
-    const intl = useIntl();
     const { SHOW_ALL } = TreeSelect;
     const fieldNames = { label: 'name', value: 'id' };
-    const [values, setValues] = useState<number[]>(() => {
-        return value instanceof Array ? value : value!.split(',').map(Number);
+    const [values, setValues] = useState<{ label: string; value: number }[]>(() => {
+        const ids = value?.split(',');
+        const menuData = (data: menuDataItem[], options: { label: string; value: number }[] = []) => {
+            data.forEach(item => {
+                ids?.forEach(id => {
+                    if (id == item.id) {
+                        options.push({ label: item.name as string, value: item.id as number });
+                        item.children && menuData(item.children, options);
+                    }
+                });
+            });
+            return options;
+        };
+        return menuData(treeData);
     });
-    /* nameToLocale */
-    const nameToLocale = (data: menuDataItem[]) => {
-        return data.map((item: menuDataItem) => {
-            item.name = intl.formatMessage({ id: item.locale });
-            item.children && nameToLocale(item.children);
-            return item;
-        });
-    };
+
     /* handleChange */
-    const handleChange = (newValue: number[]) => {
+    const handleChange = (newValue: { label: string; value: number }[]) => {
         setValues(newValue);
-        onChange?.(newValue.join(','));
+        onChange?.(newValue.map(item => item.value).join(','));
     };
 
     return (
@@ -35,15 +38,16 @@ export const TreeSelector: React.FC<{
             value={values}
             showArrow={true}
             allowClear={true}
+            treeCheckStrictly
+            treeData={treeData}
             treeCheckable={true}
             placeholder="请选择..."
             fieldNames={fieldNames}
             treeNodeFilterProp="name"
             style={{ width: '100%' }}
             showCheckedStrategy={SHOW_ALL}
-            treeDefaultExpandedKeys={values}
-            treeData={nameToLocale(treeData)}
             onChange={newValue => handleChange(newValue)}
+            treeDefaultExpandedKeys={values.map(item => item.value)}
         />
     );
 };
