@@ -1,9 +1,9 @@
 /** @format */
 
 import lodash from 'lodash';
-import { useIntl } from 'umi';
 import { IconMap } from '@/extra/iconsMap';
 import React, { useRef, useState } from 'react';
+import { useAccess, Access, useIntl } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { menuDataItem, routesDataItem } from '../data';
@@ -27,6 +27,7 @@ import {
 export default () => {
     const intl = useIntl();
     const { confirm } = Modal;
+    const access = useAccess();
     // 预设数据
     const createRecord = {
         pid: 0,
@@ -514,15 +515,18 @@ export default () => {
                     >
                         {expandedRowKey?.length ? '收起所有' : '展开所有'}
                     </Button>,
-                    <Button
-                        shape="round"
-                        type="primary"
-                        key="createMenu"
-                        icon={<PlusOutlined />}
-                        onClick={() => ref.current?.addEditRecord?.(createRecord)}
-                    >
-                        新增菜单
-                    </Button>,
+                    // @ts-ignore
+                    <Access key="create_menu" accessible={access.btnFilter('create_menu')}>
+                        <Button
+                            shape="round"
+                            type="primary"
+                            key="createMenu"
+                            icon={<PlusOutlined />}
+                            onClick={() => ref.current?.addEditRecord?.(createRecord)}
+                        >
+                            新增菜单
+                        </Button>
+                    </Access>,
                 ]}
                 tableAlertRender={({ selectedRowKeys, onCleanSelected }) => (
                     <span>
