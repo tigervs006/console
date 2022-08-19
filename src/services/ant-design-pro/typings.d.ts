@@ -9,6 +9,8 @@ declare namespace API {
         email?: string;
         status?: string;
         avatar?: string;
+        btnRole: string[];
+        apiRole: string[];
         ipaddress?: string;
         last_login?: string;
         create_time?: string;
