@@ -67,6 +67,15 @@ export default () => {
         return record;
     };
 
+    /* nameToLocale */
+    const nameToLocale = (data: menuDataItem[]) => {
+        return data.map((item: menuDataItem) => {
+            item.name = intl.formatMessage({ id: item.locale });
+            item.children && nameToLocale(item.children);
+            return item;
+        });
+    };
+
     /* 处理单行编辑保存 */
     const handleOnSave = async (data: groupDataItem) => {
         await saveGroup(data).then(res => {
@@ -177,7 +186,7 @@ export default () => {
             formItemProps: () => ({
                 rules: [{ require: true, message: '请为当前用户组设置菜单' }],
             }),
-            renderFormItem: () => <TreeSelector treeData={menuItem} />,
+            renderFormItem: () => <TreeSelector treeData={nameToLocale(menuItem)} />,
             render: (_, record) => {
                 const nameArr = localeMenu(menuItem, record.menu as string);
                 return nameArr.map(item => (
