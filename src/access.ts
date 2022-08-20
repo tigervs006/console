@@ -10,7 +10,7 @@ import type { MenuDataItem } from '@ant-design/pro-layout';
  * @param route 当前路由
  * @param menuData 用户菜单
  */
-const checkPermission = async (route: string, menuData?: MenuDataItem[]) => {
+const checkPermission = (route: string, menuData?: MenuDataItem[]) => {
     /* 扁平化菜单 */
     const filterData = (menuDatas: MenuDataItem[], init: string[] = []) => {
         menuDatas?.filter(item => {
@@ -26,8 +26,8 @@ export default function (initialState: { currentUser?: API.CurrentUser; userMenu
     const { currentUser, userMenuItem } = initialState ?? {};
     return {
         /* 按钮权限 */
-        btnFilter: (value: string) => currentUser?.btnRole.includes(value) ?? false,
+        btnFilter: (value: string) => currentUser!.btnRole.includes(value),
         /* 路由权限 */
-        authFilter: async () => await checkPermission(history.location.pathname, userMenuItem),
+        authFilter: () => checkPermission(history.location.pathname, userMenuItem),
     };
 }
