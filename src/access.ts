@@ -25,9 +25,9 @@ const checkPermission = (route: string, menuData?: MenuDataItem[]) => {
 export default function (initialState: { currentUser?: API.CurrentUser; userMenuItem?: MenuDataItem[] }) {
     const { currentUser, userMenuItem } = initialState ?? {};
     return {
-        /* 按钮权限 */
-        btnFilter: (value: string) => currentUser!.btnRole.includes(value),
         /* 路由权限 */
         authFilter: () => checkPermission(history.location.pathname, userMenuItem),
+        /* 按钮权限 */
+        btnFilter: (value: string) => currentUser?.btnRole.includes(value) ?? false,
     };
 }
