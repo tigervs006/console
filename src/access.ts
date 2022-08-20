@@ -28,6 +28,6 @@ export default function (initialState: { currentUser?: API.CurrentUser; userMenu
         /* 路由权限 */
         authFilter: () => checkPermission(history.location.pathname, userMenuItem),
         /* 按钮权限 */
-        btnFilter: (value: string) => currentUser?.btnRole.includes(value) ?? false,
+        btnFilter: (value: string) => currentUser?.btnRules.includes(value) ?? false,
     };
 }
