@@ -1,10 +1,10 @@
 /** @format */
 
-import { useModel } from 'umi';
 import type { tableDataItem } from './data';
 import { CreateModalForm } from './components';
 import React, { useRef, useState } from 'react';
 import { ProTable } from '@ant-design/pro-table';
+import { useAccess, Access, useModel } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
 import { fetchData, remove } from '@/pages/channel/service';
 import { Button, message, Modal, Space, Table } from 'antd';
@@ -23,6 +23,7 @@ import {
 
 export default () => {
     const { confirm } = Modal;
+    const access = useAccess();
     /* selectOption */
     const defaultOption = [{ id: 0, pid: 0, cname: '顶级栏目' }];
     /* setUploadList */
@@ -279,20 +280,23 @@ export default () => {
                     >
                         {expandedRowKey?.length ? '收起所有' : '展开所有'}
                     </Button>,
-                    <Button
-                        shape="round"
-                        type="primary"
-                        key="createChannel"
-                        icon={<PlusOutlined />}
-                        onClick={() => {
-                            setUploadList([]);
-                            setModalVisit(true);
-                            setModallValues({});
-                            setIsCreateChannel(true);
-                        }}
-                    >
-                        新建栏目
-                    </Button>,
+                    // @ts-ignore
+                    <Access key="create_channel" accessible={access.btnFilter('create_channel')}>
+                        <Button
+                            shape="round"
+                            type="primary"
+                            key="createChannel"
+                            icon={<PlusOutlined />}
+                            onClick={() => {
+                                setUploadList([]);
+                                setModalVisit(true);
+                                setModallValues({});
+                                setIsCreateChannel(true);
+                            }}
+                        >
+                            新建栏目
+                        </Button>
+                    </Access>,
                 ]}
                 tableAlertRender={({ selectedRowKeys, onCleanSelected }) => (
                     <span>

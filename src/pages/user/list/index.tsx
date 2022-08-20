@@ -1,11 +1,11 @@
 /** @format */
 
 import moment from 'moment';
-import { useModel } from 'umi';
 import { _int2ip } from '@/extra/utils';
 import { CreateUser } from './components';
 import ProTable from '@ant-design/pro-table';
 import React, { useState, useRef } from 'react';
+import { useAccess, useModel, Access } from 'umi';
 import type { tableDataItem } from '@/pages/user/data';
 import { PageContainer } from '@ant-design/pro-layout';
 import { fetchData, remove } from '@/pages/user/service';
@@ -16,6 +16,7 @@ import { EditOutlined, PlusOutlined, DeleteOutlined, QuestionCircleOutlined } fr
 
 export default () => {
     const { confirm } = Modal;
+    const access = useAccess();
     // childRef
     const childRef: React.ForwardedRef<any> = useRef();
     // ModalForm 状态
@@ -206,9 +207,12 @@ export default () => {
                     </Space>
                 )}
                 headerTitle={
-                    <Button shape="round" type="primary" key="createUser" icon={<PlusOutlined />} onClick={handleCreate}>
-                        新增用户
-                    </Button>
+                    // @ts-ignore
+                    <Access accessible={access.btnFilter('create_user')}>
+                        <Button shape="round" type="primary" key="createUser" icon={<PlusOutlined />} onClick={handleCreate}>
+                            新增用户
+                        </Button>
+                    </Access>
                 }
                 tableAlertOptionRender={({ selectedRows }) => {
                     return (

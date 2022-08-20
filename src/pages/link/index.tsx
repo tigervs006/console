@@ -1,5 +1,5 @@
 /** @format */
-
+import { useAccess, Access } from 'umi';
 import type { linkDataItem } from './data';
 import React, { useRef, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -9,10 +9,11 @@ import { RecordSwitch } from '@/pages/components/RecordSwitch';
 import { queryChildId, randomString, waitTime } from '@/extra/utils';
 import { fetchLink, removeLink, saveLink } from '@/pages/link/service';
 import type { EditableFormInstance, ActionType, ProColumns } from '@ant-design/pro-table';
-import { QuestionCircleOutlined, DeleteOutlined, SearchOutlined, EditOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined, DeleteOutlined, SearchOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 
 export default () => {
     const { confirm } = Modal;
+    const access = useAccess();
     /* 预设数据 */
     const createRecord = {
         sort: 0,
@@ -218,8 +219,8 @@ export default () => {
                 actionRef={ref}
                 columns={columns}
                 request={tableData}
-                headerTitle="友链管理"
                 editableFormRef={formRef}
+                recordCreatorProps={false}
                 scroll={{ x: 1300, y: 600 }}
                 pagination={{ pageSize: 15 }}
                 editable={{
@@ -229,15 +230,24 @@ export default () => {
                     onSave: (_, data) => handleOnSave(data),
                     actionRender: (row, config, dom) => [dom.save, dom.cancel],
                 }}
-                recordCreatorProps={{
-                    position: 'bottom',
-                    record: createRecord,
-                    creatorButtonText: '新增友链',
-                }}
                 rowSelection={{
                     checkStrictly: false,
                     selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT, Table.SELECTION_NONE],
                 }}
+                toolBarRender={() => [
+                    // @ts-ignore
+                    <Access key="create_link" accessible={access.btnFilter('create_link')}>
+                        <Button
+                            shape="round"
+                            type="primary"
+                            key="createMenu"
+                            icon={<PlusOutlined />}
+                            onClick={() => ref.current?.addEditRecord?.(createRecord)}
+                        >
+                            新增友链
+                        </Button>
+                    </Access>,
+                ]}
                 tableAlertRender={({ selectedRowKeys, onCleanSelected }) => (
                     <span>
                         已选 {selectedRowKeys.length} 个友链

@@ -1,12 +1,12 @@
 /** @format */
 
-import { useRequest, useIntl } from 'umi';
 import { IconMap } from '@/extra/iconsMap';
 import { TreeSelector } from '../components';
 import React, { useState, useRef } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { groupDataItem, menuDataItem } from '../data';
+import { useRequest, useAccess, useIntl, Access } from 'umi';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
 import { Button, message, Modal, Space, Table, Tag } from 'antd';
 import { queryChildId, randomString, waitTime } from '@/extra/utils';
@@ -24,6 +24,7 @@ import {
 
 export default () => {
     const intl = useIntl();
+    const access = useAccess();
     /* 预设数据 */
     const createRecord = {
         status: 1,
@@ -236,6 +237,7 @@ export default () => {
                 pagination={false}
                 request={tableData}
                 editableFormRef={formRef}
+                recordCreatorProps={false}
                 scroll={{ x: 1300, y: 600 }}
                 editable={{
                     editableKeys,
@@ -244,26 +246,24 @@ export default () => {
                     onSave: (_, data) => handleOnSave(data),
                     actionRender: (row, config, dom) => [dom.save, dom.cancel],
                 }}
-                recordCreatorProps={{
-                    position: 'bottom',
-                    record: createRecord,
-                    creatorButtonText: '新增用户组',
-                }}
                 rowSelection={{
                     checkStrictly: false,
                     selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT, Table.SELECTION_NONE],
                 }}
                 toolbar={{
                     actions: [
-                        <Button
-                            shape="round"
-                            type="primary"
-                            key="createMenu"
-                            icon={<PlusOutlined />}
-                            onClick={() => ref.current?.addEditRecord?.(createRecord)}
-                        >
-                            新建用户组
-                        </Button>,
+                        // @ts-ignore
+                        <Access key="create_group" accessible={access.btnFilter('create_group')}>
+                            <Button
+                                shape="round"
+                                type="primary"
+                                key="createMenu"
+                                icon={<PlusOutlined />}
+                                onClick={() => ref.current?.addEditRecord?.(createRecord)}
+                            >
+                                新建用户组
+                            </Button>
+                        </Access>,
                     ],
                 }}
                 tableAlertRender={({ selectedRowKeys, onCleanSelected }) => (

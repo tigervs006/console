@@ -479,6 +479,7 @@ export default () => {
                 pagination={false}
                 request={tableData}
                 editableFormRef={formRef}
+                recordCreatorProps={false}
                 scroll={{ x: 1300, y: 600 }}
                 editable={{
                     editableKeys,
@@ -490,11 +491,6 @@ export default () => {
                     onSave: (_, data) => handleOnSave(data),
                     onCancel: async () => setExpandByClick(true),
                     actionRender: (row, config, dom) => [dom.save, dom.cancel],
-                }}
-                recordCreatorProps={{
-                    position: 'bottom',
-                    record: createRecord,
-                    creatorButtonText: '新增菜单',
                 }}
                 expandable={{
                     expandRowByClick: expandByClick,

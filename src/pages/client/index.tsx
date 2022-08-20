@@ -1,5 +1,6 @@
 /** @format */
 
+import { useAccess, Access } from 'umi';
 import type { tableDataItem } from './data';
 import ProTable from '@ant-design/pro-table';
 import { fetchData, remove } from './service';
@@ -14,6 +15,7 @@ import { QuestionCircleOutlined, CommentOutlined, DeleteOutlined, IdcardOutlined
 
 export default () => {
     const { confirm } = Modal;
+    const access = useAccess();
     /** ModalForm状态 */
     const [modalVisit, setModalVisit] = useState<boolean>(false);
     /** 设置当前展开行 */
@@ -205,9 +207,12 @@ export default () => {
                     selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
                 }}
                 headerTitle={
-                    <Button shape="round" type="primary" key="createClient" icon={<PlusOutlined />} onClick={handleCreate}>
-                        新增客户
-                    </Button>
+                    // @ts-ignore
+                    <Access accessible={access.btnFilter('create_client')}>
+                        <Button shape="round" type="primary" key="createClient" icon={<PlusOutlined />} onClick={handleCreate}>
+                            新增客户
+                        </Button>
+                    </Access>
                 }
                 expandable={{
                     expandRowByClick: true,

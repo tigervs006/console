@@ -1,5 +1,6 @@
 /** @format */
 
+import { useAccess, Access } from 'umi';
 import React, { useRef, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { EditableProTable } from '@ant-design/pro-table';
@@ -21,6 +22,7 @@ import {
 
 export default () => {
     const { confirm } = Modal;
+    const access = useAccess();
     // 预设数据
     const createRecord = {
         pid: 0,
@@ -61,8 +63,9 @@ export default () => {
             .then(res => {
                 res?.msg && message.success(res.msg);
                 res?.status && message.info('正在刷新缓存...');
-                res?.status &&
-                    refreshCache({ key: 'region' }).then(status => {
+                // prettier-ignore
+                res?.status
+                    && refreshCache({ key: 'region' }).then(status => {
                         status?.msg && message.success(status.msg);
                         waitTime(2000).then(() => ref.current?.reload());
                     });
@@ -95,8 +98,9 @@ export default () => {
                     res?.msg && message.success(res.msg);
                     res?.status && message.info('正在刷新缓存...');
                     record instanceof Array && ref.current?.clearSelected!();
-                    res?.status &&
-                        refreshCache({ key: 'region' }).then(status => {
+                    // prettier-ignore
+                    res?.status
+                        && refreshCache({ key: 'region' }).then(status => {
                             status?.msg && message.success(status.msg);
                             waitTime(2000).then(() => ref.current?.reload());
                         });
@@ -232,6 +236,7 @@ export default () => {
                 pagination={false}
                 request={tableData}
                 editableFormRef={formRef}
+                recordCreatorProps={false}
                 scroll={{ x: 1300, y: 600 }}
                 editable={{
                     editableKeys,
@@ -240,11 +245,6 @@ export default () => {
                     onSave: (_, data) => handleOnSave(data),
                     onCancel: async () => setExpandByClick(true),
                     actionRender: (row, config, dom) => [dom.save, dom.cancel],
-                }}
-                recordCreatorProps={{
-                    position: 'bottom',
-                    record: createRecord,
-                    creatorButtonText: '新增地区',
                 }}
                 expandable={{
                     expandRowByClick: expandByClick,
@@ -265,24 +265,30 @@ export default () => {
                     >
                         {expandedRowKey?.length ? '收起所有' : '展开所有'}
                     </Button>,
-                    <Button
-                        shape="round"
-                        type="default"
-                        key="clearCache"
-                        icon={<RedoOutlined />}
-                        onClick={() => handleRefreshCache({ key: 'region' })}
-                    >
-                        刷新缓存
-                    </Button>,
-                    <Button
-                        shape="round"
-                        type="primary"
-                        key="createMenu"
-                        icon={<PlusOutlined />}
-                        onClick={() => ref.current?.addEditRecord?.(createRecord)}
-                    >
-                        新增地区
-                    </Button>,
+                    // @ts-ignore
+                    <Access key="refresh_cache" accessible={access.btnFilter('refresh_cache')}>
+                        <Button
+                            shape="round"
+                            type="default"
+                            key="refreshCache"
+                            icon={<RedoOutlined />}
+                            onClick={() => handleRefreshCache({ key: 'region' })}
+                        >
+                            刷新缓存
+                        </Button>
+                    </Access>,
+                    // @ts-ignore
+                    <Access key="create_region" accessible={access.btnFilter('create_region')}>
+                        <Button
+                            shape="round"
+                            type="primary"
+                            key="createMenu"
+                            icon={<PlusOutlined />}
+                            onClick={() => ref.current?.addEditRecord?.(createRecord)}
+                        >
+                            新增地区
+                        </Button>
+                    </Access>,
                 ]}
                 tableAlertRender={({ selectedRowKeys, onCleanSelected }) => (
                     <span>
