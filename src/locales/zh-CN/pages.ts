@@ -50,6 +50,7 @@ export default {
     'pages.region.create': '新增地区',
     'pages.region.status': '地区状态',
     'pages.region.refreshCache': '刷新缓存',
+    'pages.menu.routes': '路由列表',
     'pages.menu.menuList': '权限列表',
     'pages.menu.editMenu': '编辑菜单',
     'pages.menu.createMenu': '新增菜单',

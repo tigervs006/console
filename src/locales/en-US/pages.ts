@@ -50,6 +50,7 @@ export default {
     'pages.region.create': 'Create Region',
     'pages.region.status': 'Region Status',
     'pages.region.refreshCache': 'Refresh Cache',
+    'pages.menu.routes': 'Routes List',
     'pages.menu.menuList': 'Menu List',
     'pages.menu.editMenu': 'Edit Menu',
     'pages.menu.createMenu': 'Create Menu',
