@@ -16,3 +16,6 @@ export const remove = (data: Record<'id', number | number[]>) => postData('/regi
 
 /** 获取地区列表 */
 export const fetchRegionData = (params: Record<string, any>) => getData('/region/list', params);
+
+/** 获取操作日志列表 */
+export const fetchSystemLogs = (params: Record<string, any>) => getData('/system/record', params);
