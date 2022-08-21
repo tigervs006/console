@@ -17,7 +17,6 @@ export type menuDataItem = {
     pid?: number;
     type?: number;
     name?: string;
-    icon?: string;
     path?: string;
     exact?: number;
     routes?: string;
@@ -26,6 +25,7 @@ export type menuDataItem = {
     plocale?: string;
     hideInMenu?: number;
     id?: number | string;
+    icon?: string | JSX.Element;
     children?: menuDataItem[];
     paths?: string | number[];
     hideChildrenInMenu?: number;
