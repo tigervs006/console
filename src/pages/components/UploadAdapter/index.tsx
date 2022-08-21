@@ -91,7 +91,7 @@ export const UploadAdapter: React.FC<
                 content: url.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)?.[1],
                 onOk() {
                     removeFile({ filePath: filePath }).then(res => {
-                        res.success ? resolve(true) : reject('error');
+                        res?.success ? resolve(true) : reject('error');
                     });
                 },
                 onCancel() {
@@ -200,7 +200,7 @@ export const UploadAdapter: React.FC<
             showInfo: false,
         },
         className: props?.className,
-        onPreview: file => handlePreview(file),
+        onPreview: (file: UploadFile) => handlePreview(file),
         headers: { Authorization: localStorage.getItem('Authorization') || '' },
         // prettier-ignore
         beforeUpload: (file: RcFile) => handleBeforeUpload(file).then((res: boolean) => res).catch(() => false),
