@@ -13,3 +13,14 @@ export type regionDataItem = {
     create_time?: string;
     children?: regionDataItem[];
 };
+
+export type recordDataItem = {
+    id: number;
+    uid: number;
+    gid: number;
+    path: string;
+    level: number;
+    action: string;
+    ipaddress: number;
+    create_time: string;
+};
