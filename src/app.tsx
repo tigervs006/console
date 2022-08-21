@@ -115,11 +115,12 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
 
 /* 请求前拦截器 */
 const authHeaderInterceptor = (url: string, options: RequestOptionsInit) => {
-    const accessToken = localStorage.getItem('Authorization');
-    const customHeader = { 'Content-Type': 'application/json; charset=utf-8' };
-    if (null !== accessToken) Object.assign(customHeader, { Authorization: accessToken });
+    const customHeader = {
+        'Content-Type': 'application/json; charset=utf-8',
+        Authorization: localStorage.getItem?.('Authorization') ?? '',
+    };
     return {
-        url: '/console' + url,
+        url: url,
         options: { ...options, interceptors: true, headers: customHeader },
     };
 };
@@ -127,7 +128,6 @@ const authHeaderInterceptor = (url: string, options: RequestOptionsInit) => {
 /* 响应后拦截器 */
 const ResponseInterceptors = async (response: Response) => {
     const result = await response.clone().json();
-    /* Token验证失败跳转登录 */
     if (401 === result.status) {
         localStorage.clear();
         history.push(loginPath);
@@ -136,10 +136,13 @@ const ResponseInterceptors = async (response: Response) => {
 };
 
 export const request: RequestConfig = {
+    prefix: '/console',
     errorHandler: (error: Record<string, any>) => {
         notification.error({
-            message: 'Request Error',
-            description: error.response?.msg ?? 'Unknow Error, Please check your internet configuration',
+            message: 'Request Failed',
+            // prettier-ignore
+            description: error.response?.msg
+				?? 'Server Error, Please check the server configuration',
         });
     },
     requestInterceptors: [authHeaderInterceptor],
