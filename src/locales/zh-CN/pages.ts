@@ -46,6 +46,7 @@ export default {
     'pages.settings.contact': '联络方式',
     'pages.settings.email': '邮件配置',
     'pages.settings.other': '其它配置',
+    'pages.settings.record': '日志列表',
     'pages.region.list': '地区列表',
     'pages.region.lists': '懒加载地区',
     'pages.region.edit': '编辑地区',

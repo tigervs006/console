@@ -56,6 +56,7 @@ export default {
     'menu.settings': 'Settings',
     'menu.settings.system': 'Config',
     'menu.settings.region': 'Region',
+    'menu.settings.record': 'Record',
     'menu.product': 'Product',
     'menu.product.edit': 'Product Edit',
     'menu.product.list': 'Product List',

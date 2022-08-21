@@ -119,7 +119,7 @@ export default [
         routes: [
             {
                 path: '/settings',
-                redirect: '/settings/system',
+                redirect: '/settings/record',
             },
             {
                 access: 'authFilter',
@@ -130,6 +130,11 @@ export default [
                 access: 'authFilter',
                 path: '/settings/region',
                 component: './settings/region',
+            },
+            {
+                access: 'authFilter',
+                path: '/settings/record',
+                component: './settings/record',
             },
         ],
     },

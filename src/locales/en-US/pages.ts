@@ -46,6 +46,7 @@ export default {
     'pages.settings.contact': 'Contact',
     'pages.settings.email': 'Email',
     'pages.settings.other': 'Other',
+    'pages.settings.record': 'Logs List',
     'pages.region.list': 'Region List',
     'pages.region.lists': 'Region Lists',
     'pages.region.edit': 'Edit Region',
