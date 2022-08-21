@@ -60,7 +60,11 @@ export default () => {
         data?.forEach((item: menuDataItem) => {
             menuArr.forEach((id: number) => {
                 if (id === item.id) {
-                    record.push({ icon: item.icon as string, name: item.locale as string, type: item.type as number });
+                    record.push({
+                        type: item.type as number,
+                        name: item.locale as string,
+                        icon: item?.icon ? IconMap[item.icon as string] : menuType[item.type as number],
+                    });
                 }
             });
             item.children && localeMenu(item.children, menuArr, record);
@@ -72,6 +76,7 @@ export default () => {
     const nameToLocale = (data: menuDataItem[]) => {
         return data.map((item: menuDataItem) => {
             item.name = intl.formatMessage({ id: item.locale });
+            item.icon = item?.icon ? IconMap[item.icon as string] : menuType[item.type as number];
             item.children && nameToLocale(item.children);
             return item;
         });
@@ -191,7 +196,7 @@ export default () => {
             render: (_, record) => {
                 const nameArr = localeMenu(menuItem, record.menu as string);
                 return nameArr.map(item => (
-                    <Tag color="blue" icon={item?.icon ? IconMap[item.icon as string] : menuType[item.type]} key={randomString(6)}>
+                    <Tag color="blue" icon={item.icon} key={randomString(6)}>
                         {intl.formatMessage({ id: item.name })}
                     </Tag>
                 ));
