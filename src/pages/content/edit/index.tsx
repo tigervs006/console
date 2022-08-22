@@ -67,14 +67,11 @@ export default () => {
     // 处理onFinsh提交
     const handleFinsh = async (data: articleData) => {
         await saveContent(
-            Object.assign(
-                { ...data },
-                {
-                    content: content,
-                    id: history.location.query?.id ?? null,
-                    author: data?.author ?? localStorage.getItem('user'),
-                },
-            ),
+            Object.assign(data, {
+                content: content,
+                id: history.location.query?.id ?? null,
+                author: data?.author ?? localStorage.getItem('user'),
+            }),
         ).then(res => {
             res?.msg && message.success(res.msg);
             // 延时跳转到列表页
@@ -99,27 +96,7 @@ export default () => {
                         name: info.litpic.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)[1],
                     },
                 ]);
-                const attribute = [];
-                // 提取值为1的属性名
-                for (const idx in info) {
-                    if (
-                        // prettier-ignore
-                        (idx === 'is_head' && 1 === info[idx])
-                        || (idx === 'is_recom' && 1 === info[idx])
-                        || (idx === 'is_litpic' && 1 === info[idx])
-                    ) {
-                        attribute.push(idx);
-                    }
-                }
-                return res?.data
-                    ? Object.assign(
-                          { ...info },
-                          {
-                              attribute: attribute || [],
-                              content: info?.content?.content ?? null,
-                          },
-                      )
-                    : {};
+                return { ...info, content: info?.content?.content ?? null };
             });
         } else {
             // 清空fileList
@@ -142,7 +119,7 @@ export default () => {
                 initialValues={{
                     cid: 4,
                     isCrop: 1,
-                    attribute: ['is_recom'],
+                    is_recom: 1,
                 }}
                 submitter={{
                     render: (_, doms) => {
@@ -317,25 +294,13 @@ export default () => {
                         }
                     }}
                 </ProFormDependency>
-                <ProFormCheckbox.Group
-                    label="文档属性"
-                    name="attribute"
-                    tooltip="选择文档属性"
-                    // 提交时转化为对象
-                    transform={attributes => {
-                        const newObj = {};
-                        attributes.map((item: string) => {
-                            newObj[item] = 1;
-                        });
-                        return { ...newObj };
-                    }}
-                    options={[
-                        { label: '头条', value: 'is_head' },
-                        { label: '推荐', value: 'is_recom' },
-                        { label: '图文', value: 'is_litpic' },
-                    ]}
-                    rules={[{ required: true, message: '请至少设置一个文档属性' }]}
-                />
+                <ProForm.Item label="文档属性" tooltip="设置文档属性">
+                    <Space>
+                        <ProFormCheckbox name="is_head">头条</ProFormCheckbox>
+                        <ProFormCheckbox name="is_recom">推荐</ProFormCheckbox>
+                        <ProFormCheckbox name="is_litpic">图文</ProFormCheckbox>
+                    </Space>
+                </ProForm.Item>
                 <ProForm.Item
                     name="content"
                     label="文档内容"
