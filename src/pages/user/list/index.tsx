@@ -38,7 +38,7 @@ export default () => {
      * @param filter 筛选
      */
     const tableData = async (params: Record<string, any>, sort: any, filter: any) => {
-        const paramData = Object.assign(params, sort, filter);
+        const paramData = { ...params, ...sort, ...filter };
         // 过滤参数以避免后台接收到空值参数
         for (const idx in paramData) {
             ('' === paramData[idx] || null === paramData[idx] || undefined === paramData[idx]) && delete paramData[idx];
