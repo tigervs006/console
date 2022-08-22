@@ -255,12 +255,12 @@ export default () => {
     return (
         <PageContainer>
             <ProTable<tableDataItem>
+                rowKey="id"
                 search={false}
                 actionRef={ref}
                 columns={columns}
                 pagination={false}
                 request={tableData}
-                rowKey={record => record.id as number}
                 expandable={{
                     expandRowByClick: expandByClick,
                     expandedRowKeys: expandedRowKey,
