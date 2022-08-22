@@ -193,12 +193,6 @@ export default () => {
     };
     const columns: ProColumns<menuDataItem>[] = [
         {
-            width: 50,
-            fixed: 'left',
-            editable: false,
-        },
-        {
-            width: 150,
             fixed: 'left',
             title: '菜单名称',
             dataIndex: 'name',

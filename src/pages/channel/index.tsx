@@ -169,11 +169,6 @@ export default () => {
     };
     const columns: ProColumns<tableDataItem>[] = [
         {
-            width: 50,
-            editable: false,
-        },
-        {
-            width: 150,
             title: '栏目名称',
             dataIndex: 'cname',
             tooltip: '作为网站导航栏显示',
