@@ -73,7 +73,7 @@ export default () => {
                     record.push({
                         type: item.type as number,
                         name: item.locale as string,
-                        icon: item?.icon ? IconMap[item.icon as string] : menuType[item.type as number],
+                        icon: item.icon as JSX.Element,
                     });
                 }
             });
