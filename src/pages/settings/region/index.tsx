@@ -159,10 +159,6 @@ export default () => {
     };
     const columns: ProColumns<regionDataItem>[] = [
         {
-            width: 50,
-            editable: false,
-        },
-        {
             title: '地区名称',
             dataIndex: 'name',
             formItemProps: () => ({
