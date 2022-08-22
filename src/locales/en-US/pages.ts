@@ -47,6 +47,7 @@ export default {
     'pages.settings.email': 'Email',
     'pages.settings.other': 'Other',
     'pages.settings.record': 'Logs List',
+    'pages.settings.refresh_cache': 'Refresh Cache',
     'pages.region.list': 'Region List',
     'pages.region.lists': 'Region Lists',
     'pages.region.edit': 'Edit Region',
