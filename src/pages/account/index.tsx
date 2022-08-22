@@ -15,7 +15,7 @@ import ProForm, { ProFormCheckbox, ProFormDependency, ProFormText } from '@ant-d
 export default () => {
     const formRef = useRef<ProFormInstance>();
     const { initialState, refresh } = useModel('@@initialState');
-    const userInfo: API.CurrentUser = initialState?.currentUser ?? {};
+    const userInfo: API.CurrentUser | undefined = initialState?.currentUser;
     const [require, setRequire] = useState<boolean>(false);
 
     // 文件列表
