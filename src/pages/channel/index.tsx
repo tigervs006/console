@@ -256,6 +256,7 @@ export default () => {
                 columns={columns}
                 pagination={false}
                 request={tableData}
+                scroll={{ x: 1300, y: 600 }}
                 expandable={{
                     expandRowByClick: expandByClick,
                     expandedRowKeys: expandedRowKey,
