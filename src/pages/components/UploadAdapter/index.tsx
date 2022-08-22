@@ -111,11 +111,18 @@ export const UploadAdapter: React.FC<
                 message.info!('File is uploading...');
                 break;
             case 'done':
+                const uploadMsg = file.response.msg;
+                const uploadStatus = file.response.success;
                 /* 设置表单字段值 */
                 props.setFieldsValue(fileList.concat([{ ...file?.response?.data, status: 'done' }]).filter(item => !item?.response));
                 /* 设置uploadList值 */
                 setUploadList(pre => pre.concat([{ ...file?.response?.data, status: 'done' }]).filter(item => !item?.response));
-                message.success!(file.response.msg);
+                if (uploadStatus) {
+                    message.success!(uploadMsg);
+                } else {
+                    setUploadList([]);
+                    message.error!(uploadMsg);
+                }
                 break;
             case 'success':
                 message.success!('File uploaded successfully');
