@@ -3,10 +3,10 @@
 import lodash from 'lodash';
 import { IconMap } from '@/extra/iconsMap';
 import React, { useRef, useState } from 'react';
-import { useAccess, Access, useIntl } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { menuDataItem, routesDataItem } from '../data';
+import { useRequest, useAccess, Access, useIntl } from 'umi';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
 import { fetchMenuData, saveMenu, remove, fetchRules } from '../service';
 import { Button, Cascader, message, Modal, Space, Table, Tag } from 'antd';
@@ -28,7 +28,7 @@ export default () => {
     const intl = useIntl();
     const { confirm } = Modal;
     const access = useAccess();
-    // 预设数据
+    /* 预设数据 */
     const createRecord = {
         pid: 0,
         type: 1,
@@ -47,26 +47,28 @@ export default () => {
         2: { name: '按钮', icon: <AppstoreAddOutlined />, color: 'magenta' },
         3: { name: '接口', icon: <ApiOutlined />, color: 'volcano' },
     };
-    // 菜单路径
+    /* 菜单路径 */
     const [pid, setPid] = useState<number[]>();
-    // formRef
+    /* formRef */
     const formRef = useRef<EditableFormInstance>();
-    // 菜单类型
+    /* 菜单类型 */
     const [displayType, setDisplayType] = useState<number>(1);
-    // 存放子项的id
+    /* 存放子项的id */
     const [expandedIds, setexpandedIds] = useState<number[]>([]);
-    // ModalForm 菜单
+    /* ModalForm 菜单 */
     const [menuData, setMenuData] = useState<menuDataItem[]>([]);
-    // 控制点击展开行
+    /* 控制点击展开行 */
     const [expandByClick, setExpandByClick] = useState<boolean>(true);
-    // 当前展开的行
+    /* 当前展开的行 */
     const [expandedRowKey, setExpandedRowKey] = useState<number[]>([]);
-    // defalutOption
+    /* defalutOption */
     const defaultOption = [{ id: 0, pid: 0, name: '顶级菜单', locale: 'menu.top' }];
-    // editableKeys
+    /* editableKeys */
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
-    // ActionType
+    /* ActionType */
     const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
+    /* 获取后台路由列表 */
+    const [routes, setRoutes] = useState<{ label: string; value: string }[]>([]);
 
     /* 处理单个/批量删除 */
     const handleDelete = (e: React.MouseEvent<HTMLElement>, record: menuDataItem | menuDataItem[]) => {
@@ -152,15 +154,18 @@ export default () => {
             return item;
         });
     };
+
     /* 获取后台路由规则 */
-    const getRules = async () => {
-        return await fetchRules().then(res =>
-            res.data.list.map((item: routesDataItem) => ({
+    useRequest(fetchRules, {
+        onSuccess: (res: { list: routesDataItem[] }) => {
+            const rulesItem = res.list.map((item: routesDataItem) => ({
                 label: `[${item.method}] ${item.rule}`,
                 value: item.rule,
-            })),
-        );
-    };
+            }));
+            setRoutes(rulesItem);
+        },
+    });
+
     /**
      * 获取菜单列表
      * @param params 参数
@@ -169,20 +174,20 @@ export default () => {
      */
     const tableData = async (params: any, sort: any, filter: any) => {
         const paramData = Object.assign(params, sort, filter);
-        // 过滤空值参数
+        /* 过滤空值参数 */
         for (const idx in paramData) {
             ('' === paramData[idx] || null === paramData[idx] || undefined === paramData[idx]) && delete paramData[idx];
         }
         return await fetchMenuData(paramData).then(res => {
             const resList = res?.data?.list;
-            // 将对象中的path转换数组
+            /* 将对象中的path转换数组 */
             resList && pathToArray(resList);
-            // 存储菜单在选择菜单时用
+            /* 存储菜单在选择菜单时用 */
             setMenuData(() => {
                 /* 拷贝一份数据以实现改变对象值时而不影响原数据 */
                 return nameToLocale(lodash.cloneDeep(defaultOption.concat(resList)));
             });
-            // 存储存在子项的菜单id
+            /* 存储存在子项的菜单id */
             setexpandedIds(recursiveQuery(resList));
             return {
                 data: resList || [],
@@ -191,6 +196,7 @@ export default () => {
             };
         });
     };
+
     const columns: ProColumns<menuDataItem>[] = [
         {
             fixed: 'left',
@@ -301,9 +307,9 @@ export default () => {
             dataIndex: 'routes',
             valueType: 'select',
             tooltip: '后台路由规则',
-            request: () => getRules(),
             editable: () => 3 == displayType,
             fieldProps: {
+                options: routes,
                 showSearch: true,
                 allowClear: false,
             },
@@ -463,6 +469,7 @@ export default () => {
             ],
         },
     ];
+
     return (
         <PageContainer>
             <EditableProTable<menuDataItem>
