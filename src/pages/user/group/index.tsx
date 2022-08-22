@@ -49,9 +49,19 @@ export default () => {
     /* ActionType */
     const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
 
+    /* nameToLocale */
+    const nameToLocale = (data: menuDataItem[]) => {
+        return data.map((item: menuDataItem) => {
+            item.name = intl.formatMessage({ id: item.locale });
+            item.icon = item?.icon ? IconMap[item.icon as string] : menuType[item.type as number];
+            item.children && nameToLocale(item.children);
+            return item;
+        });
+    };
+
     /* 获取所有权限列表 */
     useRequest(fetchMenuData, {
-        onSuccess: (res: { list: menuDataItem[] }) => setMenuItem(() => res?.list),
+        onSuccess: (res: { list: menuDataItem[] }) => setMenuItem(() => nameToLocale(res?.list)),
     });
 
     /* 根据id获取到locale */
@@ -70,16 +80,6 @@ export default () => {
             item.children && localeMenu(item.children, menuArr, record);
         });
         return record;
-    };
-
-    /* nameToLocale */
-    const nameToLocale = (data: menuDataItem[]) => {
-        return data.map((item: menuDataItem) => {
-            item.name = intl.formatMessage({ id: item.locale });
-            item.icon = item?.icon ? IconMap[item.icon as string] : menuType[item.type as number];
-            item.children && nameToLocale(item.children);
-            return item;
-        });
     };
 
     /* 处理单行编辑保存 */
@@ -192,7 +192,7 @@ export default () => {
             formItemProps: () => ({
                 rules: [{ require: true, message: '请为当前用户组设置菜单' }],
             }),
-            renderFormItem: () => <TreeSelector treeData={nameToLocale(menuItem)} />,
+            renderFormItem: () => <TreeSelector treeData={menuItem} />,
             render: (_, record) => {
                 const nameArr = localeMenu(menuItem, record.menu as string);
                 return nameArr.map(item => (
