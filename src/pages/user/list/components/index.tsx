@@ -47,7 +47,7 @@ export const CreateUser: React.FC<{
     });
     // 处理onFinish事件
     const handleFinish = async (data: tableDataItem) => {
-        await saveUser(Object.assign({ ...data }, { id: props?.record?.id ?? null })).then(res => {
+        await saveUser(Object.assign(data, { id: props?.record?.id ?? null })).then(res => {
             res?.msg && message.success(res.msg);
             // 延时重载列表数据
             waitTime(1500).then(() => props.reloadTable());
