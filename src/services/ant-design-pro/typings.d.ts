@@ -134,4 +134,6 @@ declare namespace API {
         extraData: { field: string; path: string };
         useTransForm?: (value: string | UploadFile[]) => Record<string, any>;
     };
+
+    type TablePaginationPosition = 'topLeft' | 'topCenter' | 'topRight' | 'bottomLeft' | 'bottomCenter' | 'bottomRight';
 }
