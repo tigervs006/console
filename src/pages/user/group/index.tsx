@@ -239,7 +239,6 @@ export default () => {
                 search={false}
                 actionRef={ref}
                 columns={columns}
-                pagination={false}
                 request={tableData}
                 editableFormRef={formRef}
                 recordCreatorProps={false}
@@ -255,6 +254,7 @@ export default () => {
                     checkStrictly: false,
                     selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT, Table.SELECTION_NONE],
                 }}
+                pagination={{ hideOnSinglePage: true, position: ['bottomRight' as API.TablePaginationPosition] }}
                 toolbar={{
                     actions: [
                         // @ts-ignore
