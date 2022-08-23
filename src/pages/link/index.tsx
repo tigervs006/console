@@ -99,6 +99,7 @@ export default () => {
             title: 'ID',
             sorter: true,
             fixed: 'left',
+            search: false,
             editable: false,
             dataIndex: 'id',
         },
@@ -116,6 +117,7 @@ export default () => {
         },
         {
             width: 150,
+            search: false,
             title: '友链地址',
             dataIndex: 'url',
             formItemProps: () => ({
@@ -139,6 +141,7 @@ export default () => {
         },
         {
             width: 200,
+            search: false,
             ellipsis: true,
             title: '其它备注',
             dataIndex: 'description',
@@ -149,6 +152,7 @@ export default () => {
         {
             width: 100,
             sorter: true,
+            search: false,
             title: '友链排序',
             dataIndex: 'sort',
             tooltip: '数值越大越靠前',
@@ -162,12 +166,20 @@ export default () => {
         {
             width: 150,
             sorter: true,
+            search: false,
             editable: false,
             title: '创建时间',
             dataIndex: 'create_time',
         },
         {
+            title: '日期范围',
+            hideInTable: true,
+            dataIndex: 'dateRange',
+            valueType: 'dateRange',
+        },
+        {
             width: 100,
+            search: false,
             filters: true,
             onFilter: true,
             title: '友链状态',
@@ -219,6 +231,9 @@ export default () => {
                 actionRef={ref}
                 columns={columns}
                 request={tableData}
+                search={{
+                    filterType: 'light',
+                }}
                 editableFormRef={formRef}
                 recordCreatorProps={false}
                 scroll={{ x: 1300, y: 600 }}
@@ -234,7 +249,7 @@ export default () => {
                     checkStrictly: false,
                     selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT, Table.SELECTION_NONE],
                 }}
-                toolBarRender={() => [
+                headerTitle={
                     // @ts-ignore
                     <Access key="create_link" accessible={access.btnFilter('create_link')}>
                         <Button
@@ -246,8 +261,8 @@ export default () => {
                         >
                             新增友链
                         </Button>
-                    </Access>,
-                ]}
+                    </Access>
+                }
                 tableAlertRender={({ selectedRowKeys, onCleanSelected }) => (
                     <span>
                         已选 {selectedRowKeys.length} 个友链
