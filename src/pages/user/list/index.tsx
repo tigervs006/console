@@ -1,6 +1,7 @@
 /** @format */
 
 import moment from 'moment';
+import { useRequest } from 'umi';
 import { _int2ip } from '@/extra/utils';
 import { CreateUser } from './components';
 import ProTable from '@ant-design/pro-table';
@@ -8,15 +9,22 @@ import React, { useState, useRef } from 'react';
 import { useAccess, useModel, Access } from 'umi';
 import type { tableDataItem } from '@/pages/user/data';
 import { PageContainer } from '@ant-design/pro-layout';
-import { fetchData, remove } from '@/pages/user/service';
+import type { groupDataItem } from '@/pages/user/data';
 import { message, Button, Modal, Space, Table } from 'antd';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
+import { fetchGroupData, fetchData, remove } from '@/pages/user/service';
 import { EditOutlined, PlusOutlined, DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 
 export default () => {
     const { confirm } = Modal;
     const access = useAccess();
+    const [userGroup, setUserGroup] = useState<
+        {
+            label: string;
+            value: number;
+        }[]
+    >([]);
     // childRef
     const childRef: React.ForwardedRef<any> = useRef();
     // ModalForm 状态
@@ -31,6 +39,19 @@ export default () => {
     }));
     // ActionType
     const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
+
+    /* 获取用户组列表 */
+    useRequest(fetchGroupData, {
+        defaultParams: [{ status: 1 }],
+        onSuccess: (res: { list: groupDataItem[] }) => {
+            setUserGroup(() => {
+                return res?.list.map((item: groupDataItem) => ({
+                    label: item.name!,
+                    value: Number(item.id),
+                }));
+            });
+        },
+    });
 
     /**
      * 获取用户列表
@@ -113,6 +134,7 @@ export default () => {
     const columns: ProColumns<tableDataItem>[] = [
         {
             title: 'ID',
+            search: false,
             dataIndex: 'id',
         },
         {
@@ -124,24 +146,37 @@ export default () => {
             dataIndex: 'cname',
         },
         {
+            search: false,
             title: '用户组',
             dataIndex: ['group', 'name'],
+        },
+        {
+            title: '用户组',
+            dataIndex: 'id',
+            hideInTable: true,
+            valueType: 'select',
+            fieldProps: {
+                options: userGroup,
+            },
         },
         {
             title: '手机号',
             dataIndex: 'mobile',
         },
         {
+            search: false,
             title: 'Email',
             dataIndex: 'email',
         },
         {
+            search: false,
             title: 'ip地址',
             dataIndex: 'ipaddress',
             render: (_, record) => _int2ip(record.ipaddress as number),
         },
         {
             sorter: true,
+            search: false,
             title: '最近登录',
             dataIndex: 'last_login',
             render: (_, record) =>
@@ -149,11 +184,19 @@ export default () => {
         },
         {
             sorter: true,
+            search: false,
             title: '创建时间',
             dataIndex: 'create_time',
         },
         {
+            title: '日期范围',
+            hideInTable: true,
+            dataIndex: 'dateRange',
+            valueType: 'dateRange',
+        },
+        {
             filters: true,
+            search: false,
             onFilter: true,
             title: '用户状态',
             filterMode: 'tree',
@@ -173,6 +216,7 @@ export default () => {
         },
         {
             title: '操作',
+            search: false,
             render: (_, record) => [
                 <Space size={4} key="operation">
                     <Button size="small" shape="round" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
@@ -190,10 +234,12 @@ export default () => {
         <PageContainer>
             <ProTable<tableDataItem>
                 rowKey="id"
-                search={false}
                 actionRef={ref}
                 columns={columns}
                 request={tableData}
+                search={{
+                    filterType: 'light',
+                }}
                 pagination={{ hideOnSinglePage: true }}
                 rowSelection={{
                     selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
@@ -228,6 +274,7 @@ export default () => {
                 ref={childRef}
                 record={userValues}
                 modalVisit={modalVisit}
+                userGroupItem={userGroup}
                 isCreateUser={isCreateUser}
                 reloadTable={() => ref.current?.reload()}
                 handleSetModalVisit={(status: boolean) => setModalVisit(status)}
