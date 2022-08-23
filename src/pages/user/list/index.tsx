@@ -153,7 +153,7 @@ export default () => {
         },
         {
             title: '用户组',
-            dataIndex: 'id',
+            dataIndex: 'gid',
             hideInTable: true,
             valueType: 'select',
             fieldProps: {
