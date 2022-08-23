@@ -286,6 +286,7 @@ export default () => {
                         </Button>,
                     ],
                 }}
+                pagination={{ hideOnSinglePage: true }}
                 rowSelection={{
                     selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
                 }}

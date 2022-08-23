@@ -249,7 +249,7 @@ export default () => {
                 editableFormRef={formRef}
                 recordCreatorProps={false}
                 scroll={{ x: 1300, y: 600 }}
-                pagination={{ pageSize: 15 }}
+                pagination={{ hideOnSinglePage: true }}
                 editable={{
                     editableKeys,
                     type: 'multiple',

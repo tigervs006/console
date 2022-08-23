@@ -31,6 +31,7 @@ export default () => {
     }));
     // ActionType
     const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
+
     /**
      * 获取用户列表
      * @param params 参数
@@ -193,6 +194,7 @@ export default () => {
                 actionRef={ref}
                 columns={columns}
                 request={tableData}
+                pagination={{ hideOnSinglePage: true }}
                 rowSelection={{
                     selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
                 }}

@@ -138,6 +138,7 @@ export default () => {
                 request={tableData}
                 scroll={{ x: 1300, y: 600 }}
                 search={{ filterType: 'light' }}
+                pagination={{ hideOnSinglePage: true }}
             />
         </PageContainer>
     );
