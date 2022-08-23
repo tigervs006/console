@@ -105,6 +105,7 @@ export default () => {
         },
         {
             width: 100,
+            search: false,
             fixed: 'left',
             title: '友链名称',
             dataIndex: 'name',
@@ -114,6 +115,11 @@ export default () => {
                     { max: 15, message: '友链名称请控制在15个字符以内' },
                 ],
             }),
+        },
+        {
+            title: '友链名称',
+            dataIndex: 'name',
+            hideInTable: true,
         },
         {
             width: 150,
@@ -129,6 +135,7 @@ export default () => {
         },
         {
             width: 150,
+            search: false,
             title: '联络方式',
             dataIndex: 'contact',
             tooltip: 'QQ/微信/电话',
@@ -138,6 +145,11 @@ export default () => {
                     { max: 20, message: '联络方式请控制在20个字符以内' },
                 ],
             }),
+        },
+        {
+            title: '联络方式',
+            hideInTable: true,
+            dataIndex: 'contact',
         },
         {
             width: 200,
