@@ -20,26 +20,26 @@ const menuItems = [
     { label: '退出登录', key: 'logout', icon: <LogoutOutlined /> },
 ];
 
-/**
- * 退出登录，并且将当前的 url 保存
- */
-const loginOut = async () => {
-    await outLogin({ name: localStorage.getItem('user') || 'anonymous' }).then(() => localStorage.clear());
-    const { query = {}, search, pathname } = history.location;
-    const { redirect } = query;
-    // Note: There may be security issues, please note
-    if (window.location.pathname !== '/login' && !redirect) {
-        history.replace({
-            pathname: '/login',
-            search: stringify({
-                redirect: pathname + search,
-            }),
-        });
-    }
-};
-
 const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
     const { initialState, setInitialState } = useModel('@@initialState');
+
+    /**
+     * 退出登录，并且将当前的 url 保存
+     */
+    const loginOut = async () => {
+        await outLogin(initialState?.currentUser).then(() => localStorage.clear());
+        const { query = {}, search, pathname } = history.location;
+        const { redirect } = query;
+        // Note: There may be security issues, please note
+        if (window.location.pathname !== '/login' && !redirect) {
+            history.replace({
+                pathname: '/login',
+                search: stringify({
+                    redirect: pathname + search,
+                }),
+            });
+        }
+    };
 
     const onMenuClick = useCallback(
         (event: MenuInfo) => {

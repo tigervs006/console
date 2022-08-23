@@ -16,7 +16,7 @@ export const currentUser = (params: { id: string | null }, options?: Record<stri
 };
 
 /** 退出登录接口 POST /public/logout */
-export const outLogin = (data: { name: string }, options?: Record<string, any>) => {
+export const outLogin = (data: API.CurrentUser | undefined, options?: Record<string, any>) => {
     return request<Record<string, any>>('/public/logout', {
         method: 'POST',
         data: { ...data },
