@@ -157,6 +157,7 @@ export default () => {
             hideInTable: true,
             valueType: 'select',
             fieldProps: {
+                mode: 'multiple',
                 options: userGroup,
             },
         },
