@@ -131,7 +131,14 @@ export default () => {
 
     return (
         <PageContainer>
-            <ProTable<recordDataItem> rowKey="id" actionRef={ref} columns={columns} request={tableData} search={{ filterType: 'light' }} />
+            <ProTable<recordDataItem>
+                rowKey="id"
+                actionRef={ref}
+                columns={columns}
+                request={tableData}
+                scroll={{ x: 1300, y: 600 }}
+                search={{ filterType: 'light' }}
+            />
         </PageContainer>
     );
 };
