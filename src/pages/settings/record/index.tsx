@@ -1,7 +1,7 @@
 /** @format */
 
-import { useRequest } from 'umi';
 import { _int2ip } from '@/extra/utils';
+import { useRequest, useModel } from 'umi';
 import ProTable from '@ant-design/pro-table';
 import { fetchSystemLogs } from '../service';
 import type { recordDataItem } from '../data';
@@ -28,6 +28,11 @@ export default () => {
         2: 'account',
         3: 'general',
     };
+    /** 监听窗口变化 */
+    const { resize } = useModel('resize', ret => ({
+        resize: ret.resize,
+    }));
+
     /* 文档作者 */
     const [user, setUser] = useState<Record<number, string>>({});
     /* 用户组 */
@@ -136,9 +141,9 @@ export default () => {
                 actionRef={ref}
                 columns={columns}
                 request={tableData}
-                scroll={{ x: 1300, y: 600 }}
                 search={{ filterType: 'light' }}
-                pagination={{ hideOnSinglePage: true }}
+                scroll={resize.tableScroll}
+                pagination={{ pageSize: resize.pageSize, hideOnSinglePage: true }}
             />
         </PageContainer>
     );
