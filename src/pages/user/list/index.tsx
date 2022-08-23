@@ -141,7 +141,7 @@ export default () => {
             title: '用户名',
             dataIndex: 'name',
             formItemProps: {
-                rules: [{ type: 'string', pattern: /^\w+$/, message: '用户名只能是2~35个数字、字母与下划线的组合' }],
+                rules: [{ type: 'string', pattern: /^\w+$/, message: '用户名只能是字母、数字与下划线的组合' }],
             },
         },
         {
