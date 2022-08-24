@@ -48,8 +48,14 @@ export async function getInitialState(): Promise<{
 /* 设置全局layout */
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
     return {
-        ...initialState?.settings,
-        disableContentMargin: false,
+        pwa: false,
+        layout: 'mix',
+        headerHeight: 48,
+        navTheme: 'light',
+        fixSiderbar: true,
+        fixedHeader: false,
+        contentWidth: 'Fluid',
+        primaryColor: '#1890ff',
         menuHeaderRender: undefined,
         footerRender: () => <Footer />,
         rightContentRender: () => <RightContent />,
@@ -110,6 +116,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
                 </>
             );
         },
+        logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
     };
 };
 
