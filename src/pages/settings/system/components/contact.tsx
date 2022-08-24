@@ -58,7 +58,6 @@ export const ContactSettings: React.FC<{
                 imageHeight={200}
                 formLabel={'二维码'}
                 extraData={{
-                    field: 'qrcode',
                     path: 'images/system/qrcode',
                 }}
                 formTitle={'上传二维码'}
