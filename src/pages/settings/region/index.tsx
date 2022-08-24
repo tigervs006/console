@@ -237,7 +237,6 @@ export default () => {
                 request={tableData}
                 editableFormRef={formRef}
                 recordCreatorProps={false}
-                scroll={resize.tableScroll}
                 editable={{
                     editableKeys,
                     type: 'multiple',
@@ -251,6 +250,7 @@ export default () => {
                     expandedRowKeys: expandedRowKey,
                     onExpand: (expanded, record) => handleExpand(expanded, record),
                 }}
+                scroll={1920 >= window.innerWidth ? { x: 1300, y: 600 } : resize.tableScroll}
                 rowSelection={{
                     checkStrictly: false,
                     selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT, Table.SELECTION_NONE],
