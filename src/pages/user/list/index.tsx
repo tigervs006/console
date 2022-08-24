@@ -1,19 +1,18 @@
 /** @format */
 
 import moment from 'moment';
-import { useRequest } from 'umi';
 import { _int2ip } from '@/extra/utils';
 import { CreateUser } from './components';
 import ProTable from '@ant-design/pro-table';
+import type { groupDataItem } from '../data';
+import type { tableDataItem } from '../data';
 import React, { useState, useRef } from 'react';
-import { useAccess, useModel, Access } from 'umi';
-import type { tableDataItem } from '@/pages/user/data';
 import { PageContainer } from '@ant-design/pro-layout';
-import type { groupDataItem } from '@/pages/user/data';
 import { message, Button, Modal, Space, Table } from 'antd';
+import { useRequest, useAccess, useModel, Access } from 'umi';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
+import { fetchGroupData, fetchData, remove } from '../service';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
-import { fetchGroupData, fetchData, remove } from '@/pages/user/service';
 import { EditOutlined, PlusOutlined, DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 
 export default () => {
@@ -27,6 +26,10 @@ export default () => {
     >([]);
     // childRef
     const childRef: React.ForwardedRef<any> = useRef();
+    /* 监听窗口变化 */
+    const { resize } = useModel('resize', ret => ({
+        resize: ret.resize,
+    }));
     // ModalForm 状态
     const [modalVisit, setModalVisit] = useState<boolean>(false);
     // ModalForm 默认值
@@ -242,10 +245,11 @@ export default () => {
                 search={{
                     filterType: 'light',
                 }}
-                pagination={{ hideOnSinglePage: true }}
+                scroll={resize.tableScroll}
                 rowSelection={{
                     selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
                 }}
+                pagination={{ pageSize: resize.pageSize, hideOnSinglePage: true }}
                 tableAlertRender={({ selectedRowKeys, onCleanSelected }) => (
                     <Space size={24}>
                         <span>

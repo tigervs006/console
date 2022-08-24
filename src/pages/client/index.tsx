@@ -1,10 +1,10 @@
 /** @format */
 
-import { useAccess, Access } from 'umi';
 import type { tableDataItem } from './data';
 import ProTable from '@ant-design/pro-table';
 import { fetchData, remove } from './service';
 import React, { useState, useRef } from 'react';
+import { useAccess, useModel, Access } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType } from '@ant-design/pro-table';
 import type { ProColumns } from '@ant-design/pro-table';
@@ -16,6 +16,10 @@ import { QuestionCircleOutlined, CommentOutlined, DeleteOutlined, IdcardOutlined
 export default () => {
     const { confirm } = Modal;
     const access = useAccess();
+    /** 监听窗口变化 */
+    const { resize } = useModel('resize', ret => ({
+        resize: ret.resize,
+    }));
     /** ModalForm状态 */
     const [modalVisit, setModalVisit] = useState<boolean>(false);
     /** 设置当前展开行 */
@@ -202,11 +206,12 @@ export default () => {
                 search={{
                     filterType: 'light',
                 }}
+                scroll={resize.tableScroll}
                 rowKey={record => record.id as number}
-                pagination={{ hideOnSinglePage: true }}
                 rowSelection={{
                     selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
                 }}
+                pagination={{ pageSize: resize.pageSize, hideOnSinglePage: true }}
                 headerTitle={
                     // @ts-ignore
                     <Access accessible={access.btnFilter('create_client')}>

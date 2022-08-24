@@ -28,7 +28,7 @@ export default () => {
         2: 'account',
         3: 'general',
     };
-    /** 监听窗口变化 */
+    /* 监听窗口变化 */
     const { resize } = useModel('resize', ret => ({
         resize: ret.resize,
     }));
@@ -141,8 +141,8 @@ export default () => {
                 actionRef={ref}
                 columns={columns}
                 request={tableData}
-                search={{ filterType: 'light' }}
                 scroll={resize.tableScroll}
+                search={{ filterType: 'light' }}
                 pagination={{ pageSize: resize.pageSize, hideOnSinglePage: true }}
             />
         </PageContainer>

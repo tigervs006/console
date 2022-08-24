@@ -1,7 +1,7 @@
 /** @format */
 
 import moment from 'moment';
-import { history } from 'umi';
+import { useModel, history } from 'umi';
 import ProTable from '@ant-design/pro-table';
 import { randomString } from '@/extra/utils';
 import React, { useRef, useState } from 'react';
@@ -31,6 +31,10 @@ const ImagePreview: React.FC<{ album: string[] }> = props => {
 export default () => {
     const { confirm } = Modal;
     const { Text } = Typography;
+    /** 监听窗口变化 */
+    const { resize } = useModel('resize', ret => ({
+        resize: ret.resize,
+    }));
     /** loading */
     const [loading, setLoading] = useState<boolean>(false);
     /** ActionType */
@@ -265,6 +269,7 @@ export default () => {
                 actionRef={ref}
                 columns={columns}
                 request={tableData}
+                scroll={resize.tableScroll}
                 search={{
                     labelWidth: 'auto',
                     defaultCollapsed: false,
@@ -286,10 +291,10 @@ export default () => {
                         </Button>,
                     ],
                 }}
-                pagination={{ hideOnSinglePage: true }}
                 rowSelection={{
                     selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
                 }}
+                pagination={{ pageSize: resize.pageSize, hideOnSinglePage: true }}
                 tableAlertRender={({ selectedRowKeys, selectedRows, onCleanSelected }) => (
                     <Space size={24}>
                         <span>

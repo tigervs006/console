@@ -6,11 +6,11 @@ import React, { useState, useRef } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { groupDataItem, menuDataItem } from '../data';
-import { useRequest, useAccess, useIntl, Access } from 'umi';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
 import { Button, message, Modal, Space, Table, Tag } from 'antd';
 import { queryChildId, randomString, waitTime } from '@/extra/utils';
-import { fetchGroupData, fetchMenuData, removeGroup, saveGroup } from '@/pages/user/service';
+import { useRequest, useAccess, useModel, useIntl, Access } from 'umi';
+import { fetchGroupData, fetchMenuData, removeGroup, saveGroup } from '../service';
 import type { ActionType, ProColumns, EditableFormInstance } from '@ant-design/pro-table';
 import {
     QuestionCircleOutlined,
@@ -34,14 +34,18 @@ export default () => {
     };
     /* confirm */
     const { confirm } = Modal;
-    /* formRef */
-    const formRef = useRef<EditableFormInstance>();
     /* 菜单类型 */
     const menuType = {
         1: <MenuUnfoldOutlined />,
         2: <AppstoreAddOutlined />,
         3: <ApiOutlined />,
     };
+    /* formRef */
+    const formRef = useRef<EditableFormInstance>();
+    /* 监听窗口变化 */
+    const { resize } = useModel('resize', ret => ({
+        resize: ret.resize,
+    }));
     /* menuDataItem */
     const [menuItem, setMenuItem] = useState<menuDataItem[] | any>([]);
     /* editableKeys */
@@ -242,7 +246,7 @@ export default () => {
                 request={tableData}
                 editableFormRef={formRef}
                 recordCreatorProps={false}
-                scroll={{ x: 1300, y: 600 }}
+                scroll={resize.tableScroll}
                 editable={{
                     editableKeys,
                     type: 'multiple',
@@ -254,7 +258,6 @@ export default () => {
                     checkStrictly: false,
                     selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT, Table.SELECTION_NONE],
                 }}
-                pagination={{ hideOnSinglePage: true, position: ['bottomRight' as API.TablePaginationPosition] }}
                 toolbar={{
                     actions: [
                         // @ts-ignore
@@ -286,6 +289,7 @@ export default () => {
                         </Space>
                     );
                 }}
+                pagination={{ pageSize: resize.pageSize, hideOnSinglePage: true, position: ['bottomRight' as API.TablePaginationPosition] }}
             />
         </PageContainer>
     );

@@ -1,13 +1,13 @@
 /** @format */
-import { useAccess, Access } from 'umi';
 import type { linkDataItem } from './data';
 import React, { useRef, useState } from 'react';
+import { useAccess, useModel, Access } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
 import { EditableProTable } from '@ant-design/pro-table';
 import { Button, message, Modal, Space, Table } from 'antd';
+import { fetchLink, removeLink, saveLink } from './service';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
 import { queryChildId, randomString, waitTime } from '@/extra/utils';
-import { fetchLink, removeLink, saveLink } from '@/pages/link/service';
 import type { EditableFormInstance, ActionType, ProColumns } from '@ant-design/pro-table';
 import { QuestionCircleOutlined, DeleteOutlined, SearchOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 
@@ -26,6 +26,10 @@ export default () => {
     };
     /* formRef */
     const formRef = useRef<EditableFormInstance>();
+    /* 监听窗口变化 */
+    const { resize } = useModel('resize', ret => ({
+        resize: ret.resize,
+    }));
     /* editableKeys */
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
     /* ActionType */
@@ -248,8 +252,7 @@ export default () => {
                 }}
                 editableFormRef={formRef}
                 recordCreatorProps={false}
-                scroll={{ x: 1300, y: 600 }}
-                pagination={{ hideOnSinglePage: true }}
+                scroll={resize.tableScroll}
                 editable={{
                     editableKeys,
                     type: 'multiple',
@@ -257,6 +260,7 @@ export default () => {
                     onSave: (_, data) => handleOnSave(data),
                     actionRender: (row, config, dom) => [dom.save, dom.cancel],
                 }}
+                pagination={{ pageSize: resize.pageSize, hideOnSinglePage: true }}
                 rowSelection={{
                     checkStrictly: false,
                     selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT, Table.SELECTION_NONE],
