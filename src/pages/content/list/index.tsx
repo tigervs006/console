@@ -123,7 +123,6 @@ export default () => {
 
     const columns: ProColumns<tableDataItem>[] = [
         {
-            width: 80,
             title: 'ID',
             dataIndex: 'id',
             renderFormItem: (_, { defaultRender, ...rest }) => {
@@ -131,7 +130,6 @@ export default () => {
             },
         },
         {
-            width: 100,
             title: '作者',
             search: false,
             filters: true,
@@ -142,14 +140,11 @@ export default () => {
             valueEnum: { ...authorEnum },
         },
         {
-            width: 400,
-            ellipsis: true,
             title: '文档标题',
             dataIndex: 'title',
             fieldProps: { placeholder: '请输入大致的文档标题' },
         },
         {
-            width: 100,
             title: '所属栏目',
             dataIndex: 'cid',
             valueType: 'select',
@@ -158,14 +153,12 @@ export default () => {
             render: (_, record) => record.channel.cname,
         },
         {
-            width: 100,
             sorter: true,
             search: false,
             title: '浏览总量',
             dataIndex: 'click',
         },
         {
-            width: 150,
             sorter: true,
             title: '发布时间',
             hideInSearch: true,
@@ -212,14 +205,12 @@ export default () => {
             },
         },
         {
-            width: 150,
             sorter: true,
             search: false,
             title: '更新时间',
             dataIndex: 'update_time',
         },
         {
-            width: 100,
             search: false,
             filters: true,
             onFilter: true,
@@ -250,7 +241,6 @@ export default () => {
             ],
         },
         {
-            width: 100,
             search: false,
             filters: true,
             onFilter: true,

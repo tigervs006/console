@@ -136,24 +136,20 @@ export default () => {
 
     const columns: ProColumns<tableDataItem>[] = [
         {
-            width: 50,
             title: 'ID',
             search: false,
             dataIndex: 'id',
         },
         {
-            width: 120,
             title: '用户名',
             dataIndex: 'name',
         },
         {
-            width: 120,
             search: false,
             title: '中文名',
             dataIndex: 'cname',
         },
         {
-            width: 120,
             search: false,
             title: '用户组',
             dataIndex: ['group', 'name'],
@@ -169,7 +165,6 @@ export default () => {
             },
         },
         {
-            width: 120,
             title: '手机号',
             dataIndex: 'mobile',
         },
@@ -205,7 +200,6 @@ export default () => {
             valueType: 'dateRange',
         },
         {
-            width: 120,
             filters: true,
             search: false,
             onFilter: true,

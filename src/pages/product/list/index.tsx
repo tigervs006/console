@@ -103,7 +103,6 @@ export default () => {
     };
     const columns: ProColumns<productDataItem>[] = [
         {
-            width: 60,
             title: 'ID',
             dataIndex: 'id',
             renderFormItem: (_, { defaultRender, ...rest }) => {
@@ -111,13 +110,16 @@ export default () => {
             },
         },
         {
-            width: 80,
             search: false,
             title: '商品图',
             render: (_, record) => <ImagePreview album={record.album as string[]} />,
         },
         {
-            width: 80,
+            title: '商品名称',
+            dataIndex: 'title',
+            fieldProps: { placeholder: '请输入大致的商品名称' },
+        },
+        {
             title: '商品分类',
             dataIndex: 'pid',
             valueType: 'select',
@@ -126,16 +128,7 @@ export default () => {
             render: (_, record) => record.channel.cname,
         },
         {
-            width: 250,
-            ellipsis: true,
-            title: '商品名称',
-            dataIndex: 'title',
-            fieldProps: { placeholder: '请输入大致的商品名称' },
-        },
-        {
-            width: 250,
             search: false,
-            ellipsis: true,
             title: '商品卖点',
             dataIndex: 'special',
             render: (_, record) =>
@@ -177,14 +170,12 @@ export default () => {
             },
         },
         {
-            width: 96,
             sorter: true,
             search: false,
             title: '总浏览量',
             dataIndex: 'click',
         },
         {
-            width: 96,
             sorter: true,
             search: false,
             title: '商品价格',
@@ -192,28 +183,24 @@ export default () => {
             render: (_, record) => `￥ ${record.price}`,
         },
         {
-            width: 96,
             sorter: true,
             search: false,
             title: '商品销量',
             dataIndex: 'sales',
         },
         {
-            width: 96,
             sorter: true,
             search: false,
             title: '商品询盘',
             dataIndex: 'inquiries',
         },
         {
-            width: 96,
             sorter: true,
             search: false,
             title: '商品库存',
             dataIndex: 'stock',
         },
         {
-            width: 100,
             search: false,
             filters: true,
             onFilter: true,
@@ -237,7 +224,6 @@ export default () => {
             },
         },
         {
-            width: 260,
             title: '操作',
             search: false,
             render: (_, record) => [
