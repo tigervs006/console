@@ -34,7 +34,7 @@ export default () => {
         window.addEventListener('resize', () => handleResize(window.innerWidth));
         /** 卸载监听事件 */
         return () => window.removeEventListener('resize', () => handleResize(window.innerWidth));
-    });
+    }, []);
 
     return { resize };
 };
