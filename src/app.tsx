@@ -3,8 +3,8 @@
 import { history, Link } from 'umi';
 import Footer from '@/components/Footer';
 import { sortDesc } from '@/extra/utils';
+import { message, Button, Result } from 'antd';
 import { loopMenuItem } from './extra/iconsMap';
-import { notification, Button, Result } from 'antd';
 import RightContent from '@/components/RightContent';
 import type { RequestOptionsInit } from 'umi-request';
 import defaultSettings from '../config/defaultSettings';
@@ -115,13 +115,15 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
 
 /* 请求前拦截器 */
 const authHeaderInterceptor = (url: string, options: RequestOptionsInit) => {
-    const customHeader = {
-        'Content-Type': 'application/json; charset=utf-8',
-        Authorization: localStorage.getItem?.('Authorization') ?? '',
-    };
     return {
         url: url,
-        options: { ...options, interceptors: true, headers: customHeader },
+        options: {
+            ...options,
+            interceptors: true,
+            headers: {
+                Authorization: localStorage.getItem?.('Authorization') ?? '',
+            },
+        },
     };
 };
 
@@ -138,12 +140,9 @@ const ResponseInterceptors = async (response: Response) => {
 export const request: RequestConfig = {
     prefix: '/console',
     errorHandler: (error: Record<string, any>) => {
-        notification.error({
-            message: 'Request Failed',
-            // prettier-ignore
-            description: error.response?.msg
-				?? 'Server Error, Please check the server configuration',
-        });
+        // prettier-ignore
+        message.error!(error.response?.msg
+			?? 'Server Error, Please check the server configuration');
     },
     requestInterceptors: [authHeaderInterceptor],
     responseInterceptors: [ResponseInterceptors],
