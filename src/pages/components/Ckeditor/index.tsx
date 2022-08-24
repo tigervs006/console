@@ -2,6 +2,7 @@
 
 import './index.less';
 import React from 'react';
+import { request } from 'umi';
 import { Space, message, Typography } from 'antd';
 import type { stateData, parentProps } from './data';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
@@ -15,6 +16,7 @@ export default class Ckeditor extends React.Component<parentProps, stateData> {
             saving: false,
             defaultType: 'secondary',
             defaultStatus: 'waiting for input...',
+            uploadPath: props?.uploadPath ?? 'images/article',
             content: props?.content || '<p>来吧，请开始你的表演...</p>',
         };
     }
@@ -34,10 +36,6 @@ export default class Ckeditor extends React.Component<parentProps, stateData> {
                 save(editor: any) {
                     return saveData(editor.getData());
                 },
-            },
-            simpleUpload: {
-                uploadUrl: '/console/public/upload',
-                headers: { Authorization: localStorage?.getItem('Authorization') },
             },
         };
         // 编辑器初始化
@@ -63,6 +61,28 @@ export default class Ckeditor extends React.Component<parentProps, stateData> {
                     });
                 }
             });
+            /* 自定义上传接口 */
+            editor.plugins.get('FileRepository').createUploadAdapter = (loader: Record<string, any>) => {
+                const state = this.state;
+                return {
+                    async upload() {
+                        const formData = new FormData();
+                        const file = await loader.file;
+                        formData.append('file', file);
+                        formData.append('path', state.uploadPath);
+                        return new Promise<{ default: string }>(async (resolve, reject) => {
+                            await request('/public/upload', { method: 'post', data: formData }).then(res => {
+                                if (res?.success) {
+                                    res?.msg && message.success(res?.msg);
+                                    resolve({ default: res?.data?.url ?? '' });
+                                } else {
+                                    reject();
+                                }
+                            });
+                        });
+                    },
+                };
+            };
         };
         return (
             <>
