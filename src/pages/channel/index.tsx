@@ -190,7 +190,7 @@ export default () => {
             tooltip: '作为网站伪静态URL',
         },
         {
-            width: 150,
+            width: 100,
             key: 'sort',
             title: '栏目排序',
             dataIndex: 'sort',
@@ -207,7 +207,7 @@ export default () => {
             dataIndex: 'update_time',
         },
         {
-            width: 150,
+            width: 100,
             filters: true,
             onFilter: true,
             title: '栏目状态',
