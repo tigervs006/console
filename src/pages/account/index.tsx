@@ -75,7 +75,6 @@ export default () => {
                     formTitle={'上传头像'}
                     className={avatar.avatarUpload}
                     extraData={{
-                        field: 'avatar',
                         path: `images/avatar/${userInfo?.name}`,
                     }}
                     validateRules={[{ required: true, message: '请为当前用户上传头像' }]}

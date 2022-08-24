@@ -214,8 +214,8 @@ export default () => {
                     formName={'album'}
                     formTitle={'Upload'}
                     formLabel={'商品相册'}
+                    extraData={{ path: 'images/product' }}
                     formTooltip={'至少上传一张图片作为商品封面'}
-                    extraData={{ field: 'album', path: 'images/product' }}
                     validateRules={[{ required: true, type: 'array', min: 1, message: '请至少上传一张图像作为商品封面' }]}
                     setFieldsValue={(fileList: UploadFile[]) => formRef.current?.setFieldsValue({ album: fileList })}
                     useTransForm={value => ({ album: 'string' === typeof value ? value : value.map(item => item?.url ?? item) })}
@@ -231,7 +231,7 @@ export default () => {
                     }}
                     rules={[{ required: true, message: '商品详情不得为空' }]}
                 >
-                    <Ckeditor content={content} setContent={getContent} />
+                    <Ckeditor content={content} setContent={getContent} uploadPath={'images/product'} />
                 </ProForm.Item>
             </ProForm>
         </PageContainer>

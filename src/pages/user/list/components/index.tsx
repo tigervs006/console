@@ -78,7 +78,6 @@ export const CreateUser: React.FC<{
                                 formTitle={'上传头像'}
                                 className={styles.avatarUpload}
                                 extraData={{
-                                    field: 'avatar',
                                     path: `images/avatar/${currentUser}`,
                                 }}
                                 validateRules={[{ required: true, message: '请为当前用户上传头像' }]}

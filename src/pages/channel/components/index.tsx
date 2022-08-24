@@ -76,7 +76,7 @@ export const CreateModalForm: React.FC<{
                 formLabel={'栏目图片'}
                 formTitle={'上传图片'}
                 formTooltip={'上传图片作为栏目banner'}
-                extraData={{ field: 'banner', path: 'images/banner' }}
+                extraData={{ path: 'images/banner' }}
                 validateRules={[{ required: true, message: '请上传栏目大图' }]}
                 useTransForm={value => {
                     if ('string' === typeof value) return { banner: value };

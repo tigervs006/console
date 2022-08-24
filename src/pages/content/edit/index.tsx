@@ -280,7 +280,7 @@ export default () => {
                                         cropAspect={16 / 9}
                                         formTitle={'Upload'}
                                         formTooltip={'上传一张图片作为文档封面'}
-                                        extraData={{ field: 'litpic', path: 'images/article' }}
+                                        extraData={{ path: 'images/article' }}
                                         useTransForm={value => {
                                             if ('string' === typeof value) return { litpic: value };
                                             return {

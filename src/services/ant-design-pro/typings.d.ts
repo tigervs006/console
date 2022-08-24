@@ -130,8 +130,8 @@ declare namespace API {
         formTooltip?: string;
         imageHeight?: number;
         listType?: UploadListType;
+        extraData: { path: string };
         validateRules?: Record<string, any>[];
-        extraData: { field: string; path: string };
         useTransForm?: (value: string | UploadFile[]) => Record<string, any>;
     };
 

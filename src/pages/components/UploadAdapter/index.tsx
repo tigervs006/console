@@ -197,7 +197,6 @@ export const UploadAdapter: React.FC<
         data: props.extraData,
         onRemove: handleRemove,
         onChange: handleChange,
-        name: props.extraData.field,
         progress: {
             strokeColor: {
                 '0%': '#108ee9',
