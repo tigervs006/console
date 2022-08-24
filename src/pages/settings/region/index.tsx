@@ -1,7 +1,7 @@
 /** @format */
 
-import { useAccess, Access } from 'umi';
 import React, { useRef, useState } from 'react';
+import { useAccess, useModel, Access } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { regionDataItem } from '@/pages/settings/data';
@@ -34,6 +34,10 @@ export default () => {
     };
     // formRef
     const formRef = useRef<EditableFormInstance>();
+    /* 监听窗口变化 */
+    const { resize } = useModel('resize', ret => ({
+        resize: ret.resize,
+    }));
     // defalutOption
     const defaultOption = [{ id: 0, cid: 0, pid: 0, name: '中国' }];
     // 存放子项的id
@@ -233,7 +237,7 @@ export default () => {
                 request={tableData}
                 editableFormRef={formRef}
                 recordCreatorProps={false}
-                scroll={{ x: 1300, y: 600 }}
+                scroll={resize.tableScroll}
                 editable={{
                     editableKeys,
                     type: 'multiple',

@@ -6,8 +6,8 @@ import React, { useRef, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { menuDataItem, routesDataItem } from '../data';
-import { useRequest, useAccess, Access, useIntl } from 'umi';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
+import { useRequest, useAccess, useModel, useIntl, Access } from 'umi';
 import { fetchMenuData, saveMenu, remove, fetchRules } from '../service';
 import { Button, Cascader, message, Modal, Space, Table, Tag } from 'antd';
 import { queryChildId, randomString, recursiveQuery, waitTime } from '@/extra/utils';
@@ -41,6 +41,10 @@ export default () => {
         hideChildrenInMenu: 0,
         id: randomString(6),
     };
+    /* 监听窗口变化 */
+    const { resize } = useModel('resize', ret => ({
+        resize: ret.resize,
+    }));
     /* 菜单类型 */
     const menuType = {
         1: { name: '菜单', icon: <MenuUnfoldOutlined />, color: 'blue' },
@@ -481,7 +485,7 @@ export default () => {
                 request={tableData}
                 editableFormRef={formRef}
                 recordCreatorProps={false}
-                scroll={{ x: 1300, y: 600 }}
+                scroll={resize.tableScroll}
                 editable={{
                     editableKeys,
                     type: 'single',

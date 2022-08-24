@@ -4,7 +4,7 @@ import type { tableDataItem } from './data';
 import { CreateModalForm } from './components';
 import React, { useRef, useState } from 'react';
 import { ProTable } from '@ant-design/pro-table';
-import { useAccess, Access, useModel } from 'umi';
+import { useAccess, useModel, Access } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
 import { fetchData, remove } from '@/pages/channel/service';
 import { Button, message, Modal, Space, Table } from 'antd';
@@ -26,6 +26,10 @@ export default () => {
     const access = useAccess();
     /* selectOption */
     const defaultOption = [{ id: 0, pid: 0, cname: '顶级栏目' }];
+    /* 监听窗口变化 */
+    const { resize } = useModel('resize', ret => ({
+        resize: ret.resize,
+    }));
     /* setUploadList */
     const { setUploadList } = useModel('file', ret => ({
         setUploadList: ret.setUploadList,
@@ -256,7 +260,7 @@ export default () => {
                 columns={columns}
                 pagination={false}
                 request={tableData}
-                scroll={{ x: 1300, y: 600 }}
+                scroll={resize.tableScroll}
                 expandable={{
                     expandRowByClick: expandByClick,
                     expandedRowKeys: expandedRowKey,
