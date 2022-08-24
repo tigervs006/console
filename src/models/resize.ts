@@ -4,14 +4,14 @@ import { useLayoutEffect, useState } from 'react';
 
 export default () => {
     const innerWidth: number = window.innerWidth;
-    const [resize, setResize] = useState<{ pageSize: number; tableScroll: { x: number; y: number } }>(() => {
+    const [resize, setResize] = useState<{ pageSize: number; tableScroll: { x: number; y: number } | undefined }>(() => {
         switch (true) {
             case 2560 < innerWidth:
                 return { pageSize: 35, tableScroll: { x: 1300, y: 1500 } };
             case 1920 < innerWidth:
                 return { pageSize: 20, tableScroll: { x: 1300, y: 900 } };
             default:
-                return { pageSize: 15, tableScroll: { x: 1300, y: 600 } };
+                return { pageSize: 15, tableScroll: undefined };
         }
     });
 
@@ -25,7 +25,7 @@ export default () => {
                 setResize({ pageSize: 20, tableScroll: { x: 1300, y: 900 } });
                 break;
             default:
-                setResize({ pageSize: 15, tableScroll: { x: 1300, y: 600 } });
+                setResize({ pageSize: 15, tableScroll: undefined });
         }
     };
 
