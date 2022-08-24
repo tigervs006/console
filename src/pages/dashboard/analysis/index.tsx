@@ -1,6 +1,6 @@
 /** @format */
 
-import type { FC } from 'react';
+import React from 'react';
 import { useRequest } from 'umi';
 import styles from './style.less';
 import type moment from 'moment';
@@ -30,7 +30,7 @@ type AnalysisProps = {
 
 type SalesType = 'all' | 'online' | 'stores';
 
-const Analysis: FC<AnalysisProps> = () => {
+const Analysis: React.FC<AnalysisProps> = () => {
     const [salesType, setSalesType] = useState<SalesType>('all');
     const [currentTabKey, setCurrentTabKey] = useState<string>('');
     const [rangePickerValue, setRangePickerValue] = useState<RangePickerValue>(getTimeDistance('year'));

@@ -1,7 +1,7 @@
 /** @format */
 
+import React from 'react';
 import numeral from 'numeral';
-import type { FC } from 'react';
 import { useRequest } from 'umi';
 import styles from './style.less';
 import Map from './components/Map';
@@ -16,7 +16,7 @@ const { Countdown } = Statistic;
 
 const deadline = Date.now() + 1000 * 60 * 60 * 24 * 2 + 1000 * 30; // Moment is also OK
 
-const Monitor: FC = () => {
+const Monitor: React.FC = () => {
     const { loading, data } = useRequest(queryTags);
 
     const wordCloudData: WordCloudData[] = (data?.list || []).map(item => {
