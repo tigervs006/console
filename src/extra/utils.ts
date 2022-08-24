@@ -59,6 +59,19 @@ export const extractImg = (content: string) => {
 };
 
 /**
+ * 文件转换为Base64
+ * @param fileObject 文件
+ */
+export const file2Base64 = (fileObject: File) => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(fileObject);
+        reader.onerror = error => reject(error);
+        reader.onload = () => resolve(reader.result);
+    });
+};
+
+/**
  * int解析为ip地址
  * @return string
  * @param intIp ip地址
