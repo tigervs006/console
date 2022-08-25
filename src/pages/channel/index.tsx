@@ -190,7 +190,7 @@ export default () => {
             tooltip: '作为网站伪静态URL',
         },
         {
-            width: 150,
+            width: 100,
             key: 'sort',
             title: '栏目排序',
             dataIndex: 'sort',
@@ -207,7 +207,7 @@ export default () => {
             dataIndex: 'update_time',
         },
         {
-            width: 150,
+            width: 100,
             filters: true,
             onFilter: true,
             title: '栏目状态',
@@ -260,7 +260,7 @@ export default () => {
                 columns={columns}
                 pagination={false}
                 request={tableData}
-                scroll={resize.tableScroll}
+                scroll={1920 >= window.innerWidth ? { x: 1300, y: 600 } : resize.tableScroll}
                 expandable={{
                     expandRowByClick: expandByClick,
                     expandedRowKeys: expandedRowKey,
