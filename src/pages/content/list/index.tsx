@@ -258,7 +258,7 @@ export default () => {
                     status: 'Hide',
                 },
             },
-            render: (_, record) => <RecordSwitch record={record} url={'/article/status'} echoChecked={'启用'} echoUnChecked={'禁用'} />,
+            render: (_, record) => <RecordSwitch record={record} url={'/article/status'} echoChecked={'显示'} echoUnChecked={'隐藏'} />,
         },
         {
             title: '操作',
