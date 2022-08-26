@@ -76,17 +76,17 @@ export const ApiSettings: React.FC<{
                                     <ProFormText
                                         hasFeedback
                                         label="accessKeyId"
-                                        name={props.list.alioss_accessKeyID?.name}
-                                        initialValue={props.list.alioss_accessKeyID?.value}
-                                        tooltip={props.list.alioss_accessKeyID?.description}
+                                        name={props.list.alioss_accessKey_id?.name}
+                                        initialValue={props.list.alioss_accessKey_id?.value}
+                                        tooltip={props.list.alioss_accessKey_id?.description}
                                         getValueFromEvent={e => e.target.value.trim()}
                                     />
                                     <ProFormText
                                         hasFeedback
                                         label="AccessKeySecret"
-                                        name={props.list.alioss_accessKeySecret?.name}
-                                        initialValue={props.list.alioss_accessKeySecret?.value}
-                                        tooltip={props.list.alioss_accessKeySecret?.description}
+                                        name={props.list.alioss_accessKey_secret?.name}
+                                        initialValue={props.list.alioss_accessKey_secret?.value}
+                                        tooltip={props.list.alioss_accessKey_secret?.description}
                                         getValueFromEvent={e => e.target.value.trim()}
                                     />
                                 </>
@@ -116,17 +116,17 @@ export const ApiSettings: React.FC<{
                                     <ProFormText
                                         hasFeedback
                                         label="accessKeyId"
-                                        name={props.list.txcos_secretId?.name}
-                                        initialValue={props.list.txcos_secretId?.value}
-                                        tooltip={props.list.txcos_secretId?.description}
+                                        name={props.list.txcos_secret_id?.name}
+                                        initialValue={props.list.txcos_secret_id?.value}
+                                        tooltip={props.list.txcos_secret_id?.description}
                                         getValueFromEvent={e => e.target.value.trim()}
                                     />
                                     <ProFormText
                                         hasFeedback
                                         label="AccessKeySecret"
-                                        name={props.list.txcos_secretKey?.name}
-                                        initialValue={props.list.txcos_secretKey?.value}
-                                        tooltip={props.list.txcos_secretKey?.description}
+                                        name={props.list.txcos_secret_key?.name}
+                                        initialValue={props.list.txcos_secret_key?.value}
+                                        tooltip={props.list.txcos_secret_key?.description}
                                         getValueFromEvent={e => e.target.value.trim()}
                                     />
                                 </>
@@ -137,7 +137,7 @@ export const ApiSettings: React.FC<{
                 }}
             </ProFormDependency>
             <ProForm.Item>
-                <Divider orientation="left">阿里云CDN</Divider>
+                <Divider orientation="left">CDN配置</Divider>
             </ProForm.Item>
             <ProFormText
                 hasFeedback
@@ -145,22 +145,6 @@ export const ApiSettings: React.FC<{
                 name={props.list.uploadUrl?.name}
                 initialValue={props.list.uploadUrl?.value}
                 tooltip={props.list.uploadUrl?.description}
-                getValueFromEvent={e => e.target.value.trim()}
-            />
-            <ProFormText
-                hasFeedback
-                label="alicdn_KeyId"
-                name={props.list.alicdn_accessKeyId?.name}
-                initialValue={props.list.alicdn_accessKeyId?.value}
-                tooltip={props.list.alicdn_accessKeyId?.description}
-                getValueFromEvent={e => e.target.value.trim()}
-            />
-            <ProFormText
-                hasFeedback
-                label="alicdn_KeySecret"
-                name={props.list.alicdn_accessKeySecret?.name}
-                initialValue={props.list.alicdn_accessKeySecret?.value}
-                tooltip={props.list.alicdn_accessKeySecret?.description}
                 getValueFromEvent={e => e.target.value.trim()}
             />
         </ProForm>

@@ -38,9 +38,9 @@ export const BaiduSettings: React.FC<{
             <ProFormCheckbox.Group
                 label="地图类型"
                 options={['xml']}
-                name={props.list.sitemapType?.name}
+                name={props.list.sitemap_type?.name}
                 tooltip="网站地图类型，有助于搜索引擎收录"
-                initialValue={props.list.sitemapType?.value}
+                initialValue={props.list.sitemap_type?.value}
                 fieldProps={{
                     value: ['xml'],
                     disabled: true,

@@ -52,27 +52,27 @@ export const MailSettings: React.FC<{
                                 <ProForm.Item
                                     hasFeedback
                                     label="收件人组"
-                                    name={props.list.mail_receiver?.name}
-                                    initialValue={props.list.mail_receiver?.value}
-                                    tooltip={props.list.mail_receiver?.description}
+                                    name={props.list.mail_send_receiver?.name}
+                                    initialValue={props.list.mail_send_receiver?.value}
+                                    tooltip={props.list.mail_send_receiver?.description}
                                     rules={[{ required: true, message: '请至少填写一个收件人' }]}
                                 >
                                     <InputTagList
                                         addition={'收件人'}
                                         handleChange={value =>
                                             formRef.current?.setFieldsValue({
-                                                mail_receiver: value.join(','),
+                                                mail_send_receiver: value.join(','),
                                             })
                                         }
-                                        tagsList={props.list.mail_receiver?.value.split(',')}
+                                        tagsList={props.list.mail_send_receiver?.value.split(',')}
                                     />
                                 </ProForm.Item>
                                 <ProFormDigit
                                     hasFeedback
                                     label="发件端口"
-                                    name={props.list.mail_port?.name}
-                                    initialValue={props.list.mail_port?.value}
-                                    tooltip={props.list.mail_port?.description}
+                                    name={props.list.mail_send_port?.name}
+                                    initialValue={props.list.mail_send_port?.value}
+                                    tooltip={props.list.mail_send_port?.description}
                                     rules={[
                                         { required: true, message: '发件端口不得为空' },
                                         { pattern: /^\d+$/, message: '发件商品只能是正整数' },
@@ -93,10 +93,10 @@ export const MailSettings: React.FC<{
                                 <ProFormText.Password
                                     hasFeedback
                                     label="用户密码"
-                                    name={props.list.mail_password?.name}
+                                    name={props.list.mail_user_password?.name}
                                     getValueFromEvent={e => e.target.value.trim()}
-                                    initialValue={props.list.mail_password?.value}
-                                    tooltip={props.list.mail_password?.description}
+                                    initialValue={props.list.mail_user_password?.value}
+                                    tooltip={props.list.mail_user_password?.description}
                                     fieldProps={{
                                         readOnly: true,
                                         onFocus: e => e.target.removeAttribute('readonly'),
@@ -119,19 +119,19 @@ export const MailSettings: React.FC<{
                                 <ProFormText
                                     hasFeedback
                                     label="SMTP地址"
-                                    name={props.list.mail_host?.name}
-                                    initialValue={props.list.mail_host?.value}
-                                    tooltip={props.list.mail_host?.description}
+                                    name={props.list.mail_smtp_host?.name}
                                     getValueFromEvent={e => e.target.value.trim()}
+                                    initialValue={props.list.mail_smtp_host?.value}
+                                    tooltip={props.list.mail_smtp_host?.description}
                                     rules={[{ required: true, message: 'SMTP地址不得为空，请重新输入' }]}
                                 />
                                 <ProFormText
                                     hasFeedback
                                     label="邮件主题"
-                                    name={props.list.mail_subject?.name}
-                                    initialValue={props.list.mail_subject?.value}
+                                    name={props.list.mail_send_subject?.name}
                                     getValueFromEvent={e => e.target.value.trim()}
-                                    tooltip={props.list.mail_subject?.description}
+                                    initialValue={props.list.mail_send_subject?.value}
+                                    tooltip={props.list.mail_send_subject?.description}
                                     rules={[{ required: true, message: '邮件主题不得为空，请重新输入' }]}
                                 />
                             </>

@@ -87,9 +87,9 @@ export const OtherSettings: React.FC<{
             <ProFormText.Password
                 hasFeedback
                 label="安全密码"
-                name={props.list.delcode?.name}
-                initialValue={props.list.delcode?.value}
-                tooltip={props.list.delcode?.description}
+                name={props.list.secret_code?.name}
+                initialValue={props.list.secret_code?.value}
+                tooltip={props.list.secret_code?.description}
                 getValueFromEvent={e => e.target.value.trim()}
                 fieldProps={{
                     readOnly: true,
