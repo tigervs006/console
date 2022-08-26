@@ -262,7 +262,7 @@ export default () => {
                 )}
                 headerTitle={
                     // @ts-ignore
-                    <Access accessible={access.btnFilter('create_user')}>
+                    <Access key="user_create_btn" accessible={access.btnFilter('user_create_btn')}>
                         <Button shape="round" type="primary" key="createUser" icon={<PlusOutlined />} onClick={handleCreate}>
                             新增用户
                         </Button>

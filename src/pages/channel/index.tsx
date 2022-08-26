@@ -281,7 +281,7 @@ export default () => {
                         {expandedRowKey?.length ? '收起所有' : '展开所有'}
                     </Button>,
                     // @ts-ignore
-                    <Access key="create_channel" accessible={access.btnFilter('create_channel')}>
+                    <Access key="channel_create_btn" accessible={access.btnFilter('channel_create_btn')}>
                         <Button
                             shape="round"
                             type="primary"

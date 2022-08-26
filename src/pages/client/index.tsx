@@ -214,8 +214,8 @@ export default () => {
                 pagination={{ pageSize: resize.pageSize, hideOnSinglePage: true }}
                 headerTitle={
                     // @ts-ignore
-                    <Access accessible={access.btnFilter('create_client')}>
-                        <Button shape="round" type="primary" key="createClient" icon={<PlusOutlined />} onClick={handleCreate}>
+                    <Access accessible={access.btnFilter('client_create_btn')}>
+                        <Button shape="round" type="primary" key="clientCreate" icon={<PlusOutlined />} onClick={handleCreate}>
                             新增客户
                         </Button>
                     </Access>

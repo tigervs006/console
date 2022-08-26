@@ -266,7 +266,7 @@ export default () => {
                         {expandedRowKey?.length ? '收起所有' : '展开所有'}
                     </Button>,
                     // @ts-ignore
-                    <Access key="refresh_cache" accessible={access.btnFilter('refresh_cache')}>
+                    <Access key="refresh_cache_btn" accessible={access.btnFilter('refresh_cache_btn')}>
                         <Button
                             shape="round"
                             type="default"
@@ -278,11 +278,11 @@ export default () => {
                         </Button>
                     </Access>,
                     // @ts-ignore
-                    <Access key="create_region" accessible={access.btnFilter('create_region')}>
+                    <Access key="region_create_btn" accessible={access.btnFilter('region_create_btn')}>
                         <Button
                             shape="round"
                             type="primary"
-                            key="createMenu"
+                            key="createRegion"
                             icon={<PlusOutlined />}
                             onClick={() => ref.current?.addEditRecord?.(createRecord)}
                         >

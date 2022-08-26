@@ -517,7 +517,7 @@ export default () => {
                         {expandedRowKey?.length ? '收起所有' : '展开所有'}
                     </Button>,
                     // @ts-ignore
-                    <Access key="create_menu" accessible={access.btnFilter('create_menu')}>
+                    <Access key="menu_create_btn" accessible={access.btnFilter('menu_create_btn')}>
                         <Button
                             shape="round"
                             type="primary"

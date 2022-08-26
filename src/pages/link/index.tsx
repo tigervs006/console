@@ -267,11 +267,11 @@ export default () => {
                 }}
                 headerTitle={
                     // @ts-ignore
-                    <Access key="create_link" accessible={access.btnFilter('create_link')}>
+                    <Access key="link_create_btn" accessible={access.btnFilter('link_create_btn')}>
                         <Button
                             shape="round"
                             type="primary"
-                            key="createMenu"
+                            key="createLink"
                             icon={<PlusOutlined />}
                             onClick={() => ref.current?.addEditRecord?.(createRecord)}
                         >

@@ -261,11 +261,11 @@ export default () => {
                 toolbar={{
                     actions: [
                         // @ts-ignore
-                        <Access key="create_group" accessible={access.btnFilter('create_group')}>
+                        <Access key="group_create_btn" accessible={access.btnFilter('group_create_btn')}>
                             <Button
                                 shape="round"
                                 type="primary"
-                                key="createMenu"
+                                key="createGroup"
                                 icon={<PlusOutlined />}
                                 onClick={() => ref.current?.addEditRecord?.(createRecord)}
                             >

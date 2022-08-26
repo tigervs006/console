@@ -27,12 +27,12 @@ export default () => {
 
     /** tab菜单列表 */
     const tabItem: Record<string, string>[] = [
-        { key: '1', mark: 'website', pane: intl.formatMessage({ id: 'pages.settings.website' }) },
-        { key: '2', mark: 'baidu', pane: intl.formatMessage({ id: 'pages.settings.baidu' }) },
-        { key: '3', mark: 'storage', pane: intl.formatMessage({ id: 'pages.settings.storage' }) },
-        { key: '4', mark: 'contact', pane: intl.formatMessage({ id: 'pages.settings.contact' }) },
-        { key: '5', mark: 'email', pane: intl.formatMessage({ id: 'pages.settings.email' }) },
-        { key: '6', mark: 'other', pane: intl.formatMessage({ id: 'pages.settings.other' }) },
+        { key: '1', mark: 'settings_website_btn', pane: intl.formatMessage({ id: 'pages.settings.website' }) },
+        { key: '2', mark: 'settings_baidu_btn', pane: intl.formatMessage({ id: 'pages.settings.baidu' }) },
+        { key: '3', mark: 'settings_storage_btn', pane: intl.formatMessage({ id: 'pages.settings.storage' }) },
+        { key: '4', mark: 'settings_contact_btn', pane: intl.formatMessage({ id: 'pages.settings.contact' }) },
+        { key: '5', mark: 'settings_email_btn', pane: intl.formatMessage({ id: 'pages.settings.email' }) },
+        { key: '6', mark: 'settings_other_btn', pane: intl.formatMessage({ id: 'pages.settings.other' }) },
     ];
 
     /** 设置tab模式 */
