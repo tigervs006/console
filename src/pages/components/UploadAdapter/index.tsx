@@ -78,9 +78,15 @@ export const UploadAdapter: React.FC<
     const handleRemove: UploadProps['onRemove'] = (file: UploadFile) => {
         return new Promise<boolean>((resolve, reject) => {
             const url = file?.url ?? '';
-            /* 从网址中截取文件的相对路径 */
-            const idx = url.lastIndexOf('.cn/');
-            const filePath = url.substring(idx + 4, url.length);
+            let filePath: string | undefined;
+            /* 如果是本地存储是没有CDN网址的
+             * 需要做好区分
+             *  */
+            if (1 < url.lastIndexOf('.cn/')) {
+                /* 从网址中截取文件的相对路径 */
+                const idx = url.lastIndexOf('.cn/');
+                filePath = url.substring(idx + 4, url.length);
+            }
             confirm({
                 centered: true,
                 cancelText: '算了',
@@ -90,7 +96,7 @@ export const UploadAdapter: React.FC<
                 okButtonProps: { danger: true, shape: 'round' },
                 content: url.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)?.[1],
                 onOk() {
-                    removeFile({ filePath: filePath }).then(res => {
+                    removeFile({ filePath: filePath ?? url }).then(res => {
                         res?.success ? resolve(true) : reject('error');
                     });
                 },
