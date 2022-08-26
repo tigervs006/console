@@ -79,7 +79,7 @@ export const BaiduSettings: React.FC<{
                 tooltip={props.list.baijiahao_app_token?.description}
             />
             <ProForm.Item>
-                <Divider orientation="left">百家统计</Divider>
+                <Divider orientation="left">百度统计</Divider>
             </ProForm.Item>
             <ProFormText
                 hasFeedback
