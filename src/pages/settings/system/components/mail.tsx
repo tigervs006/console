@@ -41,7 +41,7 @@ export const MailSettings: React.FC<{
                 name={props.list.mail_service?.name}
                 tooltip={props.list.mail_service?.description}
                 transform={value => ({ mail_service: value ? 1 : 0 })}
-                initialValue={!!Number(props.list.mail_service?.value)}
+                initialValue={Number(props.list.mail_service?.value)}
                 fieldProps={{ checkedChildren: '启用', unCheckedChildren: '禁用' }}
             />
             <ProFormDependency name={[props.list.mail_service?.name]}>

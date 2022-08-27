@@ -1,7 +1,7 @@
 /** @format */
 
 import React from 'react';
-import { Divider, Space } from 'antd';
+import { Divider, Space, Row, Col } from 'antd';
 import type { SliderMarks } from 'antd/lib/slider';
 import { FormOutlined, UndoOutlined } from '@ant-design/icons';
 import ProForm, { ProFormSlider, ProFormSwitch, ProFormText } from '@ant-design/pro-form';
@@ -76,38 +76,50 @@ export const CoreSettings: React.FC<{
             <ProForm.Item>
                 <Divider orientation="left">系统安全</Divider>
             </ProForm.Item>
-            <ProFormSwitch
-                label="DEBUG"
-                name={props.list.app_debug?.name}
-                tooltip={props.list.app_debug?.description}
-                transform={value => ({ app_debug: value ? 1 : 0 })}
-                initialValue={!!Number(props.list.app_debug?.value)}
-                fieldProps={{ checkedChildren: '启用', unCheckedChildren: '禁用' }}
-            />
-            <ProFormSwitch
-                label="权限认证"
-                name={props.list.user_auth_check?.name}
-                tooltip={props.list.user_auth_check?.description}
-                transform={value => ({ user_auth_check: value ? 1 : 0 })}
-                initialValue={!!Number(props.list.user_auth_check?.value)}
-                fieldProps={{ checkedChildren: '启用', unCheckedChildren: '禁用' }}
-            />
-            <ProFormSwitch
-                label="日志记录"
-                name={props.list.record_action_log?.name}
-                tooltip={props.list.record_action_log?.description}
-                transform={value => ({ record_action_log: value ? 1 : 0 })}
-                initialValue={!!Number(props.list.record_action_log?.value)}
-                fieldProps={{ checkedChildren: '启用', unCheckedChildren: '禁用' }}
-            />
-            <ProFormSwitch
-                label="Token认证"
-                name={props.list.access_token_check?.name}
-                tooltip={props.list.access_token_check?.description}
-                transform={value => ({ access_token_check: value ? 1 : 0 })}
-                initialValue={!!Number(props.list.access_token_check?.value)}
-                fieldProps={{ checkedChildren: '启用', unCheckedChildren: '禁用' }}
-            />
+            <Row>
+                <Col xs={12} sm={12} lg={6}>
+                    <ProFormSwitch
+                        label="DEBUG"
+                        name={props.list.app_debug?.name}
+                        tooltip={props.list.app_debug?.description}
+                        transform={value => ({ app_debug: value ? 1 : 0 })}
+                        initialValue={Number(props.list.app_debug?.value)}
+                        fieldProps={{ checkedChildren: '启用', unCheckedChildren: '禁用' }}
+                    />
+                </Col>
+                <Col xs={12} sm={12} lg={6}>
+                    <ProFormSwitch
+                        label="日志记录"
+                        name={props.list.record_action_log?.name}
+                        tooltip={props.list.record_action_log?.description}
+                        transform={value => ({ record_action_log: value ? 1 : 0 })}
+                        initialValue={Number(props.list.record_action_log?.value)}
+                        fieldProps={{ checkedChildren: '启用', unCheckedChildren: '禁用' }}
+                    />
+                </Col>
+            </Row>
+            <Row>
+                <Col xs={12} sm={12} lg={6}>
+                    <ProFormSwitch
+                        label="权限认证"
+                        name={props.list.user_auth_check?.name}
+                        tooltip={props.list.user_auth_check?.description}
+                        transform={value => ({ user_auth_check: value ? 1 : 0 })}
+                        initialValue={Number(props.list.user_auth_check?.value)}
+                        fieldProps={{ checkedChildren: '启用', unCheckedChildren: '禁用' }}
+                    />
+                </Col>
+                <Col xs={12} sm={12} lg={6}>
+                    <ProFormSwitch
+                        label="Token认证"
+                        name={props.list.access_token_check?.name}
+                        tooltip={props.list.access_token_check?.description}
+                        transform={value => ({ access_token_check: value ? 1 : 0 })}
+                        initialValue={Number(props.list.access_token_check?.value)}
+                        fieldProps={{ checkedChildren: '启用', unCheckedChildren: '禁用' }}
+                    />
+                </Col>
+            </Row>
             <ProFormText.Password
                 hasFeedback
                 label="安全密码"
