@@ -79,13 +79,9 @@ export const UploadAdapter: React.FC<
         return new Promise<boolean>((resolve, reject) => {
             const url = file?.url ?? '';
             let filePath: string | undefined;
-            /* 如果是本地存储是没有CDN网址的
-             * 需要做好区分
-             *  */
-            if (1 < url.lastIndexOf('.cn/')) {
+            if (1 < url.indexOf('.cn/')) {
                 /* 从网址中截取文件的相对路径 */
-                const idx = url.lastIndexOf('.cn/');
-                filePath = url.substring(idx + 4, url.length);
+                filePath = url.substring(url.indexOf('.cn/') + 4);
             }
             confirm({
                 centered: true,
