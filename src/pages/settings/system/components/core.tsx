@@ -85,6 +85,22 @@ export const CoreSettings: React.FC<{
                 fieldProps={{ checkedChildren: '启用', unCheckedChildren: '禁用' }}
             />
             <ProFormSwitch
+                label="权限认证"
+                name={props.list.user_auth_check?.name}
+                tooltip={props.list.user_auth_check?.description}
+                transform={value => ({ user_auth_check: value ? 1 : 0 })}
+                initialValue={!!Number(props.list.user_auth_check?.value)}
+                fieldProps={{ checkedChildren: '启用', unCheckedChildren: '禁用' }}
+            />
+            <ProFormSwitch
+                label="日志记录"
+                name={props.list.record_action_log?.name}
+                tooltip={props.list.record_action_log?.description}
+                transform={value => ({ record_action_log: value ? 1 : 0 })}
+                initialValue={!!Number(props.list.record_action_log?.value)}
+                fieldProps={{ checkedChildren: '启用', unCheckedChildren: '禁用' }}
+            />
+            <ProFormSwitch
                 label="Token认证"
                 name={props.list.access_token_check?.name}
                 tooltip={props.list.access_token_check?.description}
