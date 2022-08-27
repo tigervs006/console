@@ -32,7 +32,7 @@ export default () => {
         { key: '3', mark: 'settings_storage_btn', pane: intl.formatMessage({ id: 'pages.settings.storage' }) },
         { key: '4', mark: 'settings_contact_btn', pane: intl.formatMessage({ id: 'pages.settings.contact' }) },
         { key: '5', mark: 'settings_email_btn', pane: intl.formatMessage({ id: 'pages.settings.email' }) },
-        { key: '6', mark: 'settings_other_btn', pane: intl.formatMessage({ id: 'pages.settings.other' }) },
+        { key: '6', mark: 'settings_core_btn', pane: intl.formatMessage({ id: 'pages.settings.core' }) },
     ];
 
     /** 设置tab模式 */
