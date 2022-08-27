@@ -34,7 +34,7 @@ export const CreateModalForm: React.FC<{
             res?.msg && message.success(res.msg);
             props.setExpandByClick(true);
             /* 延时重载列表数据 */
-            waitTime(1500).then(() => props.reloadTable());
+            waitTime(2000).then(() => props.reloadTable());
         });
     };
     return (
@@ -90,7 +90,6 @@ export const CreateModalForm: React.FC<{
                 name="path"
                 hasFeedback
                 label="上级栏目"
-                debounceTime={1000}
                 tooltip="选择上级栏目"
                 placeholder="请选择上级栏目"
                 fieldProps={{
