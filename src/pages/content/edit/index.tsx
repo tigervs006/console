@@ -117,7 +117,7 @@ export default () => {
                 }}
                 // 表单默认值
                 initialValues={{
-                    cid: 4,
+                    cid: 11,
                     isCrop: 1,
                     is_recom: 1,
                 }}
