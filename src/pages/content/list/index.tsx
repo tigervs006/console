@@ -179,6 +179,9 @@ export default () => {
                 },
             },
             fieldProps: {
+                showNow: true,
+                showTime: true,
+                format: 'YYYY-MM-DD HH:mm:ss',
                 placeholder: ['开始时间', '结束时间'],
                 ranges: {
                     Today: [moment(), moment()],

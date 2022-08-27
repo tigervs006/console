@@ -198,6 +198,11 @@ export default () => {
             hideInTable: true,
             dataIndex: 'dateRange',
             valueType: 'dateRange',
+            fieldProps: {
+                showNow: true,
+                showTime: true,
+                format: 'YYYY-MM-DD HH:mm:ss',
+            },
         },
         {
             filters: true,
