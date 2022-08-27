@@ -45,7 +45,7 @@ export default {
     'pages.settings.storage': 'Storage',
     'pages.settings.contact': 'Contact',
     'pages.settings.email': 'Email',
-    'pages.settings.other': 'Other',
+    'pages.settings.other': 'Core Settings',
     'pages.settings.record': 'Logs List',
     'pages.settings.refresh_cache': 'Refresh Cache',
     'pages.region.list': 'Region List',

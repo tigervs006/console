@@ -6,7 +6,7 @@ import type { SliderMarks } from 'antd/lib/slider';
 import { FormOutlined, UndoOutlined } from '@ant-design/icons';
 import ProForm, { ProFormSlider, ProFormSwitch, ProFormText } from '@ant-design/pro-form';
 
-export const OtherSettings: React.FC<{
+export const CoreSettings: React.FC<{
     list: Record<string, any>;
     handleFinish: (data: Record<string, any>) => Promise<void>;
 }> = props => {

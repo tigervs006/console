@@ -4,9 +4,9 @@ import { message, Tabs } from 'antd';
 import { list, saveConfig } from '../service';
 import { ApiSettings } from './components/cloud';
 import { SiteSettings } from './components/site';
+import { CoreSettings } from './components/core';
 import { useLayoutEffect, useState } from 'react';
 import { BaiduSettings } from './components/baidu';
-import { OtherSettings } from './components/other';
 import { useAccess, useRequest, useIntl } from 'umi';
 import { ContactSettings } from './components/contact';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -81,7 +81,7 @@ export default () => {
             case '5':
                 return <MailSettings list={settings} handleFinish={data => handleFinish(data)} />;
             case '6':
-                return <OtherSettings list={settings} handleFinish={data => handleFinish(data)} />;
+                return <CoreSettings list={settings} handleFinish={data => handleFinish(data)} />;
             default:
                 return null;
         }
