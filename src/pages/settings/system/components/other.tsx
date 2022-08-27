@@ -77,6 +77,14 @@ export const OtherSettings: React.FC<{
                 <Divider orientation="left">系统安全</Divider>
             </ProForm.Item>
             <ProFormSwitch
+                label="DEBUG"
+                name={props.list.app_debug?.name}
+                tooltip={props.list.app_debug?.description}
+                transform={value => ({ app_debug: value ? 1 : 0 })}
+                initialValue={!!Number(props.list.app_debug?.value)}
+                fieldProps={{ checkedChildren: '启用', unCheckedChildren: '禁用' }}
+            />
+            <ProFormSwitch
                 label="Token认证"
                 name={props.list.access_token_check?.name}
                 tooltip={props.list.access_token_check?.description}
