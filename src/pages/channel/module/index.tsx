@@ -6,8 +6,8 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { EditableProTable } from '@ant-design/pro-table';
 import { Button, message, Modal, Space, Table } from 'antd';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
+import { randomString, zh2Pinyin, waitTime } from '@/extra/utils';
 import { fetchModule, removeModule, saveModule } from '../service';
-import { queryChildId, randomString, zh2Pinyin, waitTime } from '@/extra/utils';
 import type { EditableFormInstance, ActionType, ProColumns } from '@ant-design/pro-table';
 import { QuestionCircleOutlined, DeleteOutlined, PlusOutlined, EditOutlined } from '@ant-design/icons';
 
@@ -41,15 +41,13 @@ export default () => {
     /* 处理单个/批量删除 */
     const handleDelete = (e: React.MouseEvent<HTMLElement>, record: moduleDataItem | moduleDataItem[]) => {
         e.stopPropagation();
-        let ids: number[] = [];
+        const ids: number[] = [];
         const titles: string[] = [];
         if (record instanceof Array) {
             record.forEach(item => {
                 ids.push(item.id as number);
                 titles.push(item?.name ?? '');
             });
-        } else {
-            ids = queryChildId([record]);
         }
         confirm({
             centered: true,

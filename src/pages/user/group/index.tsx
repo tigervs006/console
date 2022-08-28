@@ -3,12 +3,12 @@
 import { IconMap } from '@/extra/iconsMap';
 import { TreeSelector } from '../components';
 import React, { useState, useRef } from 'react';
+import { randomString, waitTime } from '@/extra/utils';
 import { PageContainer } from '@ant-design/pro-layout';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { groupDataItem, menuDataItem } from '../data';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
 import { Button, message, Modal, Space, Table, Tag } from 'antd';
-import { queryChildId, randomString, waitTime } from '@/extra/utils';
 import { useRequest, useAccess, useModel, useIntl, Access } from 'umi';
 import { fetchGroupData, fetchMenuData, removeGroup, saveGroup } from '../service';
 import type { ActionType, ProColumns, EditableFormInstance } from '@ant-design/pro-table';
@@ -97,15 +97,13 @@ export default () => {
     /* 处理单个/批量删除 */
     const handleDelete = (e: React.MouseEvent<HTMLElement>, record: groupDataItem | groupDataItem[]) => {
         e.stopPropagation();
-        let ids: number[] = [];
+        const ids: number[] = [];
         const titles: string[] = [];
         if (record instanceof Array) {
             record.forEach(item => {
                 ids.push(item.id as number);
                 titles.push(item?.name ?? '');
             });
-        } else {
-            ids = queryChildId([record]);
         }
         confirm({
             centered: true,

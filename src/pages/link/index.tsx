@@ -2,12 +2,12 @@
 import type { linkDataItem } from './data';
 import React, { useRef, useState } from 'react';
 import { useAccess, useModel, Access } from 'umi';
+import { randomString, waitTime } from '@/extra/utils';
 import { PageContainer } from '@ant-design/pro-layout';
 import { EditableProTable } from '@ant-design/pro-table';
 import { Button, message, Modal, Space, Table } from 'antd';
 import { fetchLink, removeLink, saveLink } from './service';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
-import { queryChildId, randomString, waitTime } from '@/extra/utils';
 import type { EditableFormInstance, ActionType, ProColumns } from '@ant-design/pro-table';
 import { QuestionCircleOutlined, DeleteOutlined, SearchOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 
@@ -45,15 +45,13 @@ export default () => {
     /* 处理单个/批量删除 */
     const handleDelete = (e: React.MouseEvent<HTMLElement>, record: linkDataItem | linkDataItem[]) => {
         e.stopPropagation();
-        let ids: number[] = [];
+        const ids: number[] = [];
         const titles: string[] = [];
         if (record instanceof Array) {
             record.forEach(item => {
                 ids.push(item.id as number);
                 titles.push(item?.name ?? '');
             });
-        } else {
-            ids = queryChildId([record]);
         }
         confirm({
             centered: true,
