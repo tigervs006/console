@@ -64,9 +64,24 @@ export default [
         ],
     },
     {
+        name: 'channel',
         path: '/channel',
-        access: 'authFilter',
-        component: './channel',
+        routes: [
+            {
+                path: '/channel',
+                redirect: '/channel/list',
+            },
+            {
+                access: 'authFilter',
+                path: '/channel/list',
+                component: './channel/list',
+            },
+            {
+                access: 'authFilter',
+                path: '/channel/module',
+                component: './channel/module',
+            },
+        ],
     },
     {
         path: '/client',
