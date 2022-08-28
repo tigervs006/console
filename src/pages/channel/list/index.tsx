@@ -1,6 +1,6 @@
 /** @format */
 
-import { CreateModalForm } from '../components';
+import { CreateDrawerForm } from '../components';
 import React, { useRef, useState } from 'react';
 import { ProTable } from '@ant-design/pro-table';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -36,19 +36,19 @@ export default () => {
     }));
     /* 模型列表 */
     const [module, setModule] = useState<moduleDataItem[]>([]);
-    /* ModalForm 状态 */
-    const [modalVisit, setModalVisit] = useState<boolean>(false);
+    /* DrawerForm 状态 */
+    const [drawerVisit, setDrawerVisit] = useState<boolean>(false);
     /* 存放子项的id */
     const [expandedIds, setexpandedIds] = useState<number[]>([]);
-    /* ModalForm 标题 */
+    /* DrawerForm 标题 */
     const [isCreate, setIsCreateChannel] = useState<boolean>(true);
     /* 控制点击展开行 */
     const [expandByClick, setExpandByClick] = useState<boolean>(true);
     /* 当前展开的行 */
     const [expandedRowKey, setExpandedRowKey] = useState<number[]>([]);
-    /* ModalForm 默认值 */
-    const [modalValues, setModallValues] = useState<tableDataItem>({});
-    /* ModalForm 栏目 */
+    /* DrawerForm 默认值 */
+    const [drawerValues, setDrawerlValues] = useState<tableDataItem>({});
+    /* DrawerForm 栏目 */
     const [channelData, setChannelData] = useState<tableDataItem[]>([]);
     /* ActionType */
     const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
@@ -61,8 +61,8 @@ export default () => {
     /* 处理栏目编辑 */
     const handleEdit = (record: tableDataItem, e: React.MouseEvent<HTMLElement, MouseEvent> | undefined) => {
         e!.stopPropagation();
-        setModallValues(record);
-        setModalVisit(true);
+        setDrawerlValues(record);
+        setDrawerVisit(true);
         setExpandByClick(false);
         setIsCreateChannel(false);
         setUploadList(() => {
@@ -300,8 +300,8 @@ export default () => {
                             icon={<PlusOutlined />}
                             onClick={() => {
                                 setUploadList([]);
-                                setModalVisit(true);
-                                setModallValues({});
+                                setDrawerVisit(true);
+                                setDrawerlValues({});
                                 setIsCreateChannel(true);
                             }}
                         >
@@ -325,14 +325,14 @@ export default () => {
                     );
                 }}
             />
-            <CreateModalForm
+            <CreateDrawerForm
                 module={module}
-                record={modalValues}
-                modalVisit={modalVisit}
+                record={drawerValues}
+                drawerVisit={drawerVisit}
                 isCreateChannel={isCreate}
                 reloadTable={() => ref.current?.reload()}
                 setExpandByClick={(value: boolean) => setExpandByClick(value)}
-                handleSetModalVisit={(value: boolean) => setModalVisit(value)}
+                handleSetDrawerVisit={(value: boolean) => setDrawerVisit(value)}
             />
         </PageContainer>
     );

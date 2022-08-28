@@ -8,22 +8,22 @@ import type { UploadFile } from 'antd/es/upload/interface';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import type { moduleDataItem, tableDataItem } from '../data';
 import { UploadAdapter } from '@/pages/components/UploadAdapter';
-import { ProFormCascader, ProFormTextArea, ProFormSelect, ProFormText, ModalForm } from '@ant-design/pro-form';
+import { ProFormCascader, ProFormTextArea, ProFormSelect, ProFormText, DrawerForm } from '@ant-design/pro-form';
 
-export const CreateModalForm: React.FC<{
-    modalVisit: boolean;
+export const CreateDrawerForm: React.FC<{
+    drawerVisit: boolean;
     record: tableDataItem;
     reloadTable: () => void;
     module: moduleDataItem[];
     isCreateChannel: boolean;
     setExpandByClick: (value: boolean) => void;
-    handleSetModalVisit: (value: boolean) => void;
+    handleSetDrawerVisit: (value: boolean) => void;
 }> = props => {
     /* 上级栏目 */
     const [pid, setPid] = useState<number>();
     const formRef = useRef<ProFormInstance>();
     const defaultOption = [{ id: 0, cname: '顶级栏目' }];
-    const modalTitle = props.isCreateChannel ? '新增栏目' : '编辑栏目';
+    const drawerTitle = props.isCreateChannel ? '新增栏目' : '编辑栏目';
     /* 处理onFinish事件 */
     const handleFinish = async (data: tableDataItem) => {
         const post = {
@@ -39,12 +39,11 @@ export const CreateModalForm: React.FC<{
         });
     };
     return (
-        <ModalForm<tableDataItem>
-            modalProps={{
-                centered: true,
+        <DrawerForm<tableDataItem>
+            drawerProps={{
                 maskClosable: false,
                 destroyOnClose: true,
-                onCancel: () => props.setExpandByClick(true),
+                onClose: () => props.setExpandByClick(true),
             }}
             submitter={{
                 searchConfig: {
@@ -59,14 +58,14 @@ export const CreateModalForm: React.FC<{
                     onClick: () => formRef.current?.resetFields(),
                 },
             }}
-            width={500}
+            width={600}
             formRef={formRef}
-            title={modalTitle}
+            title={drawerTitle}
             autoFocusFirstInput
             submitTimeout={2000}
-            visible={props.modalVisit}
+            visible={props.drawerVisit}
             validateTrigger={['onBlur']}
-            onVisibleChange={props.handleSetModalVisit}
+            onVisibleChange={props.handleSetDrawerVisit}
             initialValues={{ ...props.record, isCrop: 0 }}
             onFinish={values => handleFinish(values).then(() => true)}
         >
@@ -88,6 +87,7 @@ export const CreateModalForm: React.FC<{
                 setFieldsValue={(fileList: UploadFile[]) => formRef.current?.setFieldsValue({ banner: fileList })}
             />
             <ProFormCascader
+                width="sm"
                 name="path"
                 hasFeedback
                 label="上级栏目"
@@ -98,8 +98,8 @@ export const CreateModalForm: React.FC<{
                         value: 'id',
                         label: 'cname',
                     },
-                    allowClear: true,
                     showSearch: true,
+                    allowClear: false,
                     changeOnSelect: true,
                     onChange: (value: any) => setPid(value.at(-1)),
                     displayRender: (labels: string[]) => labels[labels.length - 1],
@@ -147,7 +147,9 @@ export const CreateModalForm: React.FC<{
                 tooltip="栏目列表/详情模板"
                 rules={[{ required: true, message: '请选择栏目标识' }]}
                 fieldProps={{
-                    defaultValue: 1,
+                    showSearch: true,
+                    allowClear: false,
+                    placeholder: '请选择模型标识',
                     options: props.module.map(item => ({ label: item.name, value: item.id })),
                 }}
             />
@@ -187,6 +189,6 @@ export const CreateModalForm: React.FC<{
                 ]}
                 fieldProps={{ autoSize: { minRows: 4, maxRows: 6 }, maxLength: 100, showCount: true }}
             />
-        </ModalForm>
+        </DrawerForm>
     );
 };
