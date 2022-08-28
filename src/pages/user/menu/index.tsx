@@ -118,9 +118,9 @@ export default () => {
         };
         await saveMenu(post).then(res => {
             setExpandByClick(true);
-            res?.msg && message.success(res.msg);
+            res?.success && message.success(res.msg);
             // prettier-ignore
-            res?.status && waitTime(2000).then(() => ref.current?.reload());
+            res?.success && waitTime(2000).then(() => ref.current?.reload());
         });
     };
     /* 展开/收缩状态 */

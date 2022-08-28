@@ -28,9 +28,9 @@ export const CreateClient: React.FC<{
     /** 处理onFinish事件 */
     const handleFinish = async (data: tableDataItem) => {
         await saveClient({ ...data, id: props?.record?.id ?? null }).then(res => {
-            res?.msg && message.success(res.msg);
+            res?.success && message.success(res.msg);
             // 延时重载列表数据
-            res?.status && waitTime(2000).then(() => props.reloadTable());
+            res?.success && waitTime(2000).then(() => props.reloadTable());
         });
     };
     return (

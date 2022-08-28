@@ -56,8 +56,8 @@ export default () => {
     // 处理刷新地区缓存
     const handleRefreshCache = (data: { key: string }) => {
         refreshCache(data).then(res => {
-            res?.msg && message.success(res.msg);
-            res?.status && waitTime(2000).then(() => ref.current?.reload());
+            res?.success && message.success(res.msg);
+            res?.success && waitTime(2000).then(() => ref.current?.reload());
         });
     };
 
@@ -65,13 +65,13 @@ export default () => {
     const handleOnSave = async (data: regionDataItem) => {
         await saveRegion(data)
             .then(res => {
-                res?.msg && message.success(res.msg);
-                res?.status && message.info('正在刷新缓存...');
+                res?.success && message.success(res.msg);
+                res?.success && message.info('正在刷新缓存...');
                 // prettier-ignore
-                res?.status
+                res?.success
                     && refreshCache({ key: 'region' }).then(status => {
-                        status?.msg && message.success(status.msg);
-                        waitTime(2000).then(() => ref.current?.reload());
+                        status?.success && message.success(status.msg);
+						status?.success && waitTime(2000).then(() => ref.current?.reload());
                     });
             })
             .finally(() => setExpandByClick(true));
@@ -99,14 +99,14 @@ export default () => {
             content: record instanceof Array ? `${titles.slice(0, 3).join('，')} 等 ${titles.length} 个地区` : `${record.name} 这个地区`,
             async onOk() {
                 await remove({ id: ids }).then(res => {
-                    res?.msg && message.success(res.msg);
-                    res?.status && message.info('正在刷新缓存...');
+                    res?.success && message.success(res.msg);
+                    res?.success && message.info('正在刷新缓存...');
                     record instanceof Array && ref.current?.clearSelected!();
                     // prettier-ignore
-                    res?.status
+                    res?.success
                         && refreshCache({ key: 'region' }).then(status => {
-                            status?.msg && message.success(status.msg);
-                            waitTime(2000).then(() => ref.current?.reload());
+                            status?.success && message.success(status.msg);
+							status?.success && waitTime(2000).then(() => ref.current?.reload());
                         });
                 });
             },

@@ -73,7 +73,7 @@ export default () => {
                 // @ts-ignore
                 await remove({ id: record.id || ids }).then(res => {
                     ref.current?.reload();
-                    res?.msg && message.success(res.msg);
+                    res?.success && message.success(res.msg);
                     // 只在多选的情况下清除已选择的项
                     record instanceof Array && ref.current?.clearSelected!();
                 });

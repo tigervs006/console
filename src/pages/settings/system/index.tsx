@@ -54,7 +54,7 @@ export default () => {
             }
         }
         await saveConfig(post).then(res => {
-            res?.msg && message.success(res.msg);
+            res?.success && message.success(res.msg);
         });
     };
 

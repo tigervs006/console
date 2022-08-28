@@ -49,9 +49,9 @@ export default () => {
             content: content,
             id: history.location.query?.id ?? '0',
         }).then(res => {
-            res?.msg && message.success(res.msg);
+            res?.success && message.success(res.msg);
             /* 延时跳转到列表页 */
-            res?.status && waitTime(2000).then(() => history.push({ pathname: '/product/list' }));
+            res?.success && waitTime(2000).then(() => history.push({ pathname: '/product/list' }));
         });
     };
     /* 处理Request请求 */

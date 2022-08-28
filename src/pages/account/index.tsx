@@ -38,7 +38,7 @@ export default () => {
         // @ts-ignore
         await saveUser({ ...data, scene: 'signle', id: userInfo?.id }).then(res => {
             refresh(); // 刷新全局初始化数据
-            res?.msg && message.success(res.msg);
+            res?.success && message.success(res.msg);
         });
     };
     return (

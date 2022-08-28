@@ -36,7 +36,7 @@ export const RecordSwitch: React.FC<{
         setLoadings(true);
         await postData(props.url, { id: record.id, [fieldKey]: checked ? 1 : 0 }).then(res => {
             setLoadings(false);
-            res?.msg && message.success(res.msg);
+            res?.success && message.success(res.msg);
         });
     };
     return (

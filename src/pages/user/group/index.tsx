@@ -89,7 +89,7 @@ export default () => {
     /* 处理单行编辑保存 */
     const handleOnSave = async (data: groupDataItem) => {
         await saveGroup(data).then(res => {
-            res?.msg && message.success(res.msg);
+            res?.success && message.success(res.msg);
             waitTime(1500).then(() => ref.current?.reload());
         });
     };

@@ -31,7 +31,7 @@ export const CreateModalForm: React.FC<{
             pid: pid ?? props?.record?.pid,
         };
         await saveChannel(post).then(res => {
-            res?.msg && message.success(res.msg);
+            res?.success && message.success(res.msg);
             props.setExpandByClick(true);
             /* 延时重载列表数据 */
             waitTime(2000).then(() => props.reloadTable());

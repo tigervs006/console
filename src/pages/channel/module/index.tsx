@@ -34,8 +34,8 @@ export default () => {
     /* 处理单行编辑保存 */
     const handleOnSave = async (data: moduleDataItem) => {
         await saveModule(data).then(res => {
-            res?.msg && message.success(res.msg);
-            res?.status && waitTime(2000).then(() => ref.current?.reload());
+            res?.success && message.success(res.msg);
+            res?.success && waitTime(2000).then(() => ref.current?.reload());
         });
     };
     /* 处理单个/批量删除 */
@@ -61,7 +61,7 @@ export default () => {
             content: record instanceof Array ? `${titles.slice(0, 3).join('，')} 等 ${titles.length} 个模型` : `${record.name} 这个模型`,
             async onOk() {
                 await removeModule({ id: ids }).then(res => {
-                    res?.msg && message.success(res.msg);
+                    res?.success && message.success(res.msg);
                     record instanceof Array && ref.current?.clearSelected!();
                     res?.success && waitTime(2000).then(() => ref.current?.reload());
                 });
@@ -120,8 +120,9 @@ export default () => {
                     const rowData: moduleDataItem
 						= formRef.current?.getRowData!(editableKeys.toString())
                     /* 只有rowData的id为字符串时自动设置nid、ctl_name的值 */
-                    'string' === typeof rowData.id &&
-                        formRef.current?.setRowData!(editableKeys.toString(), {
+                    // prettier-ignore
+                    'string' === typeof rowData.id
+                        && formRef.current?.setRowData!(editableKeys.toString(), {
                             nid: pinyin,
                             ctl_name: pinyin.toLowerCase().replace(/( |^)[a-z]/g, L => L.toUpperCase()),
                         });

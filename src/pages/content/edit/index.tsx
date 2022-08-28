@@ -73,9 +73,9 @@ export default () => {
                 author: data?.author ?? localStorage.getItem('user'),
             }),
         ).then(res => {
-            res?.msg && message.success(res.msg);
+            res?.success && message.success(res.msg);
             // 延时跳转到列表页
-            res?.status && waitTime(2000).then(() => history.push({ pathname: '/content/list' }));
+            res?.success && waitTime(2000).then(() => history.push({ pathname: '/content/list' }));
         });
     };
 
