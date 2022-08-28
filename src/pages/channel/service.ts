@@ -1,6 +1,6 @@
 /** @format */
 
-import type { tableDataItem } from './data';
+import type { moduleDataItem, tableDataItem } from './data';
 import { getData, postData } from '@/services/ant-design-pro/api';
 
 // 新增/编辑栏目
@@ -13,7 +13,7 @@ export const fetchData = (params: API.PageParams) => getData('/channel/list', pa
 export const remove = (data: Record<'id', number | number[]>) => postData('/channel/del', data);
 
 // 新增/编辑栏目
-export const saveModule = (data: tableDataItem) => postData('/module/save', data);
+export const saveModule = (data: moduleDataItem) => postData('/module/save', data);
 
 // 获取栏目列表
 export const fetchModule = (params: API.PageParams) => getData('/module/list', params);
