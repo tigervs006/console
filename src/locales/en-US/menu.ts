@@ -53,6 +53,8 @@ export default {
     'menu.content.edit': 'Document Edit',
     'menu.content.list': 'Document List',
     'menu.channel': 'Channel',
+    'menu.channel.list': 'Channel List',
+    'menu.channel.module': 'Channel Modules',
     'menu.settings': 'Settings',
     'menu.settings.system': 'Config',
     'menu.settings.region': 'Region',
