@@ -1,5 +1,14 @@
 /** @format */
 
+export type moduleDataItem = {
+    nid?: string;
+    name?: string;
+    status?: number;
+    ctl_name?: string;
+    id?: number | string;
+    create_time?: string;
+};
+
 export type tableDataItem = {
     sort?: number;
     name?: string;
