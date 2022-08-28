@@ -7,7 +7,7 @@ import { EditableProTable } from '@ant-design/pro-table';
 import { Button, message, Modal, Space, Table } from 'antd';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
 import { randomString, zh2Pinyin, waitTime } from '@/extra/utils';
-import { fetchModule, removeModule, saveModule } from '../service';
+import { removeModule, fetchModule, saveModule } from '../service';
 import type { EditableFormInstance, ActionType, ProColumns } from '@ant-design/pro-table';
 import { QuestionCircleOutlined, DeleteOutlined, PlusOutlined, EditOutlined } from '@ant-design/icons';
 
