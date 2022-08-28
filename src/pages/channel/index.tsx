@@ -185,7 +185,7 @@ export default () => {
         },
         {
             width: 150,
-            title: '栏目英文',
+            title: '栏目别名',
             dataIndex: 'name',
             tooltip: '作为网站伪静态URL',
         },

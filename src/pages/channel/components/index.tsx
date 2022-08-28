@@ -130,13 +130,13 @@ export const CreateModalForm: React.FC<{
             <ProFormText
                 hasFeedback
                 name="name"
-                label="栏目英文"
-                tooltip="伪静态URL地址需要"
-                placeholder="请输入栏目英文名"
+                label="栏目别名"
+                tooltip="作为伪静态URL"
+                placeholder="请输入栏目别名"
                 fieldProps={{ maxLength: 20, showCount: true }}
                 rules={[
-                    { required: true, message: '请输入栏目英文名' },
-                    { type: 'string', pattern: /^\w+$/, message: '栏目英文名只能是字母、数字和下划线的组合' },
+                    { required: true, message: '请输入栏目别名' },
+                    { type: 'string', pattern: /^\w+$/, message: '栏目别名只能是字母、数字和下划线的组合' },
                 ]}
             />
             <ProFormText
