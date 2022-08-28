@@ -1,13 +1,13 @@
 /** @format */
 
-import type { tableDataItem } from '../data';
-import { fetchData, remove } from '../service';
 import { CreateModalForm } from '../components';
 import React, { useRef, useState } from 'react';
 import { ProTable } from '@ant-design/pro-table';
-import { useAccess, useModel, Access } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
+import { fetchModule, fetchData, remove } from '../service';
 import { Button, message, Modal, Space, Table } from 'antd';
+import type { moduleDataItem, tableDataItem } from '../data';
+import { useRequest, useAccess, useModel, Access } from 'umi';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
 import { queryChildId, queryParentPath, recursiveQuery } from '@/extra/utils';
@@ -34,6 +34,8 @@ export default () => {
     const { setUploadList } = useModel('file', ret => ({
         setUploadList: ret.setUploadList,
     }));
+    /* 模型列表 */
+    const [module, setModule] = useState<moduleDataItem[]>([]);
     /* ModalForm 状态 */
     const [modalVisit, setModalVisit] = useState<boolean>(false);
     /* 存放子项的id */
@@ -50,6 +52,11 @@ export default () => {
     const [channelData, setChannelData] = useState<tableDataItem[]>([]);
     /* ActionType */
     const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
+
+    /* 获取模型列表 */
+    useRequest(fetchModule, {
+        onSuccess: (res: { list: moduleDataItem[] }) => setModule(res?.list),
+    });
 
     /* 处理栏目编辑 */
     const handleEdit = (record: tableDataItem, e: React.MouseEvent<HTMLElement, MouseEvent> | undefined) => {
@@ -185,9 +192,18 @@ export default () => {
         },
         {
             width: 150,
-            title: '栏目别名',
+            title: '栏目标识',
             dataIndex: 'name',
             tooltip: '作为网站伪静态URL',
+        },
+        {
+            width: 150,
+            title: '模型标识',
+            dataIndex: 'nid',
+            tooltip: '栏目列表/详情模板',
+            render: (_, record) => {
+                return module.map(item => item.id === record.nid && item.name);
+            },
         },
         {
             width: 100,
@@ -200,11 +216,6 @@ export default () => {
             readonly: true,
             title: '创建时间',
             dataIndex: 'create_time',
-        },
-        {
-            readonly: true,
-            title: '更新时间',
-            dataIndex: 'update_time',
         },
         {
             width: 100,
@@ -315,6 +326,7 @@ export default () => {
                 }}
             />
             <CreateModalForm
+                module={module}
                 record={modalValues}
                 modalVisit={modalVisit}
                 isCreateChannel={isCreate}

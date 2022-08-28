@@ -10,6 +10,7 @@ export type moduleDataItem = {
 };
 
 export type tableDataItem = {
+    nid?: number;
     sort?: number;
     name?: string;
     cname?: string;

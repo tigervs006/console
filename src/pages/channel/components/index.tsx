@@ -1,19 +1,20 @@
 /** @format */
 
 import { message } from 'antd';
-import type { tableDataItem } from '../data';
 import React, { useRef, useState } from 'react';
 import { waitTime, zh2Pinyin } from '@/extra/utils';
 import { fetchData, saveChannel } from '../service';
 import type { UploadFile } from 'antd/es/upload/interface';
 import type { ProFormInstance } from '@ant-design/pro-form';
+import type { moduleDataItem, tableDataItem } from '../data';
 import { UploadAdapter } from '@/pages/components/UploadAdapter';
-import { ProFormCascader, ProFormTextArea, ProFormText, ModalForm } from '@ant-design/pro-form';
+import { ProFormCascader, ProFormTextArea, ProFormSelect, ProFormText, ModalForm } from '@ant-design/pro-form';
 
 export const CreateModalForm: React.FC<{
     modalVisit: boolean;
     record: tableDataItem;
     reloadTable: () => void;
+    module: moduleDataItem[];
     isCreateChannel: boolean;
     setExpandByClick: (value: boolean) => void;
     handleSetModalVisit: (value: boolean) => void;
@@ -130,7 +131,7 @@ export const CreateModalForm: React.FC<{
             <ProFormText
                 hasFeedback
                 name="name"
-                label="栏目别名"
+                label="栏目标识"
                 tooltip="作为伪静态URL"
                 placeholder="请输入栏目别名"
                 fieldProps={{ maxLength: 20, showCount: true }}
@@ -138,6 +139,17 @@ export const CreateModalForm: React.FC<{
                     { required: true, message: '请输入栏目别名' },
                     { type: 'string', pattern: /^\w+$/, message: '栏目别名只能是字母、数字和下划线的组合' },
                 ]}
+            />
+            <ProFormSelect
+                hasFeedback
+                name="nid"
+                label="模型标识"
+                tooltip="栏目列表/详情模板"
+                rules={[{ required: true, message: '请选择栏目标识' }]}
+                fieldProps={{
+                    defaultValue: 1,
+                    options: props.module.map(item => ({ label: item.name, value: item.id })),
+                }}
             />
             <ProFormText
                 hasFeedback
