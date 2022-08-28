@@ -1,12 +1,12 @@
 /** @format */
 
-import type { tableDataItem } from './data';
-import { CreateModalForm } from './components';
+import type { tableDataItem } from '../data';
+import { fetchData, remove } from '../service';
+import { CreateModalForm } from '../components';
 import React, { useRef, useState } from 'react';
 import { ProTable } from '@ant-design/pro-table';
 import { useAccess, useModel, Access } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
-import { fetchData, remove } from '@/pages/channel/service';
 import { Button, message, Modal, Space, Table } from 'antd';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
