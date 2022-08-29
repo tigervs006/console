@@ -61,7 +61,6 @@ export const CreateDrawerForm: React.FC<{
             width={600}
             formRef={formRef}
             title={drawerTitle}
-            autoFocusFirstInput
             submitTimeout={2000}
             visible={props.drawerVisit}
             validateTrigger={['onBlur']}
@@ -100,14 +99,15 @@ export const CreateDrawerForm: React.FC<{
                     },
                     showSearch: true,
                     allowClear: false,
+                    defaultValue: [0],
                     changeOnSelect: true,
                     onChange: (value: any) => setPid(value.at(-1)),
                     displayRender: (labels: string[]) => labels[labels.length - 1],
                 }}
                 rules={[{ required: true, message: '请选择上级栏目' }]}
-                request={async params => await fetchData(params).then(res => defaultOption.concat(res?.data?.list))}
+                request={async params => await fetchData(params).then(res => defaultOption.concat(res?.data?.list ?? []))}
                 transform={(value: string | number[]) => (value instanceof Array ? { path: value.join('-') } : { path: value })}
-                convertValue={(value: string | number[]) => (value instanceof Array ? value : value?.split('-').map(Number) ?? [0])}
+                convertValue={(value: string | number[]) => (value instanceof Array ? value : value?.split('-')?.map(Number) ?? [0])}
             />
             <ProFormText
                 hasFeedback
