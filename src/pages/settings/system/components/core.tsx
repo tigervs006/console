@@ -89,7 +89,7 @@ export const CoreSettings: React.FC<{
                 </Col>
                 <Col xs={12} sm={12} lg={6}>
                     <ProFormSwitch
-                        label="日志记录"
+                        label="错误日志"
                         name={props.list.record_action_log?.name}
                         tooltip={props.list.record_action_log?.description}
                         transform={value => ({ record_action_log: value ? 1 : 0 })}
