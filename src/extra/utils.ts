@@ -106,7 +106,7 @@ export const randomString = (length: number): string => {
  * @param options 设置项
  */
 export const zh2Pinyin = (words: string, options?: Record<string, any>) => {
-    return pinyin(words, { ...options, removeNonZh: true, toneType: 'none', v: true });
+    return pinyin(words, { ...options, nonZh: 'consecutive', toneType: 'none', v: true });
 };
 
 /**
