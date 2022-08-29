@@ -86,7 +86,6 @@ export const CreateDrawerForm: React.FC<{
                 setFieldsValue={(fileList: UploadFile[]) => formRef.current?.setFieldsValue({ banner: fileList })}
             />
             <ProFormCascader
-                width="sm"
                 name="path"
                 hasFeedback
                 label="上级栏目"
@@ -102,7 +101,6 @@ export const CreateDrawerForm: React.FC<{
                     defaultValue: [0],
                     changeOnSelect: true,
                     onChange: (value: any) => setPid(value.at(-1)),
-                    displayRender: (labels: string[]) => labels[labels.length - 1],
                 }}
                 rules={[{ required: true, message: '请选择上级栏目' }]}
                 request={async params => await fetchData(params).then(res => defaultOption.concat(res?.data?.list ?? []))}
