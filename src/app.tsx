@@ -1,6 +1,6 @@
 /** @format */
 
-import { history, Link } from 'umi';
+import { history } from 'umi';
 import Footer from '@/components/Footer';
 import { sortDesc } from '@/extra/utils';
 import { message, Button, Result } from 'antd';
@@ -10,13 +10,11 @@ import type { RequestOptionsInit } from 'umi-request';
 import defaultSettings from '../config/defaultSettings';
 import type { MenuDataItem } from '@ant-design/pro-layout';
 import type { RequestConfig, RunTimeLayoutConfig } from 'umi';
-import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 import { PageLoading, SettingDrawer } from '@ant-design/pro-layout';
 import type { Settings as LayoutSettings } from '@ant-design/pro-layout';
 import { currentUser as queryCurrentUser, currentUserMenu as queryUserMenu } from './services/ant-design-pro/api';
 
 const loginPath: string = '/login';
-const isDev = process.env.NODE_ENV === 'development';
 
 /** 获取用户信息比较慢的时候会展示一个 loading */
 export const initialStateConfig = {
@@ -63,18 +61,6 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
             }
         },
         menuDataRender: () => loopMenuItem(initialState?.userMenuItem ?? []),
-        links: isDev
-            ? [
-                  <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
-                      <LinkOutlined />
-                      <span>OpenAPI 文档</span>
-                  </Link>,
-                  <Link to="/~docs" key="docs">
-                      <BookOutlined />
-                      <span>业务组件文档</span>
-                  </Link>,
-              ]
-            : [],
         /* 自定义 403 页面 */
         unAccessible: (
             <Result
