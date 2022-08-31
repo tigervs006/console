@@ -31,32 +31,25 @@ export async function getInitialState(): Promise<{
     currentUser?: API.CurrentUser;
     settings?: Partial<LayoutSettings>;
 }> {
-    /* 获取当前用户信息 */
-    const fetchUserInfo = async (params: { id: string | null }) => await queryCurrentUser(params).then(res => res.data?.info);
+    /* 判断登录状态 */
+    const isLogin: boolean = !!localStorage?.getItem('uid');
+    /* 获取当前UID */
+    const uid: string = localStorage?.getItem('uid') ?? '0';
     /* 获取当前用户菜单 */
     const fetchUserMenu = async () => await queryUserMenu().then(res => res?.data?.list.sort(sortDesc('sort')));
-    if (loginPath === history.location.pathname) {
-        return { settings: defaultSettings };
-    }
+    /* 获取当前用户信息 */
+    const fetchUserInfo = async (params: { id: string }) => await queryCurrentUser(params).then(res => res?.data?.info ?? {});
     return {
         settings: defaultSettings,
-        userMenuItem: await fetchUserMenu(),
-        currentUser: await fetchUserInfo({ id: localStorage.getItem('uid') }),
+        userMenuItem: isLogin && (await fetchUserMenu()),
+        currentUser: await fetchUserInfo({ id: uid }),
     };
 }
 
 /* 设置全局layout */
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
     return {
-        pwa: false,
-        layout: 'mix',
-        headerHeight: 48,
-        navTheme: 'light',
-        fixSiderbar: true,
-        fixedHeader: false,
-        contentWidth: 'Fluid',
-        primaryColor: '#1890ff',
-        menuHeaderRender: undefined,
+        ...initialState?.settings,
         footerRender: () => <Footer />,
         rightContentRender: () => <RightContent />,
         waterMarkProps: {
@@ -102,8 +95,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
                     {children}
                     {!props.location?.pathname?.includes('/login') && (
                         <SettingDrawer
-                            disableUrlParams
                             enableDarkTheme
+                            disableUrlParams
                             settings={initialState?.settings}
                             onSettingChange={settings => {
                                 setInitialState!(preInitialState => ({
@@ -116,7 +109,6 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
                 </>
             );
         },
-        logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
     };
 };
 
