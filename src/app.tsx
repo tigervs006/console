@@ -21,9 +21,6 @@ export const initialStateConfig = {
     loading: <PageLoading />,
 };
 
-/* 判断登录状态 */
-const isLogin: boolean = !!localStorage?.getItem('uid');
-
 /**
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
  * */
@@ -32,6 +29,8 @@ export async function getInitialState(): Promise<{
     currentUser?: API.CurrentUser;
     settings?: Partial<LayoutSettings>;
 }> {
+    /* 判断登录状态 */
+    const isLogin: boolean = !!localStorage?.getItem('uid');
     /* 获取当前UID */
     const uid: string = localStorage?.getItem('uid') ?? '0';
     /* 获取当前用户信息 */
@@ -55,8 +54,11 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
             content: initialState?.currentUser?.name,
         },
         onPageChange: () => {
+            const { location } = history;
             /* 如果没有登录，重定向到 login */
-            (!isLogin || !initialState?.currentUser) && history.push(loginPath);
+            if (!initialState?.currentUser && loginPath !== location.pathname) {
+                history.push(loginPath);
+            }
         },
         menuDataRender: () => loopMenuItem(initialState?.userMenuItem ?? []),
         /* 自定义 403 页面 */
