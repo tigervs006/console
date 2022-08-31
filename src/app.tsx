@@ -21,6 +21,9 @@ export const initialStateConfig = {
     loading: <PageLoading />,
 };
 
+/* 判断登录状态 */
+const isLogin: boolean = !!localStorage?.getItem('uid');
+
 /**
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
  * */
@@ -37,8 +40,8 @@ export async function getInitialState(): Promise<{
     const fetchUserMenu = async () => await queryUserMenu().then(res => res?.data?.list.sort(sortDesc('sort')));
     return {
         settings: defaultSettings,
-        userMenuItem: await fetchUserMenu(),
-        currentUser: await fetchUserInfo({ id: uid }),
+        userMenuItem: isLogin ? await fetchUserMenu() : undefined,
+        currentUser: isLogin ? await fetchUserInfo({ id: uid }) : undefined,
     };
 }
 
@@ -52,11 +55,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
             content: initialState?.currentUser?.name,
         },
         onPageChange: () => {
-            const { location } = history;
             /* 如果没有登录，重定向到 login */
-            if (!initialState?.currentUser && loginPath !== location.pathname) {
-                history.push(loginPath);
-            }
+            (!isLogin || !initialState?.currentUser) && history.push(loginPath);
         },
         menuDataRender: () => loopMenuItem(initialState?.userMenuItem ?? []),
         /* 自定义 403 页面 */
