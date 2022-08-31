@@ -29,17 +29,15 @@ export async function getInitialState(): Promise<{
     currentUser?: API.CurrentUser;
     settings?: Partial<LayoutSettings>;
 }> {
-    /* 判断登录状态 */
-    const isLogin: boolean = !!localStorage?.getItem('uid');
     /* 获取当前UID */
     const uid: string = localStorage?.getItem('uid') ?? '0';
+    /* 获取当前用户信息 */
+    const fetchUserInfo = async (params: { id: string }) => await queryCurrentUser(params).then(res => res?.data?.info);
     /* 获取当前用户菜单 */
     const fetchUserMenu = async () => await queryUserMenu().then(res => res?.data?.list.sort(sortDesc('sort')));
-    /* 获取当前用户信息 */
-    const fetchUserInfo = async (params: { id: string }) => await queryCurrentUser(params).then(res => res?.data?.info ?? {});
     return {
         settings: defaultSettings,
-        userMenuItem: isLogin && (await fetchUserMenu()),
+        userMenuItem: await fetchUserMenu(),
         currentUser: await fetchUserInfo({ id: uid }),
     };
 }
