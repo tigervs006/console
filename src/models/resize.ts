@@ -11,7 +11,7 @@ export default () => {
             case 1920 < innerWidth:
                 return { pageSize: 20, tableScroll: { x: 1300, y: 900 } };
             default:
-                return { pageSize: 15, tableScroll: undefined };
+                return { pageSize: 15, tableScroll: { x: 1300, y: 600 } };
         }
     });
 
@@ -25,7 +25,7 @@ export default () => {
                 setResize({ pageSize: 20, tableScroll: { x: 1300, y: 900 } });
                 break;
             default:
-                setResize({ pageSize: 15, tableScroll: undefined });
+                setResize({ pageSize: 15, tableScroll: { x: 1300, y: 600 } });
         }
     };
 
