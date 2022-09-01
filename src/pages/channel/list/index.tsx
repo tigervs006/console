@@ -180,6 +180,7 @@ export default () => {
     };
     const columns: ProColumns<tableDataItem>[] = [
         {
+            width: 150,
             title: '栏目名称',
             dataIndex: 'cname',
             tooltip: '作为网站导航栏显示',
@@ -213,6 +214,7 @@ export default () => {
             tooltip: '数值越大越靠前',
         },
         {
+            width: 150,
             readonly: true,
             title: '创建时间',
             dataIndex: 'create_time',
@@ -245,6 +247,7 @@ export default () => {
             render: (_, record) => <RecordSwitch record={record} url={'/channel/status'} />,
         },
         {
+            width: 250,
             title: '操作',
             valueType: 'option',
             render: (text, record) => [
@@ -271,7 +274,7 @@ export default () => {
                 columns={columns}
                 pagination={false}
                 request={tableData}
-                scroll={1920 >= window.innerWidth ? { x: 1300, y: 600 } : resize.tableScroll}
+                scroll={resize.tableScroll}
                 expandable={{
                     expandRowByClick: expandByClick,
                     expandedRowKeys: expandedRowKey,
