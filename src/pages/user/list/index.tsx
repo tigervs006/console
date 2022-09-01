@@ -136,20 +136,24 @@ export default () => {
 
     const columns: ProColumns<tableDataItem>[] = [
         {
+            width: 80,
             title: 'ID',
             search: false,
             dataIndex: 'id',
         },
         {
+            width: 150,
             title: '用户名',
             dataIndex: 'name',
         },
         {
+            width: 150,
             search: false,
             title: '中文名',
             dataIndex: 'cname',
         },
         {
+            width: 150,
             search: false,
             title: '用户组',
             dataIndex: ['group', 'name'],
@@ -165,33 +169,31 @@ export default () => {
             },
         },
         {
+            width: 150,
             title: '手机号',
             dataIndex: 'mobile',
         },
         {
+            width: 150,
             search: false,
             title: 'Email',
             dataIndex: 'email',
         },
         {
+            width: 150,
             search: false,
             title: 'ip地址',
             dataIndex: 'ipaddress',
             render: (_, record) => _int2ip(record.ipaddress as number),
         },
         {
+            width: 200,
             sorter: true,
             search: false,
             title: '最近登录',
             dataIndex: 'last_login',
             render: (_, record) =>
                 null === record.last_login ? '未曾登录' : moment(parseInt(record?.last_login ?? '1654092601') * 1000).format('YYYY-MM-DD hh:mm:ss'),
-        },
-        {
-            sorter: true,
-            search: false,
-            title: '创建时间',
-            dataIndex: 'create_time',
         },
         {
             title: '日期范围',
@@ -205,6 +207,7 @@ export default () => {
             },
         },
         {
+            width: 150,
             filters: true,
             search: false,
             onFilter: true,
@@ -225,8 +228,10 @@ export default () => {
             render: (_, record) => <RecordSwitch record={record} url={'/user/status'} echoChecked={'启用'} echoUnChecked={'禁用'} />,
         },
         {
+            width: 200,
             title: '操作',
             search: false,
+            fixed: 'right',
             render: (_, record) => [
                 <Space size={4} key="operation">
                     <Button size="small" shape="round" icon={<EditOutlined />} onClick={() => handleEdit(record)}>

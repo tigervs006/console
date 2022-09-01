@@ -1,15 +1,15 @@
 /** @format */
 
-import React, { useRef, useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useAccess, useModel, Access } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { regionDataItem } from '@/pages/settings/data';
 import { refreshCache } from '@/services/ant-design-pro/api';
-import { fetchRegionData, remove, saveRegion } from '../service';
-import { Button, message, Modal, Space, Table, TreeSelect } from 'antd';
-import { queryChildId, randomString, recursiveQuery, waitTime } from '@/extra/utils';
-import type { ActionType, EditableFormInstance, ProColumns } from '@ant-design/pro-table';
+import { fetchRegionData, saveRegion, remove } from '../service';
+import { TreeSelect, message, Button, Modal, Space, Table } from 'antd';
+import { recursiveQuery, queryChildId, randomString, waitTime } from '@/extra/utils';
+import type { EditableFormInstance, ActionType, ProColumns } from '@ant-design/pro-table';
 import {
     QuestionCircleOutlined,
     MinusCircleOutlined,
