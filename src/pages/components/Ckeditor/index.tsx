@@ -66,15 +66,15 @@ export default class Ckeditor extends React.Component<parentProps, stateData> {
                 const state = this.state;
                 return {
                     async upload() {
-                        const formData = new FormData();
                         const file = await loader.file;
+                        const formData = new FormData();
                         formData.append('file', file);
                         formData.append('path', state.uploadPath);
                         return new Promise<{ default: string }>(async (resolve, reject) => {
                             await request('/public/upload', { method: 'post', data: formData }).then(res => {
                                 if (res?.success) {
-                                    res?.msg && message.success(res?.msg);
-                                    resolve({ default: res?.data?.url ?? '' });
+                                    message.success(res?.msg);
+                                    resolve({ default: res?.data?.url });
                                 } else {
                                     reject();
                                 }
