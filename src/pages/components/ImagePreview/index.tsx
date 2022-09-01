@@ -4,7 +4,7 @@ import { Image } from 'antd';
 import type { ForwardedRef } from 'react';
 import { randomString } from '@/extra/utils';
 import type { UploadFile } from 'antd/es/upload/interface';
-import React, { forwardRef, useImperativeHandle, useState } from 'react';
+import React, { useImperativeHandle, forwardRef, useState } from 'react';
 
 export const ImagePreview: React.FC<{
     curIdx?: number;
