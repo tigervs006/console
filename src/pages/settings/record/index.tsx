@@ -146,9 +146,9 @@ export default () => {
                 actionRef={ref}
                 columns={columns}
                 request={tableData}
-                scroll={resize.tableScroll}
                 search={{ filterType: 'light' }}
                 pagination={{ pageSize: resize.pageSize, hideOnSinglePage: true }}
+                scroll={1920 < window.innerWidth ? resize.tableScroll : undefined}
             />
         </PageContainer>
     );
