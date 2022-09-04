@@ -193,9 +193,9 @@ export default () => {
         },
         {
             width: 150,
-            title: '栏目标识',
+            title: '栏目别名',
             dataIndex: 'name',
-            tooltip: '作为网站伪静态URL',
+            tooltip: '栏目别名',
         },
         {
             width: 150,
@@ -207,17 +207,19 @@ export default () => {
             },
         },
         {
+            width: 220,
+            readonly: true,
+            ellipsis: true,
+            title: '目录路径',
+            dataIndex: 'dirname',
+            tooltip: '栏目伪静态URL地址',
+        },
+        {
             width: 150,
             key: 'sort',
             title: '栏目排序',
             dataIndex: 'sort',
             tooltip: '数值越大越靠前',
-        },
-        {
-            width: 150,
-            readonly: true,
-            title: '创建时间',
-            dataIndex: 'create_time',
         },
         {
             width: 150,
