@@ -115,10 +115,13 @@ export const CreateDrawerForm: React.FC<{
                 fieldProps={{
                     maxLength: 20,
                     showCount: true,
-                    onBlur: e =>
-                        formRef.current?.setFieldsValue({
-                            name: zh2Pinyin(e.target.value).replace(/\s+/g, ''),
-                        }),
+                    onBlur: e => {
+                        /* 只有在新增栏目的情况下自动翻译中文 */
+                        !props?.record?.id &&
+                            formRef.current?.setFieldsValue({
+                                name: zh2Pinyin(e.target.value).replace(/\s+/g, ''),
+                            });
+                    },
                 }}
                 rules={[
                     { required: true, message: '请输入栏目名称' },
@@ -128,8 +131,8 @@ export const CreateDrawerForm: React.FC<{
             <ProFormText
                 hasFeedback
                 name="name"
-                label="栏目标识"
-                tooltip="作为伪静态URL"
+                label="栏目别名"
+                tooltip="栏目别名"
                 placeholder="请输入栏目别名"
                 fieldProps={{ maxLength: 20, showCount: true }}
                 rules={[
