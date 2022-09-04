@@ -198,6 +198,14 @@ export default () => {
             tooltip: '栏目别名',
         },
         {
+            width: 220,
+            readonly: true,
+            ellipsis: true,
+            title: '栏目路径',
+            dataIndex: 'fullpath',
+            tooltip: '栏目伪静态URL地址',
+        },
+        {
             width: 150,
             title: '模型标识',
             dataIndex: 'nid',
@@ -205,14 +213,6 @@ export default () => {
             render: (_, record) => {
                 return module.map(item => item.id === record.nid && item.name);
             },
-        },
-        {
-            width: 220,
-            readonly: true,
-            ellipsis: true,
-            title: '目录路径',
-            dataIndex: 'dirname',
-            tooltip: '栏目伪静态URL地址',
         },
         {
             width: 150,
