@@ -18,6 +18,8 @@ export type tableDataItem = {
     title?: string;
     pname?: string;
     banner?: string;
+    dirname?: string;
+    fullpath?: string;
     keywords?: string;
     id?: number | string;
     description?: string;
