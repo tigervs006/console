@@ -116,16 +116,15 @@ export const CreateDrawerForm: React.FC<{
                     maxLength: 20,
                     showCount: true,
                     onBlur: e => {
-                        /* 只有在新增栏目的情况下自动翻译中文 */
-                        !props?.record?.id &&
-                            formRef.current?.setFieldsValue({
+                        // prettier-ignore
+                        !props?.record?.id && formRef.current?.setFieldsValue({
                                 name: zh2Pinyin(e.target.value).replace(/\s+/g, ''),
                             });
                     },
                 }}
                 rules={[
                     { required: true, message: '请输入栏目名称' },
-                    { type: 'string', pattern: /^[\u4e00-\u9fa5]+$/, message: '栏目名称只能是中文' },
+                    { type: 'string', pattern: /^[\u4e00-\u9fa5\w]+$/, message: '栏目名称不得包含其它特殊符号' },
                 ]}
             />
             <ProFormText
