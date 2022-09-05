@@ -1,16 +1,16 @@
 /** @format */
 
-import { CreateDrawerForm } from '../components';
 import React, { useRef, useState } from 'react';
 import { ProTable } from '@ant-design/pro-table';
+import { CreateDrawerForm } from '../components';
 import { PageContainer } from '@ant-design/pro-layout';
 import { fetchModule, fetchData, remove } from '../service';
 import { Button, message, Modal, Space, Table } from 'antd';
 import type { moduleDataItem, tableDataItem } from '../data';
+import { queryChildId, recursiveQuery } from '@/extra/utils';
 import { useRequest, useAccess, useModel, Access } from 'umi';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
-import { queryChildId, queryParentPath, recursiveQuery } from '@/extra/utils';
 import {
     QuestionCircleOutlined,
     MinusCircleOutlined,
@@ -24,8 +24,6 @@ import {
 export default () => {
     const { confirm } = Modal;
     const access = useAccess();
-    /* selectOption */
-    const defaultOption = [{ id: 0, pid: 0, cname: '顶级栏目' }];
     /* 监听窗口变化 */
     const { resize } = useModel('resize', ret => ({
         resize: ret.resize,
@@ -48,8 +46,6 @@ export default () => {
     const [expandedRowKey, setExpandedRowKey] = useState<number[]>([]);
     /* DrawerForm 默认值 */
     const [drawerValues, setDrawerlValues] = useState<tableDataItem>({});
-    /* DrawerForm 栏目 */
-    const [channelData, setChannelData] = useState<tableDataItem[]>([]);
     /* ActionType */
     const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
 
@@ -92,8 +88,7 @@ export default () => {
     /* handlePreview */
     const handlePreview = (e: React.MouseEvent<HTMLElement>, record: tableDataItem) => {
         e.stopPropagation();
-        const path = queryParentPath(channelData, record.name as string);
-        if (path.length) window.open(`/${path.join('/')}`, 'preview');
+        window.open(`/${record.fullpath}`, 'preview');
     };
     /* 处理单个/批量删除栏目 */
     const handleDelete = (e: React.MouseEvent<HTMLElement>, record: tableDataItem | tableDataItem[]) => {
@@ -167,8 +162,6 @@ export default () => {
             const resList = res?.data?.list;
             /* 将对象中的path转换数组 */
             if (resList) pathToArray(resList);
-            /* 存储栏目在选择栏目时用 */
-            setChannelData(defaultOption.concat(resList));
             /* 把存在子项的栏目id存储起来 */
             setexpandedIds(recursiveQuery(resList));
             return {
