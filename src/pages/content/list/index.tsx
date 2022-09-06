@@ -3,11 +3,13 @@
 import moment from 'moment';
 import ProTable from '@ant-design/pro-table';
 import React, { useRef, useState } from 'react';
+import { getCate } from '@/pages/channel/service';
 import { useRequest, useModel, history } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
+import type { channelCate } from '@/pages/channel/data';
+import { fetchData, getAuthor, remove } from '../service';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
-import { fetchData, getAuthor, getChannel, remove } from '../service';
 import type { authorData, valueEnumData, tableDataItem, channelDataItem } from '../data';
 import { Typography, InputNumber, Modal, Button, message, Space, Table, Tag } from 'antd';
 import { EditOutlined, SearchOutlined, DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons';
@@ -23,17 +25,20 @@ export default () => {
     const [authorEnum, setAuthorEnum] = useState<valueEnumData>();
     /** loading */
     const [loading, setLoading] = useState<boolean>(false);
+    /** 商品分类 */
+    const [articleCate, setArticleCate] = useState<channelCate[]>([]);
     /** ActionType */
     const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
 
     /**获 取新闻栏目 */
     const channel = async () => {
-        return await getChannel().then(res =>
-            res?.data?.list.map((item: channelDataItem) => ({
+        return await getCate({ nid: 1 }).then(res => {
+            setArticleCate(res?.data?.list);
+            return res?.data?.list.map((item: channelDataItem) => ({
                 value: item.id,
                 label: item.cname,
-            })),
-        );
+            }));
+        });
     };
     /** 获取文档作者 */
     useRequest(getAuthor, {
@@ -60,7 +65,14 @@ export default () => {
      * @param record
      */
     const handlePreview = (record: tableDataItem) => {
-        window.open(`/industry/${record.id}.html`, 'preview');
+        let fullpath: string;
+        articleCate.forEach(item => {
+            if (item.id === record.cid) {
+                fullpath = item.fullpath;
+            }
+        });
+        // @ts-ignore
+        window.open(`/${fullpath}${record.id}.html`, 'preview');
     };
 
     /**

@@ -4,9 +4,11 @@ import moment from 'moment';
 import { useModel, history } from 'umi';
 import ProTable from '@ant-design/pro-table';
 import { randomString } from '@/extra/utils';
+import { fetchData, remove } from '../service';
 import React, { useRef, useState } from 'react';
+import { getCate } from '@/pages/channel/service';
 import { PageContainer } from '@ant-design/pro-layout';
-import { fetchData, getCate, remove } from '../service';
+import type { channelCate } from '@/pages/channel/data';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
 import type { channelDataItem, productDataItem } from '../data';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
@@ -37,17 +39,20 @@ export default () => {
     }));
     /** loading */
     const [loading, setLoading] = useState<boolean>(false);
+    /** 商品分类 */
+    const [productCate, setProductCate] = useState<channelCate[]>([]);
     /** ActionType */
     const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
 
     /* 商品分类 */
     const category = async () => {
-        return await getCate().then(res =>
-            res?.data?.list.map((item: channelDataItem) => ({
+        return await getCate({ nid: 2 }).then(res => {
+            setProductCate(res?.data?.list);
+            return res?.data?.list.map((item: channelDataItem) => ({
                 value: item.id,
                 label: item.cname,
-            })),
-        );
+            }));
+        });
     };
 
     /**
@@ -63,7 +68,14 @@ export default () => {
      * @param record
      */
     const handlePreview = (record: productDataItem) => {
-        window.open(`/product/${record.id}.html`, 'preview');
+        let fullpath: string;
+        productCate.forEach(item => {
+            if (item.id === record.pid) {
+                fullpath = item.fullpath;
+            }
+        });
+        // @ts-ignore
+        window.open(`/${fullpath}${record.id}.html`, 'preview');
     };
 
     /**

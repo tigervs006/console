@@ -4,6 +4,7 @@ import { message, Space } from 'antd';
 import { useModel, history } from 'umi';
 import { waitTime } from '@/extra/utils';
 import { useState, useRef } from 'react';
+import { getCate } from '@/pages/channel/service';
 import Ckeditor from '@/pages/components/Ckeditor';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { UploadFile } from 'antd/es/upload/interface';
@@ -11,7 +12,7 @@ import type { ProFormInstance } from '@ant-design/pro-form';
 import { InputTagList } from '@/pages/components/InputTagList';
 import type { productDataItem, channelDataItem } from '../data';
 import { UploadAdapter } from '@/pages/components/UploadAdapter';
-import { saveProduct, getCate, getInfo } from '@/pages/product/service';
+import { saveProduct, getInfo } from '@/pages/product/service';
 import { CheckCircleOutlined, FormOutlined, UndoOutlined } from '@ant-design/icons';
 import ProForm, { ProFormMoney, ProFormSelect, ProFormText, ProFormTextArea } from '@ant-design/pro-form';
 
@@ -29,7 +30,7 @@ export default () => {
     });
     /* 商品分类 */
     const category = async () => {
-        return await getCate().then(res =>
+        return await getCate({ nid: 2 }).then(res =>
             res?.data?.list.map((item: channelDataItem) => ({
                 value: item.id,
                 label: item.cname,

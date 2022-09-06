@@ -2,6 +2,7 @@
 
 import { history, useModel } from 'umi';
 import { useRef, useState } from 'react';
+import { getCate } from '@/pages/channel/service';
 import Ckeditor from '@/pages/components/Ckeditor';
 import { waitTime, extractImg } from '@/extra/utils';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -11,7 +12,7 @@ import type { ProFormInstance } from '@ant-design/pro-form';
 import { FormOutlined, UndoOutlined } from '@ant-design/icons';
 import { UploadAdapter } from '@/pages/components/UploadAdapter';
 import { notification, Button, Input, Space, message } from 'antd';
-import { getChannel, saveContent, getContent as getContents } from '@/pages/content/service';
+import { saveContent, getContent as getContents } from '@/pages/content/service';
 import ProForm, { ProFormDependency, ProFormCheckbox, ProFormTextArea, ProFormSelect, ProFormText } from '@ant-design/pro-form';
 
 export default () => {
@@ -26,7 +27,7 @@ export default () => {
     }));
     // 新闻栏目
     const channel = async () => {
-        return await getChannel().then(res =>
+        return await getCate({ nid: 1 }).then(res =>
             res.data?.list.map((item: channelDataItem) => ({
                 value: item.id,
                 label: item.cname,
