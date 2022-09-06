@@ -9,6 +9,9 @@ export const saveChannel = (data: tableDataItem) => postData('/channel/save', da
 // 获取栏目列表
 export const fetchData = (params: API.PageParams) => getData('/channel/list', params);
 
+//获取指定分类的栏目
+export const getCate = (params: { nid: number }) => getData('/channel/cate', params);
+
 // 单个/批量删除栏目
 export const remove = (data: Record<'id', number | number[]>) => postData('/channel/del', data);
 

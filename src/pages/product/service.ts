@@ -3,9 +3,6 @@
 import type { productDataItem } from './data';
 import { getData, postData } from '@/services/ant-design-pro/api';
 
-/* 获取商品分类 */
-export const getCate = () => getData('/product/cate');
-
 /* 获取商品信息 */
 export const getInfo = (params: { id?: string }) => getData('/product', params);
 

@@ -6,9 +6,6 @@ import { getData, postData } from '@/services/ant-design-pro/api';
 // 获取文档作者
 export const getAuthor = () => getData('/article/author');
 
-// 获取新闻栏目
-export const getChannel = () => getData('/article/channel');
-
 // 新增/编辑内容
 export const saveContent = (data: articleData) => postData('/article/save', data);
 
