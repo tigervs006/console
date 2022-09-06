@@ -124,7 +124,7 @@ export const CreateDrawerForm: React.FC<{
                 }}
                 rules={[
                     { required: true, message: '请输入栏目名称' },
-                    { type: 'string', pattern: /^[\u4e00-\u9fa5\w]+$/, message: '栏目名称不得包含其它特殊符号' },
+                    { type: 'string', pattern: /^[\u4e00-\u9fa5\w\-]+$/, message: '栏目名称不得包含其它特殊符号' },
                 ]}
             />
             <ProFormText
