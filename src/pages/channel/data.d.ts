@@ -9,6 +9,13 @@ export type moduleDataItem = {
     create_time?: string;
 };
 
+export interface channelCate {
+    id: number;
+    name: string;
+    cname: string;
+    fullpath: string;
+}
+
 export type tableDataItem = {
     nid?: number;
     sort?: number;
