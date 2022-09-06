@@ -33,7 +33,6 @@ export default {
     'pages.file.upload': '上传文件',
     'pages.file.delete': '删除文件',
     'pages.product.info': '商品信息',
-    'pages.product.cate': '商品分类',
     'pages.product.list': '商品列表',
     'pages.product.edit': '编辑商品',
     'pages.product.delete': '删除商品',
@@ -84,6 +83,7 @@ export default {
     'pages.channel.list': '栏目列表',
     'pages.channel.info': '栏目信息',
     'pages.channel.edit': '编辑栏目',
+    'pages.channel.cate': '栏目分类',
     'pages.channel.delete': '删除栏目',
     'pages.channel.status': '栏目状态',
     'pages.channel.create': '新建栏目',
@@ -99,5 +99,4 @@ export default {
     'pages.content.author': '文档作者',
     'pages.content.delete': '删除文档',
     'pages.content.status': '文档状态',
-    'pages.content.channel': '文档栏目',
 };
