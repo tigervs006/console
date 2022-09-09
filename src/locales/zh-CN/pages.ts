@@ -47,6 +47,8 @@ export default {
     'pages.settings.core': '核心配置',
     'pages.settings.record': '日志列表',
     'pages.settings.refresh_cache': '刷新缓存',
+    'pages.settings.refresh_token': '刷新令牌',
+    'pages.settings.clear_log': '清除日志',
     'pages.region.list': '地区列表',
     'pages.region.lists': '懒加载地区',
     'pages.region.edit': '编辑地区',

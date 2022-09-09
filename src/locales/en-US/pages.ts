@@ -47,6 +47,8 @@ export default {
     'pages.settings.core': 'Core Settings',
     'pages.settings.record': 'Logs List',
     'pages.settings.refresh_cache': 'Refresh Cache',
+    'pages.settings.refresh_token': 'Refresh Token',
+    'pages.settings.clear_log': 'Clear Log',
     'pages.region.list': 'Region List',
     'pages.region.lists': 'Region Lists',
     'pages.region.edit': 'Edit Region',
