@@ -21,6 +21,18 @@ export const CoreSettings: React.FC<{
             label: <b>48小时</b>,
         },
     };
+    const markDays: SliderMarks = {
+        1: '1天',
+        3: '3天',
+        7: '一周',
+        15: '半个月',
+        30: {
+            style: {
+                color: '#f50',
+            },
+            label: <b>一个月</b>,
+        },
+    };
     return (
         <ProForm
             layout="vertical"
@@ -156,6 +168,31 @@ export const CoreSettings: React.FC<{
                         return { token_expire_time: `+${value} hour` };
                     }
                     return { token_expire_time: value };
+                }}
+            />
+            <ProFormSlider
+                min={1}
+                max={30}
+                marks={markDays}
+                label="Refresh_token时效"
+                name={props.list.refresh_token_expire_time?.name}
+                initialValue={props.list.refresh_token_expire_time?.value}
+                tooltip={props.list.refresh_token_expire_time?.description}
+                fieldProps={{
+                    tooltipVisible: true,
+                    tipFormatter: value => `${value} 天`,
+                }}
+                convertValue={value => {
+                    if ('string' === typeof value) {
+                        return value.match(/\d+/);
+                    }
+                    return value;
+                }}
+                transform={value => {
+                    if ('number' === typeof value) {
+                        return { refresh_token_expire_time: `+${value} day` };
+                    }
+                    return { refresh_token_expire_time: value };
                 }}
             />
         </ProForm>
