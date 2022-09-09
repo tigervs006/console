@@ -25,7 +25,9 @@ declare namespace API {
                 uid: string;
                 name: string;
                 avatar?: string;
-                authorization: string;
+                expiresAt: number;
+                access_token: string;
+                refresh_token: string;
             };
         };
     };
