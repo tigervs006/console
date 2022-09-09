@@ -56,10 +56,11 @@ export default () => {
         await login({ ...values, type })
             .then(async res => {
                 const localItem = [
-                    { uid: res.data?.info?.uid ?? null },
-                    { user: res.data?.info?.name ?? null },
-                    { avatar: res.data?.info?.avatar ?? null },
-                    { Authorization: res.data?.info?.authorization ?? null },
+                    { uid: res.data?.info?.uid },
+                    { user: res.data?.info?.name },
+                    { expiresAt: res.data?.info?.expiresAt },
+                    { access_token: res.data?.info?.access_token },
+                    { refresh_token: res.data?.info?.refresh_token },
                 ];
                 /* 写入localStorage */
                 localItem.forEach(item => {
