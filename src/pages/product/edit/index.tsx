@@ -10,9 +10,9 @@ import { PageContainer } from '@ant-design/pro-layout';
 import type { UploadFile } from 'antd/es/upload/interface';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import { InputTagList } from '@/pages/components/InputTagList';
+import { saveProduct, getInfo } from '@/pages/product/service';
 import type { productDataItem, channelDataItem } from '../data';
 import { UploadAdapter } from '@/pages/components/UploadAdapter';
-import { saveProduct, getInfo } from '@/pages/product/service';
 import { CheckCircleOutlined, FormOutlined, UndoOutlined } from '@ant-design/icons';
 import ProForm, { ProFormMoney, ProFormSelect, ProFormText, ProFormTextArea } from '@ant-design/pro-form';
 
@@ -75,9 +75,11 @@ export default () => {
                 );
                 return { ...info, content: info?.detail?.content ?? null };
             });
+        } else {
+            // 清空fileList
+            setUploadList([]);
+            return {}; // 不是编辑状态直接返回空对象
         }
-        setUploadList([]);
-        return {};
     };
     return (
         <PageContainer>
@@ -90,7 +92,6 @@ export default () => {
                     xl: { span: 8 },
                 }}
                 initialValues={{
-                    pid: 1,
                     isCrop: 1,
                 }}
                 submitter={{
