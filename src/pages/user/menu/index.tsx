@@ -10,8 +10,8 @@ import { RecordSwitch } from '@/pages/components/RecordSwitch';
 import { useRequest, useAccess, useModel, useIntl, Access } from 'umi';
 import { fetchMenuData, saveMenu, remove, fetchRules } from '../service';
 import { Button, Cascader, message, Modal, Space, Table, Tag } from 'antd';
-import { queryChildId, randomString, recursiveQuery, waitTime } from '@/extra/utils';
 import type { EditableFormInstance, ActionType, ProColumns } from '@ant-design/pro-table';
+import { queryChildId, randomString, recursiveQuery, sortDesc, waitTime } from '@/extra/utils';
 import {
     QuestionCircleOutlined,
     MinusCircleOutlined,
@@ -147,6 +147,7 @@ export default () => {
         data.forEach((item: menuDataItem) => {
             // 拆分为数组后再转换成数字数组
             item.paths = 'string' === typeof item?.paths ? item?.paths!.split('-').map(Number) : item?.paths;
+            item.children && item.children.sort(sortDesc('type'));
             item.children && pathToArray(item.children);
         });
     };

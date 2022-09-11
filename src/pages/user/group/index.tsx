@@ -3,11 +3,11 @@
 import { IconMap } from '@/extra/iconsMap';
 import { TreeSelector } from '../components';
 import React, { useState, useRef } from 'react';
-import { randomString, waitTime } from '@/extra/utils';
 import { PageContainer } from '@ant-design/pro-layout';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { groupDataItem, menuDataItem } from '../data';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
+import { randomString, sortDesc, waitTime } from '@/extra/utils';
 import { Button, message, Modal, Space, Table, Tag } from 'antd';
 import { useRequest, useAccess, useModel, useIntl, Access } from 'umi';
 import { fetchGroupData, fetchMenuData, removeGroup, saveGroup } from '../service';
@@ -58,6 +58,7 @@ export default () => {
         return data.map((item: menuDataItem) => {
             item.name = intl.formatMessage({ id: item.locale });
             item.icon = item?.icon ? IconMap[item.icon as string] : menuType[item.type as number];
+            item.children && item.children.sort(sortDesc('type'));
             item.children && nameToLocale(item.children);
             return item;
         });
