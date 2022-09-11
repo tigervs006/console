@@ -21,7 +21,7 @@ export const waitTime = (time: number = 500) => {
  * @param property 属性
  */
 export const sortAsc = (property: string) => {
-    return function (a: number, b: number) {
+    return function (a: any, b: any) {
         const v1 = a[property];
         const v2 = b[property];
         return v1 - v2;
@@ -34,7 +34,7 @@ export const sortAsc = (property: string) => {
  * @param property 属性
  */
 export const sortDesc = (property: string) => {
-    return function (a: number, b: number) {
+    return function (a: any, b: any) {
         const v1 = a[property];
         const v2 = b[property];
         return v2 - v1;
