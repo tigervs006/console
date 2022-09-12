@@ -116,7 +116,7 @@ export default () => {
             >
                 <ProFormSelect
                     hasFeedback
-                    width="xs"
+                    width="sm"
                     name="pid"
                     label="分类"
                     request={category}

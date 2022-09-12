@@ -143,7 +143,7 @@ export default () => {
             >
                 <ProFormSelect
                     hasFeedback
-                    width="xs"
+                    width="sm"
                     name="cid"
                     label="栏目"
                     request={channel}
