@@ -57,35 +57,6 @@ export const CoreSettings: React.FC<{
             onFinish={values => props.handleFinish(values)}
         >
             <ProForm.Item>
-                <Divider orientation="left">简数采集</Divider>
-            </ProForm.Item>
-            <ProFormText.Password
-                hasFeedback
-                label="采集密码"
-                fieldProps={{
-                    readOnly: true,
-                    onFocus: e => e.target.removeAttribute('readonly'),
-                    onBlur: e => e.target.setAttribute('readonly', 'true'),
-                }}
-                name={props.list.keydata_password?.name}
-                getValueFromEvent={e => e.target.value.trim()}
-                initialValue={props.list.keydata_password?.value}
-                tooltip={props.list.keydata_password?.description}
-            />
-            <ProFormText.Password
-                hasFeedback
-                label="加密因子"
-                fieldProps={{
-                    readOnly: true,
-                    onFocus: e => e.target.removeAttribute('readonly'),
-                    onBlur: e => e.target.setAttribute('readonly', 'true'),
-                }}
-                name={props.list.keydata_encryption?.name}
-                getValueFromEvent={e => e.target.value.trim()}
-                initialValue={props.list.keydata_encryption?.value}
-                tooltip={props.list.keydata_encryption?.description}
-            />
-            <ProForm.Item>
                 <Divider orientation="left">系统安全</Divider>
             </ProForm.Item>
             <Row>
@@ -149,7 +120,7 @@ export const CoreSettings: React.FC<{
                 min={1}
                 max={48}
                 marks={marks}
-                label="Token时效"
+                label="Access_token时效"
                 name={props.list.token_expire_time?.name}
                 initialValue={props.list.token_expire_time?.value}
                 tooltip={props.list.token_expire_time?.description}
