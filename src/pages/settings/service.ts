@@ -18,4 +18,4 @@ export const remove = (data: Record<'id', number | number[]>) => postData('/regi
 export const fetchSystemLogs = (params: Record<string, any>) => getData('/system/record', params);
 
 /** 获取地区列表 */
-export const fetchRegionData = (params: Record<string, any>) => getData('/region/list', params, { useCache: true });
+export const fetchRegionData = (params: Record<string, any>) => getData('/region/list', params, { useCache: true, ttl: 0 });
