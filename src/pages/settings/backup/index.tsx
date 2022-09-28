@@ -1,12 +1,12 @@
 /** @format */
 
 import { useModel, request } from 'umi';
+import { TableSchema } from './components';
 import { ProTable } from '@ant-design/pro-table';
 import { PageContainer } from '@ant-design/pro-layout';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import React, { useEffect, useState, useRef } from 'react';
 import { Typography, message, Space, Table, Modal } from 'antd';
-import { TableSchema } from '@/pages/settings/backup/components';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import type { backupRecordDataItem, databaseDataItem } from '../data';
 import { download, optimize, deletes, backup, revert, repair } from '../service';
