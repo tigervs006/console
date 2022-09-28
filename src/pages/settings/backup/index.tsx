@@ -42,10 +42,11 @@ export default () => {
     /* 恢复备份文件参数 */
     const [revertParam, setRevertParam] = useState<{ gz?: number; part: number; time?: number; start?: number }>();
 
+    /* 恢复备份数据 */
     useEffect(() => {
-        /* 恢复备份数据 */
-        revertParam?.part &&
-            revert({ ...revertParam }).then(res => {
+        // prettier-ignore
+        revertParam?.part
+            && revert({ ...revertParam }).then(res => {
                 res?.success && message.success(res.msg);
                 res?.data && setRevertParam({ gz: res.data?.gz, part: res.data.part, start: res.data.start });
             });
@@ -107,8 +108,8 @@ export default () => {
             title: '当真要删除?',
             icon: <QuestionCircleOutlined />,
             cancelButtonProps: { shape: 'round' },
-            okButtonProps: { danger: true, shape: 'round' },
             content: `${record.filename} 这个备份文件`,
+            okButtonProps: { danger: true, shape: 'round' },
             async onOk() {
                 await deletes({ filename: record.time }).then(res => {
                     ref.current?.reload();
