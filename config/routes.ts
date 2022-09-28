@@ -138,11 +138,6 @@ export default [
             },
             {
                 access: 'authFilter',
-                path: '/settings/system',
-                component: './settings/system',
-            },
-            {
-                access: 'authFilter',
                 path: '/settings/region',
                 component: './settings/region',
             },
@@ -150,6 +145,16 @@ export default [
                 access: 'authFilter',
                 path: '/settings/record',
                 component: './settings/record',
+            },
+            {
+                access: 'authFilter',
+                path: '/settings/database',
+                component: './settings/backup',
+            },
+            {
+                access: 'authFilter',
+                path: '/settings/system',
+                component: './settings/system',
             },
         ],
     },
