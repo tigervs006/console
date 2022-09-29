@@ -61,6 +61,7 @@ export default {
     'menu.settings.region': '行政区域',
     'menu.settings.record': '操作日志',
     'menu.settings.database': '数据管理',
+    'menu.settings.attach': '附件管理',
     'menu.product': '商品管理',
     'menu.product.edit': '商品编辑',
     'menu.product.list': '商品列表',

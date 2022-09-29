@@ -147,6 +147,10 @@ export default [
                 component: './settings/record',
             },
             {
+                path: '/settings/attach',
+                component: './settings/attach',
+            },
+            {
                 access: 'authFilter',
                 path: '/settings/database',
                 component: './settings/backup',
