@@ -250,7 +250,10 @@ export const Directory: React.FC = () => {
                 rootClassName="customTree"
                 expandedKeys={expandedKeys}
                 autoExpandParent={autoExpandParent}
-                onSelect={key => setCurrentKey(key.toString())}
+                onSelect={(key, event) => {
+                    const { selected } = event;
+                    selected && setCurrentKey(key.toString());
+                }}
             />
         </>
     );
