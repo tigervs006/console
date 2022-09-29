@@ -119,7 +119,7 @@ export default () => {
         });
     };
 
-    const tabColumns: Record<string, ProColumns<backupRecordDataItem | databaseDataItem>[]> = {
+    const tabColumns: Record<string, ProColumns<backupRecordDataItem & databaseDataItem>[]> = {
         backup: [
             {
                 copyable: true,
@@ -155,7 +155,6 @@ export default () => {
                         <Link key="link_download" onClick={() => handleDownload(record as backupRecordDataItem)}>
                             下载
                         </Link>
-                        {/* @ts-ignore */}
                         <Link key="link_revert" type="warning" onClick={() => setRevertParam({ part: record.part, time: record.time })}>
                             恢复
                         </Link>
