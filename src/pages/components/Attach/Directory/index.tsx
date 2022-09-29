@@ -126,7 +126,9 @@ export const Directory: React.FC = () => {
                     overlay={() => menu(nodeData.key)}
                     getPopupContainer={(triggerNode: any) => triggerNode.parentNode}
                 >
-                    <EllipsisOutlined className="overlayDropDown" />
+                    <Text onClick={e => e?.stopPropagation()}>
+                        <EllipsisOutlined className="overlayDropDown" />
+                    </Text>
                 </Dropdown>
             </div>
         );
@@ -214,8 +216,9 @@ export const Directory: React.FC = () => {
                 const index = strTitle.indexOf(searchValue);
                 const beforeStr = strTitle.substring(0, index);
                 const afterStr = strTitle.slice(index + searchValue.length);
-                const title =
-                    index > -1 ? (
+                // prettier-ignore
+                const title
+                    = index > -1 ? (
                         <span>
                             {beforeStr}
                             <span className="site-tree-search-value">{searchValue}</span>
