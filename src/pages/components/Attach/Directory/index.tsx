@@ -8,7 +8,7 @@ import { EllipsisOutlined } from '@ant-design/icons';
 import type { MenuInfo } from 'rc-menu/lib/interface';
 import { Typography, Dropdown, message, Input, Menu, Tree } from 'antd';
 
-export const Directory: React.FC = () => {
+export const Directory: React.FC<{ defaultData: DataNode[] }> = props => {
     const { Search } = Input;
     const { Text } = Typography;
     const [searchValue, setSearchValue] = useState<string>('');
@@ -17,65 +17,6 @@ export const Directory: React.FC = () => {
     }));
     const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
     const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
-
-    const defaultData: DataNode[] = [
-        {
-            key: 'all',
-            title: '全部人类',
-        },
-        {
-            key: 'adult',
-            title: '成年人',
-            children: [
-                {
-                    key: 'man',
-                    title: '男人',
-                    children: [
-                        {
-                            key: 'father',
-                            title: '父亲',
-                        },
-                    ],
-                },
-                {
-                    key: 'woman',
-                    title: '女人',
-                    children: [
-                        {
-                            key: 'mother',
-                            title: '母亲',
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            key: 'juveniles',
-            title: '未成年人',
-            children: [
-                {
-                    key: 'boy',
-                    title: '男孩',
-                    children: [
-                        {
-                            key: 'son',
-                            title: '儿子',
-                        },
-                    ],
-                },
-                {
-                    key: 'girl',
-                    title: '女孩',
-                    children: [
-                        {
-                            key: 'daughter',
-                            title: '女儿',
-                        },
-                    ],
-                },
-            ],
-        },
-    ];
 
     /**
      * 处理点击事件
@@ -153,7 +94,7 @@ export const Directory: React.FC = () => {
         }
     };
     /* 执行展开树形数据 */
-    generateList(defaultData);
+    generateList(props.defaultData);
 
     /**
      * 获取父节点key
@@ -195,7 +136,7 @@ export const Directory: React.FC = () => {
         const newExpandedKeys = dataList
             .map(item => {
                 if (value && item.title.indexOf(value) > -1) {
-                    return getParentKey(item.key, defaultData);
+                    return getParentKey(item.key, props.defaultData);
                 }
                 return null;
             })
@@ -237,7 +178,7 @@ export const Directory: React.FC = () => {
                 };
             });
 
-        return loop(defaultData);
+        return loop(props.defaultData);
     }, [searchValue]);
 
     return (
