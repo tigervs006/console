@@ -113,7 +113,7 @@ export const CreateDrawerForm: React.FC<{
                 tooltip="显示在前端的栏目名称"
                 placeholder="请输入栏目名称"
                 fieldProps={{
-                    maxLength: 20,
+                    maxLength: 32,
                     showCount: true,
                     onBlur: e => {
                         // prettier-ignore
@@ -133,7 +133,7 @@ export const CreateDrawerForm: React.FC<{
                 label="栏目别名"
                 tooltip="栏目别名"
                 placeholder="请输入栏目别名"
-                fieldProps={{ maxLength: 20, showCount: true }}
+                fieldProps={{ maxLength: 50, showCount: true }}
                 rules={[
                     { required: true, message: '请输入栏目别名' },
                     { type: 'string', pattern: /^\w+$/, message: '栏目别名只能是字母、数字和下划线的组合' },
