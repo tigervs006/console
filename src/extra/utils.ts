@@ -160,3 +160,23 @@ export const queryParentPath = (data: Record<string, any>[], name: string, path:
     }
     return [];
 };
+
+/**
+ * 反向查询父级的ID
+ * @return Array
+ * @param func
+ * @param path
+ * @param treeData
+ */
+export const findParentId = (treeData: Record<string, any>[], func: (data: Record<string, any>) => boolean, path: number[] = []): number[] => {
+    for (const data of treeData) {
+        path.push(data.id);
+        if (func(data)) return path;
+        if (data.children) {
+            const findChildren = findParentId(data.children, func, path);
+            if (findChildren.length) return findChildren;
+        }
+        path.pop();
+    }
+    return [];
+};
