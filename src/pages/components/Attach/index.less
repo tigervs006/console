@@ -4,6 +4,7 @@
     padding: 16px;
 }
 .customTree {
+	min-height: 690px;
     border-right: 1px solid #eee;
     .ant-tree-treenode {
         width: 100%;
@@ -26,6 +27,44 @@
 .site-tree-search-value {
     color: #f50;
 }
+.ant-pro-checkcard-cover {
+	padding: unset !important;
+}
 .ant-tree-node-content-wrapper:hover .overlayDropDown {
     display: block;
+}
+.anticon > * {
+	line-height: 1;
+}
+.anticon svg {
+	display: inline-block;
+}
+.ant-image {
+	position: relative;
+	display: inline-block;
+}
+.ant-image-mask {
+	inset: 0;
+	opacity: 0;
+	cursor: pointer;
+	display: flex;
+	color: #fff;
+	position: absolute;
+	align-items: center;
+	justify-content: center;
+	transition: opacity .3s;
+	background: rgba(0,0,0,.5);
+}
+.ant-image-mask:hover {
+	opacity: 1;
+}
+.ant-image-mask-info {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+.ant-image-mask-info .anticon {
+	color: white;
+	margin-inline-end: 4px;
+	--webkit-margin-end: 4px;
 }
