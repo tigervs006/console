@@ -2,21 +2,49 @@
 
 import '../index.less';
 import { useModel } from 'umi';
+import { info, remove } from '../services';
+import { CreateDirectory } from './modules';
+import type { cateDataItem } from '../data';
 import type { DataNode } from 'antd/es/tree';
-import React, { useState, useMemo } from 'react';
 import { EllipsisOutlined } from '@ant-design/icons';
 import type { MenuInfo } from 'rc-menu/lib/interface';
+import React, { useState, useMemo, useRef } from 'react';
 import { Typography, Dropdown, message, Input, Menu, Tree } from 'antd';
 
-export const Directory: React.FC<{ defaultData: DataNode[] }> = props => {
+export const Directory: React.FC = () => {
     const { Search } = Input;
     const { Text } = Typography;
+    const [path, setPath] = useState<number[]>();
+    const childRef: React.ForwardedRef<any> = useRef();
+    const [cateInfo, setCateInfo] = useState<cateDataItem>();
     const [searchValue, setSearchValue] = useState<string>('');
-    const { setCurrentKey } = useModel('attach', ret => ({
+    const { cateData, setCurrentKey } = useModel('attach', ret => ({
+        cateData: ret.cateData,
         setCurrentKey: ret.setCurrentKey,
     }));
+    const [modalVisit, setModalVisit] = useState<boolean>(false);
     const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
     const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
+
+    /**
+     * 获取父节点key
+     * @param key React.Key
+     * @param tree DataNode[]
+     */
+    const getParentKey = (key: React.Key, tree: cateDataItem[]): React.Key => {
+        let parentKey: React.Key;
+        for (let i = 0; i < tree.length; i++) {
+            const node = tree[i];
+            if (node.children) {
+                if (node.children.some(item => item.id === key)) {
+                    parentKey = node.id;
+                } else if (getParentKey(key, node.children)) {
+                    parentKey = getParentKey(key, node.children);
+                }
+            }
+        }
+        return parentKey!;
+    };
 
     /**
      * 处理点击事件
@@ -24,9 +52,44 @@ export const Directory: React.FC<{ defaultData: DataNode[] }> = props => {
      * @param event MenuInfo
      * @param tKey TreeNodeKey
      */
-    const onClick = (tKey: string, event: MenuInfo) => {
+    const onClick = (tKey: number, event: MenuInfo) => {
         const { key } = event;
-        message.info!(`Click on key ${key} ${tKey}`);
+        switch (key) {
+            case 'update':
+                info({ id: tKey }).then((res: Record<string, any>) => {
+                    setModalVisit(true);
+                    setCateInfo(res.data?.info);
+                });
+                break;
+            case 'delete':
+                remove({ id: tKey }).then((res: Record<string, any>) => {
+                    res?.success && message.success(res.msg);
+                });
+                break;
+            default:
+                childRef.current?.setPid(tKey);
+                if (tKey) {
+                    info({ id: tKey })
+                        .then((res: Record<string, any>) => {
+                            setCateInfo(undefined);
+                            /* 拆分为数组并过滤零值 */
+                            setPath(
+                                res?.data?.info.path
+                                    .split('-')
+                                    .map(Number)
+                                    .concat(tKey)
+                                    .filter((v: number) => v),
+                            );
+                        })
+                        .finally(() => {
+                            setModalVisit(true);
+                        });
+                } else {
+                    setPath(undefined);
+                    setModalVisit(true);
+                    setCateInfo(undefined);
+                }
+        }
     };
 
     /**
@@ -34,22 +97,22 @@ export const Directory: React.FC<{ defaultData: DataNode[] }> = props => {
      * @return JSX.Element
      * @param tKey string
      */
-    const menu = (tKey: string) => {
+    const menu = (tKey: number) => {
         const menuItem = [
             {
                 key: 'create',
-                label: '新增分类',
+                label: '新增目录',
             },
             {
                 key: 'update',
-                label: '编辑分类',
+                label: '编辑目录',
             },
             {
                 key: 'delete',
-                label: '删除分类',
+                label: '删除目录',
             },
         ];
-        return <Menu onClick={event => onClick(tKey, event)} items={'all' !== tKey ? menuItem : menuItem.splice(0, 1)} />;
+        return <Menu onClick={event => onClick(tKey, event)} items={0 != tKey ? menuItem : menuItem.splice(0, 1)} />;
     };
 
     /**
@@ -83,38 +146,18 @@ export const Directory: React.FC<{ defaultData: DataNode[] }> = props => {
      * @return void
      * @param data treeData
      */
-    const generateList = (data: DataNode[]) => {
+    const generateList = (data: cateDataItem[]) => {
         for (let i = 0; i < data.length; i++) {
             const node = data[i];
-            const { key, title } = node;
-            dataList.push({ key, title: title as string });
+            const { id, name } = node;
+            dataList.push({ key: id, title: name });
             if (node.children) {
                 generateList(node.children);
             }
         }
     };
     /* 执行展开树形数据 */
-    generateList(props.defaultData);
-
-    /**
-     * 获取父节点key
-     * @param key React.Key
-     * @param tree DataNode[]
-     */
-    const getParentKey = (key: React.Key, tree: DataNode[]): React.Key => {
-        let parentKey: React.Key;
-        for (let i = 0; i < tree.length; i++) {
-            const node = tree[i];
-            if (node.children) {
-                if (node.children.some(item => item.key === key)) {
-                    parentKey = node.key;
-                } else if (getParentKey(key, node.children)) {
-                    parentKey = getParentKey(key, node.children);
-                }
-            }
-        }
-        return parentKey!;
-    };
+    generateList(cateData);
 
     /**
      * 处理展开节点
@@ -136,7 +179,7 @@ export const Directory: React.FC<{ defaultData: DataNode[] }> = props => {
         const newExpandedKeys = dataList
             .map(item => {
                 if (value && item.title.indexOf(value) > -1) {
-                    return getParentKey(item.key, props.defaultData);
+                    return getParentKey(item.key, cateData);
                 }
                 return null;
             })
@@ -151,9 +194,9 @@ export const Directory: React.FC<{ defaultData: DataNode[] }> = props => {
      * @return DataNode[]
      */
     const treeData = useMemo(() => {
-        const loop = (data: DataNode[]): DataNode[] =>
+        const loop = (data: cateDataItem[]): DataNode[] =>
             data.map(item => {
-                const strTitle = item.title as string;
+                const strTitle = item.name;
                 const index = strTitle.indexOf(searchValue);
                 const beforeStr = strTitle.substring(0, index);
                 const afterStr = strTitle.slice(index + searchValue.length);
@@ -169,16 +212,15 @@ export const Directory: React.FC<{ defaultData: DataNode[] }> = props => {
                         <span>{strTitle}</span>
                     );
                 if (item.children) {
-                    return { title, key: item.key, children: loop(item.children) };
+                    return { title, key: item.id, children: loop(item.children) };
                 }
-
                 return {
                     title,
-                    key: item.key,
+                    key: item.id,
                 };
             });
 
-        return loop(props.defaultData);
+        return loop(cateData);
     }, [searchValue]);
 
     return (
@@ -193,8 +235,15 @@ export const Directory: React.FC<{ defaultData: DataNode[] }> = props => {
                 autoExpandParent={autoExpandParent}
                 onSelect={(key, event) => {
                     const { selected } = event;
-                    selected && setCurrentKey(key.toString());
+                    selected && setCurrentKey(Number(key.toString()));
                 }}
+            />
+            <CreateDirectory
+                path={path}
+                ref={childRef}
+                cateInfo={cateInfo}
+                modalVisit={modalVisit}
+                handleSetModalVisit={(status: boolean) => setModalVisit(status)}
             />
         </>
     );
