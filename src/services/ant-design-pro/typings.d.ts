@@ -118,9 +118,9 @@ declare namespace API {
     };
 
     type uploadComponents = {
+        size?: number;
         formName: string;
         formTitle: string;
-        fileSize?: number;
         maxUpload?: number;
         formLabel?: string;
         className?: string;
