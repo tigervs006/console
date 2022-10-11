@@ -48,7 +48,7 @@ export const CreateDirectory: React.FC<{
     /* 处理新增/编辑事件 */
     const handleOnFinsh = async (values: cateDataItem) => {
         // prettier-ignore
-        const data = !cateInfo
+        const data = !cateInfo?.id
 			? { ...values, pid: parent ?? 0 }
 			: { ...values, id: cateInfo.id, pid: parent ?? cateInfo.pid }
         // prettier-ignore
