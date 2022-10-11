@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import { useRequest } from 'umi';
 import type { cateDataItem } from '@/pages/components/Attach/data';
-import { cate as fetchCate } from '@/pages/components/Attach/services';
+import { cate as fetchCate, info as fetchInfo } from '@/pages/components/Attach/services';
 
-const defaultCateOptions = [
+const defaultCateOptions: cateDataItem[] & { disabled: boolean }[] = [
     {
         id: 0,
         pid: 0,
@@ -13,21 +13,33 @@ const defaultCateOptions = [
         name: '根目录',
         ename: 'root',
         disabled: true,
+        dirname: 'attach',
         create_time: '2022-10-10',
     },
 ];
 
 export default () => {
-    const [currentKey, setCurrentKey] = useState<number>(0);
+    /* 目录详情 */
+    const [cateInfo, setCateInfo] = useState<cateDataItem>();
+    /* 目录列表 */
     const [cateData, setCateData] = useState<cateDataItem[]>(defaultCateOptions);
-    useRequest(fetchCate, {
+    /* 自动获取目录列表 */
+    const { refresh } = useRequest(fetchCate, {
         defaultParams: [{ pid: 0 }],
-        onSuccess: (res: Record<string, any>) => setCateData(prev => prev.concat(res?.list)),
+        onSuccess: res => setCateData(defaultCateOptions.concat(res?.list)),
+    });
+    /* 手动获取目录详情 */
+    const { run: getInfo } = useRequest(fetchInfo, {
+        manual: true,
+        defaultParams: [{ id: 0 }],
+        onSuccess: res => setCateInfo({ ...res?.info, ...res?.info?.config }),
     });
     return {
+        getInfo,
+        refresh,
+        cateInfo,
         cateData,
-        currentKey,
         setCateData,
-        setCurrentKey,
+        setCateInfo,
     };
 };
