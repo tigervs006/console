@@ -1,5 +1,6 @@
 /** @format */
 
+import lodash from 'lodash';
 import { message } from 'antd';
 import { useModel } from 'umi';
 import { save } from '../../services';
@@ -33,7 +34,7 @@ export const CreateDirectory: React.FC<{
     const { refresh, cateInfo, cateData } = useModel('attach', ret => ({
         refresh: ret.refresh,
         cateInfo: ret.cateInfo,
-        cateData: ret.cateData,
+        cateData: lodash.cloneDeep(ret.cateData),
     }));
     /* requires */
     const [requires, setRequires] = useState<{
