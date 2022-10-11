@@ -2,29 +2,32 @@
 
 import '../index.less';
 import { useModel } from 'umi';
-import { info, remove } from '../services';
+import { remove } from '../services';
+import { waitTime } from '@/extra/utils';
 import { CreateDirectory } from './modules';
 import type { cateDataItem } from '../data';
 import type { DataNode } from 'antd/es/tree';
 import { EllipsisOutlined } from '@ant-design/icons';
 import type { MenuInfo } from 'rc-menu/lib/interface';
 import React, { useState, useMemo, useRef } from 'react';
-import { Typography, Dropdown, message, Input, Menu, Tree } from 'antd';
+import { Popconfirm, Typography, Dropdown, message, Input, Menu, Tree } from 'antd';
 
 export const Directory: React.FC = () => {
     const { Search } = Input;
     const { Text } = Typography;
     const [path, setPath] = useState<number[]>();
     const childRef: React.ForwardedRef<any> = useRef();
-    const [cateInfo, setCateInfo] = useState<cateDataItem>();
     const [searchValue, setSearchValue] = useState<string>('');
-    const { cateData, setCurrentKey } = useModel('attach', ret => ({
-        cateData: ret.cateData,
-        setCurrentKey: ret.setCurrentKey,
-    }));
     const [modalVisit, setModalVisit] = useState<boolean>(false);
     const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
     const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
+
+    const { getInfo, refresh, cateData, setCateInfo } = useModel('attach', ret => ({
+        refresh: ret.refresh,
+        getInfo: ret.getInfo,
+        cateData: ret.cateData,
+        setCateInfo: ret.setCateInfo,
+    }));
 
     /**
      * 获取父节点key
@@ -49,47 +52,50 @@ export const Directory: React.FC = () => {
     /**
      * 处理点击事件
      * @return void
-     * @param event MenuInfo
+     * @param e MenuInfo
      * @param tKey TreeNodeKey
      */
-    const onClick = (tKey: number, event: MenuInfo) => {
-        const { key } = event;
-        switch (key) {
-            case 'update':
-                info({ id: tKey }).then((res: Record<string, any>) => {
-                    setModalVisit(true);
-                    setCateInfo(res.data?.info);
-                });
+    const onClick = (e: MenuInfo, tKey: number) => {
+        switch (e.key) {
+            case 'update' /* 编辑目录 */:
+                waitTime().then(() => setModalVisit(true));
                 break;
-            case 'delete':
-                remove({ id: tKey }).then((res: Record<string, any>) => {
-                    res?.success && message.success(res.msg);
-                });
-                break;
-            default:
+            case 'create' /* 新增目录 */:
                 childRef.current?.setPid(tKey);
                 if (tKey) {
-                    info({ id: tKey })
-                        .then((res: Record<string, any>) => {
-                            setCateInfo(undefined);
-                            /* 拆分为数组并过滤零值 */
-                            setPath(
-                                res?.data?.info.path
-                                    .split('-')
-                                    .map(Number)
-                                    .concat(tKey)
-                                    .filter((v: number) => v),
-                            );
+                    waitTime()
+                        .then(() => {
+                            // @ts-ignore
+                            setCateInfo((pre: Pick<cateDataItem, 'path'>) => {
+                                /* 过滤零值并添加自身作为path */
+                                return {
+                                    path: pre?.path
+                                        .split('')
+                                        .map(Number)
+                                        .concat(tKey)
+                                        .filter(v => v),
+                                };
+                            });
                         })
-                        .finally(() => {
-                            setModalVisit(true);
-                        });
+                        .finally(() => setModalVisit(true));
                 } else {
                     setPath(undefined);
                     setModalVisit(true);
                     setCateInfo(undefined);
                 }
+                break;
+            default: /* 删除目录 */
         }
+    };
+
+    /* 确认删除目录 */
+    const confirmDelete = async (tKey: number) => {
+        return await remove({ id: tKey })
+            .then(res => {
+                res?.success && message.success(res.msg);
+                return res?.success;
+            })
+            .finally(() => refresh());
     };
 
     /**
@@ -109,10 +115,15 @@ export const Directory: React.FC = () => {
             },
             {
                 key: 'delete',
-                label: '删除目录',
+                label: (
+                    <Popconfirm title="确认删除该目录?" onConfirm={() => confirmDelete(tKey)}>
+                        <Text>删除目录</Text>
+                    </Popconfirm>
+                ),
             },
         ];
-        return <Menu onClick={event => onClick(tKey, event)} items={0 != tKey ? menuItem : menuItem.splice(0, 1)} />;
+        /* 根目录默认不显示编辑及删除目录菜单 */
+        return <Menu onClick={e => onClick(e, tKey)} items={0 != tKey ? menuItem : menuItem.splice(0, 1)} />;
     };
 
     /**
@@ -221,7 +232,7 @@ export const Directory: React.FC = () => {
             });
 
         return loop(cateData);
-    }, [searchValue]);
+    }, [cateData, searchValue]);
 
     return (
         <>
@@ -235,16 +246,11 @@ export const Directory: React.FC = () => {
                 autoExpandParent={autoExpandParent}
                 onSelect={(key, event) => {
                     const { selected } = event;
-                    selected && setCurrentKey(Number(key.toString()));
+                    /* 根目录不需要重新获取 */
+                    selected && 0 < key[0] && getInfo({ id: key[0] as number });
                 }}
             />
-            <CreateDirectory
-                path={path}
-                ref={childRef}
-                cateInfo={cateInfo}
-                modalVisit={modalVisit}
-                handleSetModalVisit={(status: boolean) => setModalVisit(status)}
-            />
+            <CreateDirectory path={path} ref={childRef} modalVisit={modalVisit} handleSetModalVisit={(status: boolean) => setModalVisit(status)} />
         </>
     );
 };
