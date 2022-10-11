@@ -90,8 +90,7 @@ export const Directory: React.FC = () => {
     /* 确认删除目录 */
     const confirmDelete = async (tKey: number) => {
         // prettier-ignore
-        return await remove({ id: tKey })
-            .then(res => {
+        return await remove({ id: tKey }).then(res => {
                 res?.success && message.success(res.msg);
                 return res?.success;
             }).finally(() => refresh());
