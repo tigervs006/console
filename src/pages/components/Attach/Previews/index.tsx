@@ -1,14 +1,13 @@
 /** @format */
 
-import '../index.less';
 import { useModel } from 'umi';
-import type { UploadProps } from 'antd';
 import React, { useState, useRef } from 'react';
 import { CheckCard } from '@ant-design/pro-card';
 import { ImagePreview } from '../../ImagePreview';
+import { UploadAdapter } from '../../UploadAdapter';
 import type { UploadFile } from 'antd/es/upload/interface';
 import { DeleteOutlined, EyeOutlined } from '@ant-design/icons';
-import { Typography, Pagination, TreeSelect, message, Button, Upload, Space, Row, Col } from 'antd';
+import { Typography, Pagination, TreeSelect, message, Button, Space, Row, Col } from 'antd';
 
 export const Previews: React.FC = () => {
     const { Text } = Typography;
@@ -17,30 +16,12 @@ export const Previews: React.FC = () => {
     const previewRef: React.ForwardedRef<any> = useRef();
     /* 设置预览索引 */
     const [currentId, setCurrentId] = useState<number>(0);
-    const { cateData, currentKey } = useModel('attach', ret => ({
+    const { cateData, cateInfo } = useModel('attach', ret => ({
         cateData: ret.cateData,
-        currentKey: ret.currentKey,
+        cateInfo: ret.cateInfo,
     }));
     /* 设置选中的值 */
     const [checkedItem, setCheckedItem] = useState<string[]>([]);
-    console.log('currentKey', currentKey);
-    const uploadProps: UploadProps = {
-        name: 'file',
-        action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-        headers: {
-            authorization: 'authorization-text',
-        },
-        onChange(info) {
-            if (info.file.status !== 'uploading') {
-                console.log(info.file, info.fileList);
-            }
-            if (info.file.status === 'done') {
-                message.success!(`${info.file.name} file uploaded successfully`);
-            } else if (info.file.status === 'error') {
-                message.error!(`${info.file.name} file upload failed.`);
-            }
-        },
-    };
 
     /* 处理删除事件 */
     const handleDelete = (e: any, id: number | string) => {
@@ -78,10 +59,8 @@ export const Previews: React.FC = () => {
         <Row>
             <Col span={24}>
                 <Space size="middle" style={{ marginBottom: '1rem' }}>
-                    <Upload {...uploadProps}>
-                        <Button>上传图像</Button>
-                    </Upload>
-                    <Button onClick={() => alert(`删除图像 ${checkedItem}`)} disabled={!checkedItem.length}>
+                    <UploadAdapter {...cateInfo?.config} formTitle={'上传图像'} extraData={{ path: cateInfo?.dirname ?? 'attach' }} />
+                    <Button icon={<DeleteOutlined />} disabled={!checkedItem.length} onClick={() => message.info(`删除图像 ${checkedItem}`)}>
                         删除图像
                     </Button>
                     <TreeSelect
