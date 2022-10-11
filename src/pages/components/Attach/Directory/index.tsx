@@ -57,10 +57,12 @@ export const Directory: React.FC = () => {
      */
     const onClick = (e: MenuInfo, tKey: number) => {
         switch (e.key) {
-            case 'update' /* 编辑目录 */:
+            // prettier-ignore
+            case 'update': /* 编辑目录 */
                 waitTime().then(() => setModalVisit(true));
                 break;
-            case 'create' /* 新增目录 */:
+            // prettier-ignore
+            case 'create': /* 新增目录 */
                 childRef.current?.setPid(tKey);
                 if (tKey) {
                     waitTime()
@@ -69,11 +71,8 @@ export const Directory: React.FC = () => {
                             setCateInfo((pre: Pick<cateDataItem, 'path'>) => {
                                 /* 过滤零值并添加自身作为path */
                                 return {
-                                    path: pre?.path
-                                        .split('')
-                                        .map(Number)
-                                        .concat(tKey)
-                                        .filter(v => v),
+									// prettier-ignore
+                                    path: pre?.path.split('').map(Number).concat(tKey).filter(v => v),
                                 };
                             });
                         })
@@ -90,12 +89,12 @@ export const Directory: React.FC = () => {
 
     /* 确认删除目录 */
     const confirmDelete = async (tKey: number) => {
+        // prettier-ignore
         return await remove({ id: tKey })
             .then(res => {
                 res?.success && message.success(res.msg);
                 return res?.success;
-            })
-            .finally(() => refresh());
+            }).finally(() => refresh());
     };
 
     /**
@@ -187,14 +186,13 @@ export const Directory: React.FC = () => {
      */
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
-        const newExpandedKeys = dataList
-            .map(item => {
+        // prettier-ignore
+        const newExpandedKeys = dataList.map(item => {
                 if (value && item.title.indexOf(value) > -1) {
                     return getParentKey(item.key, cateData);
                 }
                 return null;
-            })
-            .filter((item: any, i: any, self: any) => item && self.indexOf(item) === i);
+            }).filter((item: any, i: any, self: any) => item && self.indexOf(item) === i);
         setSearchValue(value);
         setAutoExpandParent(true);
         setExpandedKeys(newExpandedKeys as React.Key[]);
@@ -212,16 +210,13 @@ export const Directory: React.FC = () => {
                 const beforeStr = strTitle.substring(0, index);
                 const afterStr = strTitle.slice(index + searchValue.length);
                 // prettier-ignore
-                const title
-                    = index > -1 ? (
-                        <span>
+                const title = index > -1
+						? <span>
                             {beforeStr}
                             <span className="site-tree-search-value">{searchValue}</span>
                             {afterStr}
                         </span>
-                    ) : (
-                        <span>{strTitle}</span>
-                    );
+                     	: <span>{strTitle}</span>;
                 if (item.children) {
                     return { title, key: item.id, children: loop(item.children) };
                 }
