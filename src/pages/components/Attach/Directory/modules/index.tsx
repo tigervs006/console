@@ -51,11 +51,10 @@ export const CreateDirectory: React.FC<{
         const data = !cateInfo
 			? { ...values, pid: parent ?? 0 }
 			: { ...values, id: cateInfo.id, pid: parent ?? cateInfo.pid }
-        await save(data)
-            .then(res => {
+        // prettier-ignore
+        await save(data).then(res => {
                 res?.success && message.success(res.msg);
-            })
-            .finally(() => refresh());
+            }).finally(() => refresh());
     };
 
     return (
@@ -119,9 +118,10 @@ export const CreateDirectory: React.FC<{
                     showCount: true,
                     onBlur: e => {
                         // prettier-ignore
-                        !cateInfo?.id && formRef.current?.setFieldsValue({
-							ename: zh2Pinyin(e.target.value).replace(/\s+/g, ''),
-						});
+                        !cateInfo?.id && formRef.current?.setFieldValue(
+							'ename',
+							zh2Pinyin(e.target.value).replace(/\s+/g, '')
+						);
                     },
                 }}
                 rules={[
@@ -133,11 +133,10 @@ export const CreateDirectory: React.FC<{
                 hasFeedback
                 name="ename"
                 label="目录别名"
-                tooltip="不支持自定义"
-                placeholder="由系统自动生成"
+                tooltip="系统自动生成"
+                placeholder="请输入目录别名"
                 fieldProps={{
                     maxLength: 64,
-                    readOnly: true,
                     showCount: true,
                 }}
                 rules={[
@@ -191,11 +190,11 @@ export const CreateDirectory: React.FC<{
                                 name="size"
                                 label="文件大小"
                                 tooltip="上传文件的大小"
-                                rules={[{ required: requires.limitRequire, message: '请设置文件大小值' }]}
                                 fieldProps={{
                                     precision: 0,
                                     addonAfter: 'MB',
                                 }}
+                                rules={[{ required: requires.limitRequire, message: '请设置文件大小值' }]}
                             />
                         );
                     } else {
@@ -212,6 +211,11 @@ export const CreateDirectory: React.FC<{
                                 name="astricts"
                                 label="限制宽高"
                                 tooltip="默认单位为px"
+                                fieldProps={{
+                                    precision: 0,
+                                    addonAfter: 'PX',
+                                    onBlur: e => e.stopPropagation(),
+                                }}
                                 rules={[
                                     () => ({
                                         validator(_, value) {
@@ -222,11 +226,6 @@ export const CreateDirectory: React.FC<{
                                         },
                                     }),
                                 ]}
-                                fieldProps={{
-                                    precision: 0,
-                                    addonAfter: 'PX',
-                                    onBlur: e => e.stopPropagation(),
-                                }}
                             />,
                         ];
                     } else {
@@ -243,6 +242,10 @@ export const CreateDirectory: React.FC<{
                                 name="aspects"
                                 label="裁剪比例"
                                 tooltip="需为正整数"
+                                fieldProps={{
+                                    precision: 0,
+                                    onBlur: e => e.stopPropagation(),
+                                }}
                                 rules={[
                                     () => ({
                                         validator(_, value) {
@@ -253,10 +256,6 @@ export const CreateDirectory: React.FC<{
                                         },
                                     }),
                                 ]}
-                                fieldProps={{
-                                    precision: 0,
-                                    onBlur: e => e.stopPropagation(),
-                                }}
                             />,
                         ];
                     } else {
