@@ -3,48 +3,42 @@
 import 'antd/es/slider/style';
 import { useModel } from 'umi';
 import ImgCrop from 'antd-img-crop';
-import React, { useState, useRef } from 'react';
-import type { NamePath } from 'antd/es/form/interface';
+import React, { useState } from 'react';
 import { removeFile } from '@/services/ant-design-pro/api';
-import { ImagePreview } from '@/pages/components/ImagePreview';
-import ProForm, { ProFormDependency } from '@ant-design/pro-form';
-import { Button, message, Modal, notification, Upload } from 'antd';
-import type { UploadFile, UploadListType } from 'antd/es/upload/interface';
-import type { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
-import { CloudUploadOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { notification, message, Upload, Button, Modal } from 'antd';
+import type { UploadListType, UploadFile } from 'antd/es/upload/interface';
+import type { UploadChangeParam, UploadProps, RcFile } from 'antd/es/upload';
+import { QuestionCircleOutlined, CloudUploadOutlined, LoadingOutlined } from '@ant-design/icons';
 
 export const UploadAdapter: React.FC<
-    API.uploadComponents & {
-        cropAspect?: number;
+    Omit<API.uploadComponents, 'formName'> & {
+        crop?: number;
         cropQuality?: number;
-        setFieldsValue: (fileList: UploadFile[]) => void;
+        aspects?: [number, number];
+        astricts?: [number, number];
     }
 > = props => {
     const { confirm } = Modal;
     /* 是否裁剪 */
-    const isCrop: NamePath[] = ['isCrop'];
+    const isCrop: number = props?.crop ?? 0;
     /* 大小限制 */
-    const fileSize: number = props?.fileSize ?? 2;
+    const fileSize: number = props?.size ?? 0;
     /* 数量限制 */
     const maxUpload: number = props?.maxUpload ?? 1;
     /* 裁剪质量 */
     const quality: number = props?.cropQuality ?? 0.6;
-    /* 裁剪比例 */
-    const aspect: number = props?.cropAspect ?? 1 / 1!;
     /* 文件多选 */
     const multiple: boolean = props?.multiple ?? false;
-    /* 图片宽度 */
-    const imageWidth: number = props?.imageWidth ?? 750;
-    /* 图片预览 */
-    const previewRef: React.ForwardedRef<any> = useRef();
-    /* 图片高度 */
-    const imageHeight: number = props?.imageHeight ?? 422;
-    /* 预览索引 */
-    const [curId, setCurId] = useState<number>(0);
     /* 按钮文字 */
     const uploadText: string = props?.formTitle ?? '上传图像';
     /* 展示方式 */
-    const listType: UploadListType = props?.listType ?? 'picture-card';
+    const listType: UploadListType = props?.listType ?? 'text';
+    /* loading */
+    const [loading, setLoading] = useState<boolean>(false);
+    /* 图片宽度 */
+    const imageWidth: number = props?.astricts ? props.astricts[0] : 0;
+    /* 图片高度 */
+    const imageHeight: number = props?.astricts ? props.astricts[1] : 0;
     /* 上传路径 */
     const uploadUrl: string = props?.uploadUrl ?? '/console/public/upload';
     /* 文件后缀 */
@@ -54,25 +48,10 @@ export const UploadAdapter: React.FC<
         uploadList: ret.uploadList,
         setUploadList: ret.setUploadList,
     }));
+    /* 裁剪比例 */
+    const aspect: number = props?.aspects ? props.aspects[0] / props.aspects[1] : 1;
     /* 文件格式 */
     const fileType: string[] = props?.fileType ?? ['image/png', 'image/jpeg', 'image/gif'];
-
-    /* 上传按钮 */
-    const showButton = () => {
-        return maxUpload !== uploadList.length ? (
-            <Button type="link" icon={<CloudUploadOutlined />}>
-                {uploadText}
-            </Button>
-        ) : null;
-    };
-
-    /* 处理图片预览 */
-    const handlePreview = (file: UploadFile) => {
-        uploadList.forEach((item, index) => {
-            item.uid === file.uid && setCurId(index);
-        });
-        previewRef.current?.imagePreview(true);
-    };
 
     /* 处理文件删除状态 */
     const handleRemove: UploadProps['onRemove'] = (file: UploadFile) => {
@@ -110,37 +89,37 @@ export const UploadAdapter: React.FC<
         const status = info.file.status;
         switch (status) {
             case 'uploading':
-                message.info!('File is uploading...');
-                break;
-            case 'done':
-                const uploadMsg = file.response.msg;
-                const uploadStatus = file.response.success;
-                /* 设置表单字段值 */
-                props.setFieldsValue(fileList.concat([{ ...file?.response?.data, status: 'done' }]).filter(item => !item?.response));
-                /* 设置uploadList值 */
-                setUploadList(pre => pre.concat([{ ...file?.response?.data, status: 'done' }]).filter(item => !item?.response));
-                if (uploadStatus) {
-                    message.success!(uploadMsg);
-                } else {
-                    setUploadList([]);
-                    message.error!(uploadMsg);
-                }
+                setLoading(true);
+                message.info!(`File ${file.name} is uploading...`);
                 break;
             case 'success':
-                message.success!('File uploaded successfully');
+                message.success!(`File ${file.name} uploaded successfully`);
                 break;
             case 'removed':
                 setUploadList(fileList);
-                props.setFieldsValue(fileList);
-                message.success!('File removed successfully');
+                message.success!(`File ${file.name} removed successfully`);
                 break;
             case 'error':
                 notification.error({
                     message: 'Error',
-                    description: file?.response?.msg ?? 'File upload failed',
+                    description: file?.response?.msg ?? `File ${file.name} upload failed`,
                 });
                 break;
+            case 'done':
+                setLoading(false);
+                const uploadMsg = file.response.msg;
+                const uploadStatus = file.response.success;
+                /* 设置uploadList值 */
+                setUploadList(pre => pre.concat([{ ...file?.response?.data, status: 'done' }]).filter(item => !item?.response));
+                if (uploadStatus) {
+                    message.success!(`File ${file.name} ${uploadMsg}`);
+                } else {
+                    setUploadList([]);
+                    message.error!(`File ${file.name} ${uploadMsg}`);
+                }
+                break;
             case undefined:
+                setLoading(false);
                 /* 这里很重要 */
                 setUploadList([]);
                 break;
@@ -153,7 +132,6 @@ export const UploadAdapter: React.FC<
     const handleBeforeUpload = (file: RcFile) => {
         const UNIT = 1024 * 1024;
         const curType = file.type;
-        const MAX_FILE_SIZE = fileSize;
         return new Promise<boolean>((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file as Blob);
@@ -168,10 +146,10 @@ export const UploadAdapter: React.FC<
                             description: `请上传格式为 ${fileType} 的文件`,
                         });
                         reject();
-                    } else if (file.size > MAX_FILE_SIZE * UNIT) {
+                    } else if (fileSize && file.size > fileSize * UNIT) {
                         notification.error({
                             message: '文件大小不符合要求',
-                            description: `单个文件不得超过 ${MAX_FILE_SIZE}M`,
+                            description: `单个文件不得超过 ${fileSize}M`,
                         });
                         reject();
                     } else if (imageWidth > image.width || imageHeight > image.height) {
@@ -191,11 +169,13 @@ export const UploadAdapter: React.FC<
     /* uploadProps */
     const uploadProps = {
         action: uploadUrl,
+        disabled: loading,
         multiple: multiple,
         accept: acceptFile,
         listType: listType,
         maxCount: maxUpload,
         fileList: uploadList,
+        showUploadList: false,
         data: props.extraData,
         onRemove: handleRemove,
         onChange: handleChange,
@@ -208,7 +188,6 @@ export const UploadAdapter: React.FC<
             showInfo: false,
         },
         className: props?.className,
-        onPreview: (file: UploadFile) => handlePreview(file),
         headers: { Authorization: localStorage.getItem('access_token') || '' },
         // prettier-ignore
         beforeUpload: (file: RcFile) => handleBeforeUpload(file).then((res: boolean) => res).catch(() => false),
@@ -216,27 +195,18 @@ export const UploadAdapter: React.FC<
 
     return (
         <>
-            <ProForm.Item
-                name={props.formName}
-                label={props?.formLabel}
-                tooltip={props?.formTooltip}
-                rules={props?.validateRules}
-                transform={value => props?.useTransForm?.(value) ?? { [props.formName]: value }}
-            >
-                <ProFormDependency name={isCrop} ignoreFormListField>
-                    {depValues => {
-                        if (depValues.isCrop) {
-                            return (
-                                <ImgCrop grid quality={quality} aspect={aspect} modalTitle="裁剪图像">
-                                    <Upload {...uploadProps}>{showButton()}</Upload>
-                                </ImgCrop>
-                            );
-                        }
-                        return <Upload {...uploadProps}>{showButton()}</Upload>;
-                    }}
-                </ProFormDependency>
-            </ProForm.Item>
-            <ImagePreview curIdx={curId} ref={previewRef} imgList={uploadList} />
+            {/* prettier-ignore */}
+            {isCrop ? (
+                <ImgCrop grid quality={quality} aspect={aspect} modalTitle="裁剪图像">
+                    <Upload {...uploadProps}>
+                        <Button icon={loading ? <LoadingOutlined /> : <CloudUploadOutlined />}>{loading ? 'Uploading' : uploadText}</Button>
+                    </Upload>
+                </ImgCrop>
+            ) : (
+                <Upload {...uploadProps}>
+                    <Button icon={loading ? <LoadingOutlined /> : <CloudUploadOutlined />}>{loading ? 'Uploading' : uploadText}</Button>
+                </Upload>
+            )}
         </>
     );
 };
