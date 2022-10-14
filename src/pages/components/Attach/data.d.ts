@@ -19,3 +19,15 @@ export type cateDataItem = {
     };
     children?: cateDataItem[];
 };
+
+export type attachDataItem = {
+    id: number;
+    pid: number;
+    name: string;
+    path: string;
+    type: string;
+    storage: number;
+    real_path: string;
+    static_path: string;
+    create_time: string;
+};
