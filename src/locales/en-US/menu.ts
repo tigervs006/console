@@ -60,7 +60,7 @@ export default {
     'menu.settings.region': 'Region',
     'menu.settings.record': 'Record',
     'menu.settings.database': 'Database',
-    'menu.settings.attach': 'Attach Manager',
+    'menu.settings.attach': 'File Manager',
     'menu.product': 'Product',
     'menu.product.edit': 'Product Edit',
     'menu.product.list': 'Product List',
