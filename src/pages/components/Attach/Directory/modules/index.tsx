@@ -48,9 +48,9 @@ export const CreateDirectory: React.FC<{
     /* 处理新增/编辑事件 */
     const handleOnFinsh = async (values: cateDataItem) => {
         // prettier-ignore
-        const data = !cateInfo?.id
+        const data = props?.path
 			? { ...values, pid: parent ?? 0 }
-			: { ...values, id: cateInfo.id, pid: parent ?? cateInfo.pid }
+			: { ...values, id: cateInfo?.id ?? 0, pid: parent ?? cateInfo?.pid ?? 0 }
         // prettier-ignore
         await save(data).then(res => {
                 res?.success && message.success(res.msg);
@@ -84,8 +84,8 @@ export const CreateDirectory: React.FC<{
             validateTrigger={['onBlur']}
             onVisibleChange={props.handleSetModalVisit}
             title={cateInfo?.id ? '编辑目录' : '新增目录'}
-            initialValues={cateInfo ?? { path: props?.path ?? [0] }}
             onFinish={values => handleOnFinsh(values).then(() => true)}
+            initialValues={props?.path ? { path: props.path } : cateInfo}
         >
             <ProFormCascader
                 name="path"
@@ -95,13 +95,13 @@ export const CreateDirectory: React.FC<{
                 rules={[{ required: true, message: '请选择上级附件目录' }]}
                 fieldProps={{
                     showSearch: true,
+                    changeOnSelect: true,
                     options: cateData.map(item => {
                         if (!item.id) {
                             item.disabled = false;
                         }
                         return item;
                     }),
-                    changeOnSelect: true,
                     onChange: (value: any) => setParent(value.at(-1)),
                     fieldNames: { label: 'name', value: 'id', children: 'children' },
                 }}
@@ -118,7 +118,7 @@ export const CreateDirectory: React.FC<{
                     showCount: true,
                     onBlur: e => {
                         // prettier-ignore
-                        !cateInfo?.id && formRef.current?.setFieldValue(
+                        props?.path && formRef.current?.setFieldValue(
 							'ename',
 							zh2Pinyin(e.target.value).replace(/\s+/g, '')
 						);
