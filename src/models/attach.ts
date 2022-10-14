@@ -26,7 +26,7 @@ export default () => {
     /* 目录列表 */
     const [cateData, setCateData] = useState<cateDataItem[]>(defaultCateOptions);
     /* 默认分页 */
-    const [pagination, setPagination] = useState<{ current: number; pageSize: number }>({ current: 1, pageSize: 32 });
+    const [pagination, setPagination] = useState<{ current: number; pageSize: number }>({ current: 1, pageSize: 24 });
     /* 自动获取目录列表 */
     const { refresh, loading } = useRequest(fetchCate, {
         defaultParams: [{ pid: 0 }],

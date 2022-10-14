@@ -215,8 +215,7 @@ export const Previews: React.FC = () => {
                     size="small"
                     total={totals}
                     hideOnSinglePage
-                    defaultCurrent={1}
-                    defaultPageSize={32}
+                    defaultPageSize={24}
                     style={{ float: 'right' }}
                     current={pagination.current}
                     pageSize={pagination.pageSize}
