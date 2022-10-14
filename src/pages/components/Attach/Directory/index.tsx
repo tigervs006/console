@@ -3,14 +3,13 @@
 import '../index.less';
 import { useModel } from 'umi';
 import { remove } from '../services';
-import { waitTime } from '@/extra/utils';
 import { CreateDirectory } from './modules';
 import type { cateDataItem } from '../data';
 import type { DataNode } from 'antd/es/tree';
 import { EllipsisOutlined } from '@ant-design/icons';
 import type { MenuInfo } from 'rc-menu/lib/interface';
 import React, { useState, useMemo, useRef } from 'react';
-import { Popconfirm, Typography, Dropdown, message, Input, Menu, Tree } from 'antd';
+import { Popconfirm, Typography, Dropdown, message, Input, Menu, Tree, Spin } from 'antd';
 
 export const Directory: React.FC = () => {
     const { Search } = Input;
@@ -22,11 +21,16 @@ export const Directory: React.FC = () => {
     const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
     const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
 
-    const { getInfo, refresh, cateData, setCateInfo } = useModel('attach', ret => ({
-        refresh: ret.refresh,
+    // prettier-ignore
+    const { getInfo, refresh, loading, cateData, setCateId, setCateInfo, setPagination }
+		= useModel('attach', ret => ({
+        loading: ret.loading,
+		refresh: ret.refresh,
         getInfo: ret.getInfo,
         cateData: ret.cateData,
+		setCateId: ret.setCateId,
         setCateInfo: ret.setCateInfo,
+		setPagination: ret.setPagination,
     }));
 
     /**
@@ -59,31 +63,29 @@ export const Directory: React.FC = () => {
         switch (e.key) {
             // prettier-ignore
             case 'update': /* 编辑目录 */
-                waitTime().then(() => setModalVisit(true));
+				e.domEvent.stopPropagation()
+				getInfo({ id: tKey }).then(res => {
+					res?.info && setModalVisit(true)
+				})
                 break;
             // prettier-ignore
             case 'create': /* 新增目录 */
-                childRef.current?.setPid(tKey);
+				e.domEvent.stopPropagation()
+				childRef.current?.setPid(tKey);
                 if (tKey) {
-                    waitTime()
-                        .then(() => {
-                            // @ts-ignore
-                            setCateInfo((pre: Pick<cateDataItem, 'path'>) => {
-                                /* 过滤零值并添加自身作为path */
-                                return {
-									// prettier-ignore
-                                    path: pre?.path.split('').map(Number).concat(tKey).filter(v => v),
-                                };
-                            });
-                        })
-                        .finally(() => setModalVisit(true));
+					// prettier-ignore
+					getInfo({ id: tKey }).then(res => {
+						// prettier-ignore
+						setPath(res?.info.path.split('-').map(Number).concat(tKey).filter((v: number) => v))
+					}).finally(() => setModalVisit(true))
                 } else {
                     setPath(undefined);
                     setModalVisit(true);
                     setCateInfo(undefined);
                 }
                 break;
-            default: /* 删除目录 */
+            default:
+                e.domEvent.stopPropagation();
         }
     };
 
@@ -231,20 +233,33 @@ export const Directory: React.FC = () => {
     return (
         <>
             <Search allowClear onChange={onChange} className="treeSearch" placeholder="请输入分类名称" />
-            <Tree
-                treeData={treeData}
-                onExpand={onExpand}
-                titleRender={titleRender}
-                rootClassName="customTree"
-                expandedKeys={expandedKeys}
-                autoExpandParent={autoExpandParent}
-                onSelect={(key, event) => {
-                    const { selected } = event;
-                    /* 根目录不需要重新获取 */
-                    selected && 0 < key[0] && getInfo({ id: key[0] as number });
+            <Spin spinning={loading} tip="Loading...">
+                <Tree
+                    treeData={treeData}
+                    onExpand={onExpand}
+                    titleRender={titleRender}
+                    rootClassName="customTree"
+                    expandedKeys={expandedKeys}
+                    autoExpandParent={autoExpandParent}
+                    onSelect={(key, event) => {
+                        const { selected } = event;
+                        selected && setCateId(key[0] as number);
+                        /* 切换目录时且key非根目录时刷新目录信息 */
+                        selected && key[0] && getInfo({ id: key[0] as number });
+                        /* 切换目录时重置页码及使用默认pageSize */
+                        selected && setPagination(prev => ({ current: 1, pageSize: prev.pageSize }));
+                    }}
+                />
+            </Spin>
+            <CreateDirectory
+                path={path}
+                ref={childRef}
+                modalVisit={modalVisit}
+                handleSetModalVisit={(status: boolean) => {
+                    setModalVisit(status);
+                    !status && setPath(undefined);
                 }}
             />
-            <CreateDirectory path={path} ref={childRef} modalVisit={modalVisit} handleSetModalVisit={(status: boolean) => setModalVisit(status)} />
         </>
     );
 };
