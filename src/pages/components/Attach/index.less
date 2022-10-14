@@ -28,7 +28,11 @@
     color: #f50;
 }
 .ant-pro-checkcard-cover {
+	height: inherit;
 	padding: unset !important;
+	img {
+		height: unset !important;
+	}
 }
 .ant-tree-node-content-wrapper:hover .overlayDropDown {
     display: block;
@@ -40,8 +44,10 @@
 	display: inline-block;
 }
 .ant-image {
-	position: relative;
-	display: inline-block;
+	display: flex;
+	height: inherit;
+	align-items: center;
+	justify-content: center;
 }
 .ant-image-mask {
 	inset: 0;
