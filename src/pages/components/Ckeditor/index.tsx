@@ -16,7 +16,7 @@ export default class Ckeditor extends React.Component<parentProps, stateData> {
             saving: false,
             defaultType: 'secondary',
             defaultStatus: 'waiting for input...',
-            uploadPath: props?.uploadPath ?? 'images/article',
+            uploadPath: props?.uploadPath ?? 'article/content',
             content: props?.content || '<p>来吧，请开始你的表演...</p>',
         };
     }
@@ -71,7 +71,7 @@ export default class Ckeditor extends React.Component<parentProps, stateData> {
                         formData.append('file', file);
                         formData.append('path', state.uploadPath);
                         return new Promise<{ default: string }>(async (resolve, reject) => {
-                            await request('/public/upload', { method: 'post', data: formData }).then(res => {
+                            await request('/attach/upload', { method: 'post', data: formData }).then(res => {
                                 if (res?.success) {
                                     message.success(res?.msg);
                                     resolve({ default: res?.data?.url });
