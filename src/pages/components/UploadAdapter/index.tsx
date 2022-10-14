@@ -13,6 +13,7 @@ import { QuestionCircleOutlined, CloudUploadOutlined, LoadingOutlined } from '@a
 export const UploadAdapter: React.FC<
     Omit<API.uploadComponents, 'formName'> & {
         crop?: number;
+        fetch: () => void;
         cropQuality?: number;
         aspects?: [number, number];
         astricts?: [number, number];
@@ -24,23 +25,23 @@ export const UploadAdapter: React.FC<
     /* 大小限制 */
     const fileSize: number = props?.size ?? 0;
     /* 数量限制 */
-    const maxUpload: number = props?.maxUpload ?? 1;
+    const maxUpload: number = props?.maxUpload ?? 0;
     /* 裁剪质量 */
     const quality: number = props?.cropQuality ?? 0.6;
-    /* 文件多选 */
-    const multiple: boolean = props?.multiple ?? false;
     /* 按钮文字 */
     const uploadText: string = props?.formTitle ?? '上传图像';
     /* 展示方式 */
     const listType: UploadListType = props?.listType ?? 'text';
     /* loading */
     const [loading, setLoading] = useState<boolean>(false);
+    /* 文件多选 */
+    const multiple: boolean = isCrop ? false : props?.multiple ?? true;
     /* 图片宽度 */
     const imageWidth: number = props?.astricts ? props.astricts[0] : 0;
     /* 图片高度 */
     const imageHeight: number = props?.astricts ? props.astricts[1] : 0;
     /* 上传路径 */
-    const uploadUrl: string = props?.uploadUrl ?? '/console/public/upload';
+    const uploadUrl: string = props?.uploadUrl ?? '/console/attach/upload';
     /* 文件后缀 */
     const acceptFile: string = props?.acceptFile ?? '.png, .jpg, .jpeg, .gif';
     /* 文件列表 */
@@ -106,6 +107,7 @@ export const UploadAdapter: React.FC<
                 });
                 break;
             case 'done':
+                props.fetch();
                 setLoading(false);
                 const uploadMsg = file.response.msg;
                 const uploadStatus = file.response.success;
