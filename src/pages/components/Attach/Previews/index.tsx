@@ -20,6 +20,7 @@ import { Typography, Pagination, TreeSelect, message, Button, Badge, Modal, Spac
 
 export const Previews: React.FC = () => {
     const { Text } = Typography;
+    /* 图像处理 */
     const imageProcess = {
         1: '',
         2: '?x-oss-process=image/auto-orient,1/interlace,1/resize,m_lfit,w_150/quality,q_90',
@@ -35,15 +36,19 @@ export const Previews: React.FC = () => {
     const [currentId, setCurrentId] = useState<number>(0);
     /* 设置选中的值 */
     const [checkedItem, setCheckedItem] = useState<attachDataItem[]>([]);
-    const { cateId, cateData, cateInfo, pagination, setPagination } = useModel('attach', ret => ({
+    const { cateId, isModal, cateData, cateInfo, pagination, setPagination } = useModel('attach', ret => ({
         cateId: ret.cateId,
+        isModal: ret.isModal,
         cateData: ret.cateData,
         cateInfo: ret.cateInfo,
         pagination: ret.pagination,
         setPagination: ret.setPagination,
     }));
 
-    /* 获取文件列表 */
+    /**
+     * 获取文件列表
+     * prettier-ignore
+     */
     const {
         run: fetchList,
         refresh,
@@ -139,7 +144,6 @@ export const Previews: React.FC = () => {
                             {checkedItem.length ? '取消选择' : '全部选择'}
                         </Button>
                     </Badge>
-                    {/* eslint-disable-next-line max-len */}
                     <Button
                         danger
                         icon={<DeleteOutlined />}
@@ -172,10 +176,14 @@ export const Previews: React.FC = () => {
                     >
                         <Row gutter={16}>
                             {fileList?.map((item: Record<string, any>) => (
-                                <Col span={3} key={item.id}>
+                                <Col span={isModal ? 4 : 3} key={item.id}>
                                     <CheckCard
                                         value={item}
-                                        style={{ width: '150px', height: '150px', overflow: 'hidden' }}
+                                        style={{
+                                            overflow: 'hidden',
+                                            width: isModal ? '100px' : '150px',
+                                            height: isModal ? '100px' : '150px',
+                                        }}
                                         cover={
                                             <div className="ant-image">
                                                 <img
@@ -188,13 +196,13 @@ export const Previews: React.FC = () => {
                                                         <Text className="anticon" onClick={e => handlePreivew(e, item.id)}>
                                                             <p>
                                                                 <EyeOutlined />
-                                                                预览
+                                                                {!isModal && '预览'}
                                                             </p>
                                                         </Text>
                                                         <Text className="anticon" onClick={e => handleDelete(e, item as attachDataItem)}>
                                                             <p>
                                                                 <DeleteOutlined />
-                                                                删除
+                                                                {!isModal && '删除'}
                                                             </p>
                                                         </Text>
                                                     </Space>
@@ -207,6 +215,8 @@ export const Previews: React.FC = () => {
                         </Row>
                     </CheckCard.Group>
                 </Spin>
+            </Col>
+            <Col span={24}>
                 <ImagePreview curIdx={currentId} ref={previewRef} imgList={fileList ?? []} />
             </Col>
             <Col span={24}>
@@ -215,11 +225,11 @@ export const Previews: React.FC = () => {
                     size="small"
                     total={totals}
                     hideOnSinglePage
-                    defaultPageSize={24}
                     style={{ float: 'right' }}
                     current={pagination.current}
                     pageSize={pagination.pageSize}
                     pageSizeOptions={[24, 32, 40, 48]}
+                    defaultPageSize={isModal ? 24 : 32}
                     showTotal={(total, range) => `第 ${range[0]}-${range[1]} 条/总共 ${totals} 条`}
                     onChange={(page, pageSize) => setPagination({ current: page, pageSize: pageSize })}
                     onShowSizeChange={(current, size) => setPagination({ current: current, pageSize: size })}

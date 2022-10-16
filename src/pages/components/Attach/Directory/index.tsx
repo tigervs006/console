@@ -22,11 +22,12 @@ export const Directory: React.FC = () => {
     const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
 
     // prettier-ignore
-    const { getInfo, refresh, loading, cateData, setCateId, setCateInfo, setPagination }
+    const { getInfo, refresh, loading, isModal, cateData, setCateId, setCateInfo, setPagination }
 		= useModel('attach', ret => ({
         loading: ret.loading,
 		refresh: ret.refresh,
         getInfo: ret.getInfo,
+		isModal: ret.isModal,
         cateData: ret.cateData,
 		setCateId: ret.setCateId,
         setCateInfo: ret.setCateInfo,
@@ -238,9 +239,10 @@ export const Directory: React.FC = () => {
                     treeData={treeData}
                     onExpand={onExpand}
                     titleRender={titleRender}
-                    rootClassName="customTree"
                     expandedKeys={expandedKeys}
+                    height={isModal ? 490 : undefined}
                     autoExpandParent={autoExpandParent}
+                    rootClassName={isModal ? 'modalTree' : 'normalTree'}
                     onSelect={(key, event) => {
                         const { selected } = event;
                         selected && setCateId(key[0] as number);
