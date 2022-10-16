@@ -1,17 +1,21 @@
 /** @format */
-
+.border {
+	border-right: 1px solid #eee;
+}
 .customRow {
     padding: 16px;
 }
-.customTree {
+.ant-tree-treenode {
+	width: 100%;
+	.ant-tree-node-content-wrapper {
+		width: inherit;
+	}
+}
+.normalTree:extend(.border) {
 	min-height: 690px;
-    border-right: 1px solid #eee;
-    .ant-tree-treenode {
-        width: 100%;
-        .ant-tree-node-content-wrapper {
-            width: inherit;
-        }
-    }
+}
+.modalTree:extend(.border) {
+	min-height: 490px;
 }
 .treeSearch {
     margin-bottom: 1rem;
@@ -44,10 +48,10 @@
 	display: inline-block;
 }
 .ant-image {
-	display: flex;
 	height: inherit;
 	align-items: center;
 	justify-content: center;
+	display: flex !important;
 }
 .ant-image-mask {
 	inset: 0;
