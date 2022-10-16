@@ -23,10 +23,13 @@ export default () => {
     const [cateInfo, setCateInfo] = useState<cateDataItem>();
     /* 当前目录 */
     const [cateId, setCateId] = useState<number>(0);
+    /* 是否模态 */
+    const [isModal, setIsModal] = useState<boolean>(false);
     /* 目录列表 */
     const [cateData, setCateData] = useState<cateDataItem[]>(defaultCateOptions);
-    /* 默认分页 */
-    const [pagination, setPagination] = useState<{ current: number; pageSize: number }>({ current: 1, pageSize: 24 });
+    // prettier-ignore
+    const [pagination, setPagination] = useState<{
+		current: number; pageSize: number }>({ current: 1, pageSize: 24 });
     /* 自动获取目录列表 */
     const { refresh, loading } = useRequest(fetchCate, {
         defaultParams: [{ pid: 0 }],
@@ -40,6 +43,7 @@ export default () => {
     });
     return {
         cateId,
+        isModal,
         getInfo,
         refresh,
         loading,
@@ -47,6 +51,7 @@ export default () => {
         cateData,
         setCateId,
         pagination,
+        setIsModal,
         setCateData,
         setCateInfo,
         setPagination,
