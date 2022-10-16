@@ -26,6 +26,7 @@ export type attachDataItem = {
     name: string;
     path: string;
     type: string;
+    url?: string;
     storage: number;
     real_path: string;
     static_path: string;
