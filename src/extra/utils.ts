@@ -42,6 +42,17 @@ export const sortDesc = (property: string) => {
 };
 
 /**
+ * 从网址中提取文件名
+ * @param url string
+ */
+export const extFileFromUrl = (url: string) => {
+    return url
+        .match(/[^/]+/g)
+        ?.filter(item => item)
+        .pop();
+};
+
+/**
  * 提取文章图片
  * @return array
  * @param content
