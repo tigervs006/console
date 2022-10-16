@@ -4,14 +4,13 @@ import { history, useModel } from 'umi';
 import { useRef, useState } from 'react';
 import { getCate } from '@/pages/channel/service';
 import Ckeditor from '@/pages/components/Ckeditor';
-import { waitTime, extractImg } from '@/extra/utils';
 import { PageContainer } from '@ant-design/pro-layout';
-import type { UploadFile } from 'antd/es/upload/interface';
+import { FileSelect } from '../../components/FileSelect';
 import type { articleData, channelDataItem } from '../data';
 import type { ProFormInstance } from '@ant-design/pro-form';
-import { FormOutlined, UndoOutlined } from '@ant-design/icons';
-import { UploadAdapter } from '@/pages/components/UploadAdapter';
+import { UndoOutlined, FormOutlined } from '@ant-design/icons';
 import { notification, Button, Input, Space, message } from 'antd';
+import { extFileFromUrl, extractImg, waitTime } from '@/extra/utils';
 import { saveContent, getContent as getContents } from '@/pages/content/service';
 import ProForm, { ProFormDependency, ProFormCheckbox, ProFormTextArea, ProFormSelect, ProFormText } from '@ant-design/pro-form';
 
@@ -93,8 +92,8 @@ export default () => {
                     {
                         status: 'done',
                         url: info.litpic,
+                        name: extFileFromUrl(info.litpic) ?? '',
                         uid: Math.floor(Math.random() * 100).toString(),
-                        name: info.litpic.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)[1],
                     },
                 ]);
                 return { ...info, content: info?.content?.content ?? null };
@@ -275,21 +274,9 @@ export default () => {
                                 );
                             default:
                                 return (
-                                    <UploadAdapter
-                                        formName={'litpic'}
-                                        cropAspect={16 / 9}
-                                        formTitle={'Upload'}
-                                        formTooltip={'上传一张图片作为文档封面'}
-                                        extraData={{ path: 'images/article' }}
-                                        useTransForm={value => {
-                                            if ('string' === typeof value) return { litpic: value };
-                                            return {
-                                                litpic: value.map((item: UploadFile) => item?.url).toString(),
-                                            };
-                                        }}
-                                        validateRules={[{ required: true, message: '请选择上传图像或输入图像网址作为文档封面' }]}
-                                        setFieldsValue={(fileList: UploadFile[]) => formRef.current?.setFieldsValue({ litpic: fileList })}
-                                    />
+                                    <ProForm.Item name="litpic">
+                                        <FileSelect />
+                                    </ProForm.Item>
                                 );
                         }
                     }}
