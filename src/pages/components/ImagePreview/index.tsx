@@ -18,7 +18,7 @@ export const ImagePreview: React.FC<{
         <div style={{ display: 'none' }}>
             <Image.PreviewGroup preview={{ visible, current: curId, onVisibleChange: value => setVisible(value) }}>
                 {props?.imgList.map(item => (
-                    <Image key={randomString(4)} src={item.static_path} />
+                    <Image key={item?.id ?? randomString(4)} src={item?.url ?? item.static_path} />
                 ))}
             </Image.PreviewGroup>
         </div>
