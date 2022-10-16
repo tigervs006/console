@@ -47,13 +47,10 @@ export const Previews: React.FC = () => {
 
     /**
      * 获取文件列表
-     * prettier-ignore
      */
+    // prettier-ignore
     const {
-        run: fetchList,
-        refresh,
-        loading,
-    } = useRequest(list, {
+        run: fetchList, refresh, loading } = useRequest(list, {
         manual: true,
         defaultParams: [{ id: 0, ...pagination }],
         onSuccess: (res: { total: number; list?: attachDataItem[] }) => {

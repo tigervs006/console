@@ -33,11 +33,9 @@ export const FileSelect: React.FC = () => {
         setUploadList: ret.setUploadList,
     }));
 
-    const { isModal, setIsModal, setCateId, setPagination } = useModel('attach', ret => ({
+    const { isModal, setIsModal } = useModel('attach', ret => ({
         isModal: ret.isModal,
-        setCateId: ret.setCateId,
         setIsModal: ret.setIsModal,
-        setPagination: ret.setPagination,
     }));
 
     /* Modal位置 */
@@ -107,14 +105,7 @@ export const FileSelect: React.FC = () => {
                 width={960}
                 visible={visible}
                 submitter={false}
-                onVisibleChange={value => {
-                    setIsModal(value);
-                    setCateId(0);
-                    setPagination(() => ({
-                        current: 1,
-                        pageSize: value ? 24 : 32,
-                    }));
-                }}
+                onVisibleChange={value => setIsModal(value)}
                 modalProps={{
                     centered: true,
                     maskClosable: false,
