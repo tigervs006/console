@@ -20,7 +20,20 @@ export const Directory: React.FC = () => {
     const [modalVisit, setModalVisit] = useState<boolean>(false);
     const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
 
-    const { cateId, getInfo, refresh, loading, isModal, cateData, setCateId, setCateInfo, expandedKeys, setPagination, setExpandedKeys } = useModel(
+	// prettier-ignore
+    const {
+		cateId,
+		getInfo,
+		refresh,
+		loading,
+		isModal,
+		cateData,
+		setCateId,
+		setCateInfo,
+		expandedKeys,
+		setPagination,
+		setExpandedKeys
+	} = useModel(
         'attach',
         ret => ({
             cateId: ret.cateId,
