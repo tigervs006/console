@@ -12,7 +12,7 @@ import { Typography, Button, Space } from 'antd';
 import { ModalForm } from '@ant-design/pro-form';
 import type { attachDataItem } from '../Attach/data';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
-import { FolderOpenOutlined, CloseOutlined, EyeOutlined } from '@ant-design/icons';
+import { CameraOutlined, CloseOutlined, EyeOutlined } from '@ant-design/icons';
 
 export const FileSelect: React.FC = () => {
     const { Text } = Typography;
@@ -102,7 +102,7 @@ export const FileSelect: React.FC = () => {
                       ))
                     : null}
                 <div className="ant-image-select">
-                    <FolderOpenOutlined id="select" onClick={() => handleOpenFolder()} />
+                    <CameraOutlined id="select" onClick={() => handleOpenFolder()} />
                 </div>
             </Space>
             <ImagePreview ref={previewRef} curIdx={curIdx} imgList={uploadList as unknown as attachDataItem[]} />
