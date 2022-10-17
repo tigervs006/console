@@ -7,10 +7,10 @@ import { Attach } from '../Attach';
 import Draggable from 'react-draggable';
 import '@/pages/components/Attach/index.less';
 import { ImagePreview } from '../ImagePreview';
+import React, { useState, useRef } from 'react';
 import { Typography, Button, Space } from 'antd';
 import { ModalForm } from '@ant-design/pro-form';
 import type { attachDataItem } from '../Attach/data';
-import React, { useEffect, useState, useRef } from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
 import { FolderOpenOutlined, CloseCircleOutlined, CloseOutlined, EyeOutlined } from '@ant-design/icons';
 
@@ -33,9 +33,12 @@ export const FileSelect: React.FC = () => {
         setUploadList: ret.setUploadList,
     }));
 
-    const { isModal, setIsModal } = useModel('attach', ret => ({
+    const { setCateId, setIsModal, setPagination, setExpandedKeys } = useModel('attach', ret => ({
         isModal: ret.isModal,
+        setCateId: ret.setCateId,
         setIsModal: ret.setIsModal,
+        setPagination: ret.setPagination,
+        setExpandedKeys: ret.setExpandedKeys,
     }));
 
     /* Modal位置 */
@@ -53,11 +56,6 @@ export const FileSelect: React.FC = () => {
         });
     };
 
-    /* 监听值变化 */
-    useEffect(() => {
-        console.log('isModal', isModal);
-    }, [isModal]);
-
     /* 处理移除文件 */
     const handleRemove = (idx: number) => {
         setUploadList(prev => {
@@ -73,6 +71,13 @@ export const FileSelect: React.FC = () => {
     const handlePreview = (idx: number) => {
         setCurIdx(idx);
         previewRef.current?.imagePreview(true);
+    };
+
+    const handleOpenFolder = () => {
+        setCateId([0]);
+        setVisible(true);
+        setExpandedKeys([]);
+        setPagination({ current: 1, pageSize: 24 });
     };
 
     return (
@@ -97,7 +102,7 @@ export const FileSelect: React.FC = () => {
                       ))
                     : null}
                 <div className="ant-image-select">
-                    <FolderOpenOutlined id="select" onClick={() => setVisible(true)} />
+                    <FolderOpenOutlined id="select" onClick={() => handleOpenFolder()} />
                 </div>
             </Space>
             <ImagePreview ref={previewRef} curIdx={curIdx} imgList={uploadList as unknown as attachDataItem[]} />
@@ -110,6 +115,11 @@ export const FileSelect: React.FC = () => {
                     centered: true,
                     maskClosable: false,
                     destroyOnClose: true,
+                    afterClose: () => {
+                        setCateId([0]);
+                        setExpandedKeys([]);
+                        setPagination({ current: 1, pageSize: 32 });
+                    },
                     modalRender: modal => (
                         <Draggable bounds={bounds} disabled={disabled} onStart={(event, uiData) => onStart(event, uiData)}>
                             <div ref={draggleRef}>{modal}</div>
