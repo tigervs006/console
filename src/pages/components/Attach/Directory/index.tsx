@@ -83,7 +83,7 @@ export const Directory: React.FC = () => {
 						setPath(res?.info.path.split('-').map(Number).concat(tKey).filter((v: number) => v))
 					}).finally(() => setModalVisit(true))
                 } else {
-                    setPath(undefined);
+                    setPath([0]);
                     setModalVisit(true);
                     setCateInfo(undefined);
                 }
