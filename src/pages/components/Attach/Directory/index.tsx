@@ -20,7 +20,7 @@ export const Directory: React.FC = () => {
     const [modalVisit, setModalVisit] = useState<boolean>(false);
     const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
 
-	// prettier-ignore
+    // prettier-ignore
     const {
 		cateId,
 		getInfo,
@@ -33,9 +33,7 @@ export const Directory: React.FC = () => {
 		expandedKeys,
 		setPagination,
 		setExpandedKeys
-	} = useModel(
-        'attach',
-        ret => ({
+	} = useModel('attach', ret => ({
             cateId: ret.cateId,
             loading: ret.loading,
             refresh: ret.refresh,
