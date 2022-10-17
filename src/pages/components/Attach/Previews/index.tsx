@@ -37,7 +37,17 @@ export const Previews: React.FC = () => {
     const [currentId, setCurrentId] = useState<number>(0);
     /* 设置选中的值 */
     const [checkedItem, setCheckedItem] = useState<attachDataItem[]>([]);
-    const { cateId, isModal, cateData, cateInfo, setCateId, pagination, setPagination, setExpandedKeys } = useModel('attach', ret => ({
+    // prettier-ignore
+    const {
+		cateId,
+		isModal,
+		cateData,
+		cateInfo,
+		setCateId,
+		pagination,
+		setPagination,
+		setExpandedKeys
+	} = useModel('attach', ret => ({
         cateId: ret.cateId,
         isModal: ret.isModal,
         cateData: ret.cateData,
@@ -48,9 +58,6 @@ export const Previews: React.FC = () => {
         setExpandedKeys: ret.setExpandedKeys,
     }));
 
-    /**
-     * 获取文件列表
-     */
     // prettier-ignore
     const {
         run: fetchList, refresh, loading } = useRequest(list, {
@@ -88,7 +95,7 @@ export const Previews: React.FC = () => {
     };
 
     useEffect(() => {
-        fetchList!({ id: cateId[0], ...pagination });
+        fetchList!({ id: cateId.at(0), ...pagination });
     }, [cateId, fetchList, pagination]);
 
     /* 处理删除事件 */
