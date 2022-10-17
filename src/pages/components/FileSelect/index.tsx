@@ -12,7 +12,7 @@ import { Typography, Button, Space } from 'antd';
 import { ModalForm } from '@ant-design/pro-form';
 import type { attachDataItem } from '../Attach/data';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
-import { FolderOpenOutlined, CloseCircleOutlined, CloseOutlined, EyeOutlined } from '@ant-design/icons';
+import { FolderOpenOutlined, CloseOutlined, EyeOutlined } from '@ant-design/icons';
 
 export const FileSelect: React.FC = () => {
     const { Text } = Typography;
@@ -126,7 +126,6 @@ export const FileSelect: React.FC = () => {
                         </Draggable>
                     ),
                     onCancel: () => setVisible(false),
-                    closeIcon: <CloseCircleOutlined style={{ fontSize: '1.5rem' }} />,
                 }}
                 title={
                     <div
