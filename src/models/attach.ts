@@ -1,5 +1,6 @@
 /** @format */
 
+import type React from 'react';
 import { useState } from 'react';
 import { useRequest } from 'umi';
 import type { cateDataItem } from '@/pages/components/Attach/data';
@@ -22,9 +23,11 @@ export default () => {
     /* 目录详情 */
     const [cateInfo, setCateInfo] = useState<cateDataItem>();
     /* 当前目录 */
-    const [cateId, setCateId] = useState<number>(0);
+    const [cateId, setCateId] = useState<number[]>([0]);
     /* 是否模态 */
     const [isModal, setIsModal] = useState<boolean>(false);
+    /* 默认展开 */
+    const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
     /* 目录列表 */
     const [cateData, setCateData] = useState<cateDataItem[]>(defaultCateOptions);
     // prettier-ignore
@@ -54,6 +57,8 @@ export default () => {
         setIsModal,
         setCateData,
         setCateInfo,
+        expandedKeys,
         setPagination,
+        setExpandedKeys,
     };
 };

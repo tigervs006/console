@@ -18,21 +18,24 @@ export const Directory: React.FC = () => {
     const childRef: React.ForwardedRef<any> = useRef();
     const [searchValue, setSearchValue] = useState<string>('');
     const [modalVisit, setModalVisit] = useState<boolean>(false);
-    const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
     const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
 
-    // prettier-ignore
-    const { getInfo, refresh, loading, isModal, cateData, setCateId, setCateInfo, setPagination }
-		= useModel('attach', ret => ({
-        loading: ret.loading,
-		refresh: ret.refresh,
-        getInfo: ret.getInfo,
-		isModal: ret.isModal,
-        cateData: ret.cateData,
-		setCateId: ret.setCateId,
-        setCateInfo: ret.setCateInfo,
-		setPagination: ret.setPagination,
-    }));
+    const { cateId, getInfo, refresh, loading, isModal, cateData, setCateId, setCateInfo, expandedKeys, setPagination, setExpandedKeys } = useModel(
+        'attach',
+        ret => ({
+            cateId: ret.cateId,
+            loading: ret.loading,
+            refresh: ret.refresh,
+            getInfo: ret.getInfo,
+            isModal: ret.isModal,
+            cateData: ret.cateData,
+            setCateId: ret.setCateId,
+            setCateInfo: ret.setCateInfo,
+            expandedKeys: ret.expandedKeys,
+            setPagination: ret.setPagination,
+            setExpandedKeys: ret.setExpandedKeys,
+        }),
+    );
 
     /**
      * 获取父节点key
@@ -238,6 +241,8 @@ export const Directory: React.FC = () => {
                 <Tree
                     treeData={treeData}
                     onExpand={onExpand}
+                    selectedKeys={cateId}
+                    defaultSelectedKeys={[0]}
                     titleRender={titleRender}
                     expandedKeys={expandedKeys}
                     height={isModal ? 490 : undefined}
@@ -245,7 +250,7 @@ export const Directory: React.FC = () => {
                     rootClassName={isModal ? 'modalTree' : 'normalTree'}
                     onSelect={(key, event) => {
                         const { selected } = event;
-                        selected && setCateId(key[0] as number);
+                        selected && setCateId(key as number[]);
                         /* 切换目录时且key非根目录时刷新目录信息 */
                         selected && key[0] && getInfo({ id: key[0] as number });
                         /* 切换目录时重置页码及使用默认pageSize */

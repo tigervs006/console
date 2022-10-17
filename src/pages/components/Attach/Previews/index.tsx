@@ -1,6 +1,7 @@
 /** @format */
 
 import { useRequest, useModel } from 'umi';
+import { findParentId } from '@/extra/utils';
 import type { attachDataItem } from '../data';
 import { CheckCard } from '@ant-design/pro-card';
 import { ImagePreview } from '../../ImagePreview';
@@ -36,13 +37,15 @@ export const Previews: React.FC = () => {
     const [currentId, setCurrentId] = useState<number>(0);
     /* 设置选中的值 */
     const [checkedItem, setCheckedItem] = useState<attachDataItem[]>([]);
-    const { cateId, isModal, cateData, cateInfo, pagination, setPagination } = useModel('attach', ret => ({
+    const { cateId, isModal, cateData, cateInfo, setCateId, pagination, setPagination, setExpandedKeys } = useModel('attach', ret => ({
         cateId: ret.cateId,
         isModal: ret.isModal,
         cateData: ret.cateData,
         cateInfo: ret.cateInfo,
+        setCateId: ret.setCateId,
         pagination: ret.pagination,
         setPagination: ret.setPagination,
+        setExpandedKeys: ret.setExpandedKeys,
     }));
 
     /**
@@ -63,11 +66,14 @@ export const Previews: React.FC = () => {
     const handleMoveCate = async (newValue: number) => {
         const ids: number[] = [];
         checkedItem.forEach(item => ids.push(item.id));
+        const expandKey = findParentId(cateData, data => data.id == Array.of(newValue));
+        1 < expandKey.length && expandKey.pop();
         await move({ id: ids, pid: newValue }).then(res => {
             if (res?.success) {
-                refresh();
                 setCheckedItem([]);
                 message.success(res.msg);
+                setExpandedKeys(expandKey);
+                setCateId(Array.of(newValue));
             }
         });
     };
@@ -82,7 +88,7 @@ export const Previews: React.FC = () => {
     };
 
     useEffect(() => {
-        fetchList!({ id: cateId, ...pagination });
+        fetchList!({ id: cateId[0], ...pagination });
     }, [cateId, fetchList, pagination]);
 
     /* 处理删除事件 */
