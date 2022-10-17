@@ -4,10 +4,12 @@ import lodash from 'lodash';
 import { message } from 'antd';
 import { useModel } from 'umi';
 import { save } from '../../services';
+import Draggable from 'react-draggable';
 import type { ForwardedRef } from 'react';
 import { zh2Pinyin } from '@/extra/utils';
 import type { cateDataItem } from '../../data';
 import type { ProFormInstance } from '@ant-design/pro-form';
+import type { DraggableData, DraggableEvent } from 'react-draggable';
 import {
     ProFormDependency,
     ProFormDigitRange,
@@ -30,18 +32,27 @@ export const CreateDirectory: React.FC<{
     const formRef = useRef<ProFormInstance>();
     /* parent */
     const [parent, setParent] = useState<number>();
+    /* draggleRef */
+    const draggleRef = useRef<HTMLDivElement>(null);
+    /* setDisabled */
+    const [disabled, setDisabled] = useState<boolean>(false);
+    /* setBounds */
+    const [bounds, setBounds] = useState({ left: 0, top: 0, bottom: 0, right: 0 });
+
     /* caetInfo */
     const { refresh, cateInfo, cateData } = useModel('attach', ret => ({
         refresh: ret.refresh,
         cateInfo: ret.cateInfo,
         cateData: lodash.cloneDeep(ret.cateData),
     }));
+
     /* requires */
     const [requires, setRequires] = useState<{
         cropRequire: boolean;
         limitRequire: boolean;
         astrictRequire: boolean;
     }>({ cropRequire: false, limitRequire: false, astrictRequire: false });
+
     /* useImperative */
     useImperativeHandle(ref, () => ({ setPid: (pid: number) => setParent(pid) }));
 
@@ -57,13 +68,49 @@ export const CreateDirectory: React.FC<{
             }).finally(() => refresh());
     };
 
+    /* Modal位置 */
+    const onStart = (_event: DraggableEvent, uiData: DraggableData) => {
+        const targetRect = draggleRef.current?.getBoundingClientRect();
+        const { clientWidth, clientHeight } = window.document.documentElement;
+        if (!targetRect) {
+            return;
+        }
+        setBounds({
+            top: -targetRect.top + uiData.y,
+            left: -targetRect.left + uiData.x,
+            right: clientWidth - (targetRect.right - uiData.x),
+            bottom: clientHeight - (targetRect.bottom - uiData.y),
+        });
+    };
+
     return (
         <ModalForm<cateDataItem>
             modalProps={{
                 centered: true,
                 maskClosable: false,
                 destroyOnClose: true,
+                modalRender: modal => (
+                    <Draggable bounds={bounds} disabled={disabled} onStart={(event, uiData) => onStart(event, uiData)}>
+                        <div ref={draggleRef}>{modal}</div>
+                    </Draggable>
+                ),
             }}
+            title={
+                <div
+                    style={{
+                        width: '100%',
+                        cursor: 'move',
+                    }}
+                    onMouseOut={() => {
+                        setDisabled(true);
+                    }}
+                    onMouseOver={() => {
+                        disabled && setDisabled(false);
+                    }}
+                >
+                    {cateInfo?.id ? '编辑目录' : '新增目录'}
+                </div>
+            }
             submitter={{
                 searchConfig: {
                     resetText: '重置',
@@ -83,7 +130,6 @@ export const CreateDirectory: React.FC<{
             visible={props.modalVisit}
             validateTrigger={['onBlur']}
             onVisibleChange={props.handleSetModalVisit}
-            title={cateInfo?.id ? '编辑目录' : '新增目录'}
             onFinish={values => handleOnFinsh(values).then(() => true)}
             initialValues={props?.path ? { path: props.path } : cateInfo}
         >
