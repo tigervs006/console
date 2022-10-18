@@ -1,7 +1,7 @@
 /** @format */
 
 import { history, useModel } from 'umi';
-import { useRef, useState } from 'react';
+import { useState, useRef } from 'react';
 import { getCate } from '@/pages/channel/service';
 import Ckeditor from '@/pages/components/Ckeditor';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -20,10 +20,12 @@ export default () => {
     const [content, setContent] = useState<string>(() => {
         return formRef.current?.getFieldValue('content') || null;
     });
+
     // 文件列表
     const { setUploadList } = useModel('file', ret => ({
         setUploadList: ret.setUploadList,
     }));
+
     // 新闻栏目
     const channel = async () => {
         return await getCate({ nid: 1 }).then(res =>
@@ -33,6 +35,7 @@ export default () => {
             })),
         );
     };
+
     // 提取图像
     const adstractImg = () => {
         // 从正文提取图像
@@ -56,6 +59,7 @@ export default () => {
         }
         formRef.current?.setFieldsValue({ litpic: imgArr.toString() });
     };
+
     // 获取编辑器内容
     const getContent = (CKcontent: string) => {
         // 设置useState
