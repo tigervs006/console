@@ -8,6 +8,7 @@ import { ImagePreview } from '../../ImagePreview';
 import { deletes, list, move } from '../services';
 import { UploadAdapter } from '../../UploadAdapter';
 import React, { useEffect, useState, useRef } from 'react';
+import type { UploadFile } from 'antd/es/upload/interface';
 import {
     ExclamationCircleOutlined,
     QuestionCircleOutlined,
@@ -35,6 +36,10 @@ export const Previews: React.FC = () => {
     const [fileList, setFileList] = useState<attachDataItem[]>();
     /* 设置预览索引 */
     const [currentId, setCurrentId] = useState<number>(0);
+    /* 设置文件列表 */
+    const { setUploadList } = useModel('file', ret => ({
+        setUploadList: ret.setUploadList,
+    }));
     /* 设置选中的值 */
     const [checkedItem, setCheckedItem] = useState<attachDataItem[]>([]);
     // prettier-ignore
@@ -45,6 +50,7 @@ export const Previews: React.FC = () => {
 		cateInfo,
 		setCateId,
 		pagination,
+		setVisible,
 		setPagination,
 		setExpandedKeys
 	} = useModel('attach', ret => ({
@@ -53,6 +59,7 @@ export const Previews: React.FC = () => {
         cateData: ret.cateData,
         cateInfo: ret.cateInfo,
         setCateId: ret.setCateId,
+		setVisible: ret.setVisible,
         pagination: ret.pagination,
         setPagination: ret.setPagination,
         setExpandedKeys: ret.setExpandedKeys,
@@ -66,6 +73,7 @@ export const Previews: React.FC = () => {
         onSuccess: (res: { total: number; list?: attachDataItem[] }) => {
             setTotal(res?.total);
             setFileList(res?.list);
+			setCheckedItem([]);
         },
     });
 
@@ -97,6 +105,18 @@ export const Previews: React.FC = () => {
     useEffect(() => {
         fetchList!({ id: cateId.at(0), ...pagination });
     }, [cateId, fetchList, pagination]);
+
+    /* 使用选中按钮 */
+    const handleUseSelect = () => {
+        const fileSelect = checkedItem.map(item => ({
+            status: 'done',
+            name: item.name,
+            url: item.static_path,
+            uid: item.id.toString(),
+        }));
+        setUploadList(fileSelect as UploadFile[]);
+        setVisible(false); /* close modal */
+    };
 
     /* 处理删除事件 */
     const handleDelete = (e: any, record: attachDataItem | attachDataItem[]) => {
@@ -144,23 +164,31 @@ export const Previews: React.FC = () => {
                     <Button icon={<SyncOutlined />} onClick={refresh}>
                         刷新列表
                     </Button>
-                    <Badge count={checkedItem.length}>
-                        <Button
-                            icon={checkedItem.length ? <CloseCircleOutlined /> : <CheckCircleOutlined />}
-                            onClick={() => {
-                                checkedItem.length ? setCheckedItem([]) : setCheckedItem(fileList ?? []);
-                            }}
-                        >
-                            {checkedItem.length ? '取消选择' : '全部选择'}
-                        </Button>
-                    </Badge>
+                    {isModal ? (
+                        <Badge count={checkedItem.length}>
+                            <Button disabled={!checkedItem.length} icon={<CheckCircleOutlined />} onClick={() => handleUseSelect()}>
+                                使用选中
+                            </Button>
+                        </Badge>
+                    ) : (
+                        <Badge count={checkedItem.length}>
+                            <Button
+                                icon={checkedItem.length ? <CloseCircleOutlined /> : <CheckCircleOutlined />}
+                                onClick={() => {
+                                    checkedItem.length ? setCheckedItem([]) : setCheckedItem(fileList ?? []);
+                                }}
+                            >
+                                {checkedItem.length ? '清空选择' : '全部选择'}
+                            </Button>
+                        </Badge>
+                    )}
                     <Button
                         danger
                         icon={<DeleteOutlined />}
                         disabled={!checkedItem.length}
                         onClick={e => handleDelete(e, checkedItem as attachDataItem[])}
                     >
-                        删除图像
+                        删除文件
                     </Button>
                     <TreeSelect
                         allowClear
