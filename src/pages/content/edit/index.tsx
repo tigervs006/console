@@ -278,8 +278,15 @@ export default () => {
                                 );
                             default:
                                 return (
-                                    <ProForm.Item name="litpic">
-                                        <FileSelect />
+                                    <ProForm.Item
+                                        name="litpic"
+                                        rules={[
+                                            { required: true, message: '请完善文档封面' },
+                                            { type: 'array', max: 1, message: '文档封面只需要一张图片就行了' },
+                                        ]}
+                                        transform={value => (value instanceof Array ? { litpic: value.at(-1) } : { litpic: value })}
+                                    >
+                                        <FileSelect setFieldValue={(fileList: string[]) => formRef.current?.setFieldValue('litpic', fileList)} />
                                     </ProForm.Item>
                                 );
                         }
