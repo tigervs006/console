@@ -7,14 +7,14 @@ import { Attach } from '../Attach';
 import Draggable from 'react-draggable';
 import '@/pages/components/Attach/index.less';
 import { ImagePreview } from '../ImagePreview';
-import React, { useState, useRef } from 'react';
 import { Typography, Button, Space } from 'antd';
 import { ModalForm } from '@ant-design/pro-form';
 import type { attachDataItem } from '../Attach/data';
+import React, { useEffect, useState, useRef } from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
 import { CameraOutlined, CloseOutlined, EyeOutlined } from '@ant-design/icons';
 
-export const FileSelect: React.FC = () => {
+export const FileSelect: React.FC<{ setFieldValue: (fileList: string[]) => void }> = props => {
     const { Text } = Typography;
     /* previewRef */
     const previewRef: React.ForwardedRef<any> = useRef();
@@ -48,6 +48,11 @@ export const FileSelect: React.FC = () => {
         setPagination: ret.setPagination,
         setExpandedKeys: ret.setExpandedKeys,
     }));
+
+    useEffect(() => {
+        props.setFieldValue(uploadList?.map(item => item.url as string));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [uploadList]);
 
     /* Modal位置 */
     const onStart = (_event: DraggableEvent, uiData: DraggableData) => {
