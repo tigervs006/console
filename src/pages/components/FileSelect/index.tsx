@@ -22,7 +22,6 @@ export const FileSelect: React.FC = () => {
     const [curIdx, setCurIdx] = useState<number>(0);
     /* draggleRef */
     const draggleRef = useRef<HTMLDivElement>(null);
-    const [visible, setVisible] = useState<boolean>(false);
     /* setDisabled */
     const [disabled, setDisabled] = useState<boolean>(false);
     /* setBounds */
@@ -32,11 +31,20 @@ export const FileSelect: React.FC = () => {
         uploadList: ret.uploadList,
         setUploadList: ret.setUploadList,
     }));
-
-    const { setCateId, setIsModal, setPagination, setExpandedKeys } = useModel('attach', ret => ({
+    // prettier-ignore
+    const {
+		visible,
+		setCateId,
+		setIsModal,
+		setVisible,
+		setPagination,
+		setExpandedKeys
+	} = useModel('attach', ret => ({
         isModal: ret.isModal,
+		visible: ret.visible,
         setCateId: ret.setCateId,
         setIsModal: ret.setIsModal,
+		setVisible: ret.setVisible,
         setPagination: ret.setPagination,
         setExpandedKeys: ret.setExpandedKeys,
     }));
@@ -85,7 +93,7 @@ export const FileSelect: React.FC = () => {
             <Space size="large" className="ant-image-container">
                 {uploadList
                     ? uploadList?.map((item, idx) => (
-                          <div key="area-image" className="ant-image">
+                          <div key={item.uid} className="ant-image">
                               <img src={item.url} alt={item.name} className="ant-image-img" />
                               <div className="ant-image-mask">
                                   <Space className="ant-image-mask-info">
@@ -120,12 +128,12 @@ export const FileSelect: React.FC = () => {
                         setExpandedKeys([]);
                         setPagination({ current: 1, pageSize: 32 });
                     },
+                    onCancel: () => setVisible(false),
                     modalRender: modal => (
                         <Draggable bounds={bounds} disabled={disabled} onStart={(event, uiData) => onStart(event, uiData)}>
                             <div ref={draggleRef}>{modal}</div>
                         </Draggable>
                     ),
-                    onCancel: () => setVisible(false),
                 }}
                 title={
                     <div
