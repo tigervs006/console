@@ -1,5 +1,6 @@
 /** @format */
 
+import { extFileFromUrl } from '@/extra/utils';
 import React, { useRef, useState } from 'react';
 import { ProTable } from '@ant-design/pro-table';
 import { CreateDrawerForm } from '../components';
@@ -67,8 +68,8 @@ export default () => {
                     {
                         status: 'done',
                         url: record.banner,
+                        name: extFileFromUrl(record.banner) ?? '',
                         uid: Math.floor(Math.random() * 100).toString(),
-                        name: record.banner.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)?.[1] ?? '',
                     },
                 ];
             }

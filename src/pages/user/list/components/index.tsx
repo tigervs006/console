@@ -2,31 +2,25 @@
 
 import md5 from 'md5';
 import { message } from 'antd';
-import styles from '../../index.less';
 import { waitTime } from '@/extra/utils';
 import { saveUser } from '../../service';
-import type { ForwardedRef } from 'react';
+import React, { useState, useRef } from 'react';
 import type { tableDataItem } from '../../data';
-import type { UploadFile } from 'antd/es/upload/interface';
+import { FileSelect } from '@/pages/components/FileSelect';
 import type { ProFormInstance } from '@ant-design/pro-form';
-import { UploadAdapter } from '@/pages/components/UploadAdapter';
-import React, { useImperativeHandle, forwardRef, useState, useRef } from 'react';
-import { ProFormDependency, ProFormSelect, ProFormText, ModalForm } from '@ant-design/pro-form';
+import ProForm, { ProFormDependency, ProFormSelect, ProFormText, ModalForm } from '@ant-design/pro-form';
 
 export const CreateUser: React.FC<{
     modalVisit: boolean;
     isCreateUser: boolean;
     record: tableDataItem;
-    ref: ForwardedRef<any>;
     reloadTable: () => void;
     handleSetModalVisit: (status: boolean) => void;
     userGroupItem: { label: string; value: number }[];
-}> = forwardRef((props, ref) => {
+}> = props => {
     const formRef = useRef<ProFormInstance>();
-    const [currentUser, setCurrentUser] = useState<string>();
     const modalTitle = props.isCreateUser ? '新增用户' : '编辑用户';
     const [passwordRequire, setPasswordRequire] = useState<boolean>(false);
-    useImperativeHandle(ref, () => ({ setUser: (user: string) => setCurrentUser(user) }));
     // 处理onFinish事件
     const handleFinish = async (data: tableDataItem) => {
         await saveUser(Object.assign(data, { id: props?.record?.id ?? null })).then(res => {
@@ -71,24 +65,13 @@ export const CreateUser: React.FC<{
                 {({ name }) => {
                     if (name) {
                         return (
-                            <UploadAdapter
-                                imageWidth={200}
-                                imageHeight={200}
-                                formName={'avatar'}
-                                formTitle={'上传头像'}
-                                className={styles.avatarUpload}
-                                extraData={{
-                                    path: `images/avatar/${currentUser}`,
-                                }}
-                                validateRules={[{ required: true, message: '请为当前用户上传头像' }]}
-                                useTransForm={value => {
-                                    if ('string' === typeof value) return { avatar: value };
-                                    return {
-                                        avatar: value.map((item: UploadFile) => item?.url).toString(),
-                                    };
-                                }}
-                                setFieldsValue={(fileList: UploadFile[]) => formRef.current?.setFieldsValue({ avatar: fileList })}
-                            />
+                            <ProForm.Item
+                                name="avatar"
+                                rules={[{ required: true, message: '请完善当前用户头像' }]}
+                                transform={value => (value instanceof Array ? { avatar: value.at(0) } : { avatar: value })}
+                            >
+                                <FileSelect setFieldValue={(fileList: string[]) => formRef.current?.setFieldValue('avatar', fileList)} />
+                            </ProForm.Item>
                         );
                     } else {
                         return null;
@@ -101,11 +84,7 @@ export const CreateUser: React.FC<{
                 label="用户名"
                 tooltip="你的登录账号"
                 placeholder="请输入用户名"
-                fieldProps={{
-                    maxLength: 20,
-                    showCount: true,
-                    onBlur: e => setCurrentUser(e.target.value),
-                }}
+                fieldProps={{ maxLength: 20, showCount: true }}
                 rules={[
                     { required: true, message: '请输入用户名' },
                     { type: 'string', pattern: /^\w+$/, message: '用户名只能是英文或数字与下横线组合' },
@@ -216,4 +195,4 @@ export const CreateUser: React.FC<{
             />
         </ModalForm>
     );
-});
+};

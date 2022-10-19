@@ -4,11 +4,10 @@ import { message } from 'antd';
 import React, { useRef, useState } from 'react';
 import { waitTime, zh2Pinyin } from '@/extra/utils';
 import { fetchData, saveChannel } from '../service';
-import type { UploadFile } from 'antd/es/upload/interface';
+import { FileSelect } from '@/pages/components/FileSelect';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import type { moduleDataItem, tableDataItem } from '../data';
-import { UploadAdapter } from '@/pages/components/UploadAdapter';
-import { ProFormCascader, ProFormTextArea, ProFormSelect, ProFormText, DrawerForm } from '@ant-design/pro-form';
+import ProForm, { ProFormCascader, ProFormTextArea, ProFormSelect, ProFormText, DrawerForm } from '@ant-design/pro-form';
 
 export const CreateDrawerForm: React.FC<{
     drawerVisit: boolean;
@@ -68,22 +67,14 @@ export const CreateDrawerForm: React.FC<{
             initialValues={{ ...props.record, isCrop: 0 }}
             onFinish={values => handleFinish(values).then(() => true)}
         >
-            <UploadAdapter
-                imageHeight={500}
-                imageWidth={1920}
-                formName={'banner'}
-                formLabel={'栏目图片'}
-                formTitle={'上传图片'}
-                formTooltip={'上传图片作为栏目banner'}
-                extraData={{ path: 'images/banner' }}
-                useTransForm={value => {
-                    if ('string' === typeof value) return { banner: value };
-                    return {
-                        banner: value.map((item: UploadFile) => item?.url).toString(),
-                    };
-                }}
-                setFieldsValue={(fileList: UploadFile[]) => formRef.current?.setFieldsValue({ banner: fileList })}
-            />
+            <ProForm.Item
+                name="banner"
+                label="栏目图片"
+                tooltip="上传图片作为栏目banner"
+                transform={value => (value instanceof Array ? { banner: value.at(0) } : { banner: value })}
+            >
+                <FileSelect setFieldValue={(fileList: string[]) => formRef.current?.setFieldValue('banner', fileList)} />
+            </ProForm.Item>
             <ProFormCascader
                 name="path"
                 hasFeedback

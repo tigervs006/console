@@ -1,13 +1,13 @@
 /** @format */
 
 import moment from 'moment';
-import { _int2ip } from '@/extra/utils';
 import { CreateUser } from './components';
 import ProTable from '@ant-design/pro-table';
 import type { groupDataItem } from '../data';
 import type { tableDataItem } from '../data';
 import React, { useState, useRef } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
+import { extFileFromUrl, _int2ip } from '@/extra/utils';
 import { message, Button, Modal, Space, Table } from 'antd';
 import { useRequest, useAccess, useModel, Access } from 'umi';
 import { RecordSwitch } from '@/pages/components/RecordSwitch';
@@ -24,8 +24,6 @@ export default () => {
             value: number;
         }[]
     >([]);
-    // childRef
-    const childRef: React.ForwardedRef<any> = useRef();
     /* 监听窗口变化 */
     const { resize } = useModel('resize', ret => ({
         resize: ret.resize,
@@ -86,13 +84,12 @@ export default () => {
         setUserValues(record);
         setModalVisit(true);
         setIsCreateUser(false);
-        childRef.current?.setUser(record.name as string);
         setUploadList([
             {
                 status: 'done',
                 url: record.avatar,
                 uid: Math.floor(Math.random() * 100).toString(),
-                name: record?.avatar?.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)?.[1] ?? '',
+                name: extFileFromUrl(record?.avatar ?? '') ?? '',
             },
         ]);
     };
@@ -287,7 +284,6 @@ export default () => {
                 }}
             />
             <CreateUser
-                ref={childRef}
                 record={userValues}
                 modalVisit={modalVisit}
                 userGroupItem={userGroup}

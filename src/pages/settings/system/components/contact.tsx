@@ -1,13 +1,13 @@
 /** @format */
 
 import { Space } from 'antd';
+import { extFileFromUrl } from '@/extra/utils';
 import React, { useEffect, useRef } from 'react';
 import { useModel } from '@@/plugin-model/useModel';
-import type { UploadFile } from 'antd/es/upload/interface';
+import { FileSelect } from '@/pages/components/FileSelect';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import ProForm, { ProFormText } from '@ant-design/pro-form';
 import { FormOutlined, UndoOutlined } from '@ant-design/icons';
-import { UploadAdapter } from '@/pages/components/UploadAdapter';
 
 export const ContactSettings: React.FC<{
     list: Record<string, any>;
@@ -24,7 +24,7 @@ export const ContactSettings: React.FC<{
                 status: 'done',
                 url: props.list.qrcode?.value,
                 uid: Math.floor(Math.random() * 100).toString(),
-                name: props.list.qrcode?.value?.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)?.[1] ?? '',
+                name: extFileFromUrl(props.list.qrcode?.value ?? '') ?? '',
             },
         ]);
     });
@@ -53,24 +53,9 @@ export const ContactSettings: React.FC<{
             initialValues={{ isCrop: 1 }}
             onFinish={values => props.handleFinish(values)}
         >
-            <UploadAdapter
-                imageWidth={200}
-                imageHeight={200}
-                formLabel={'二维码'}
-                extraData={{
-                    path: 'images/system/qrcode',
-                }}
-                formTitle={'上传二维码'}
-                formName={props.list.qrcode?.name}
-                formTooltip={props.list.qrcode?.description}
-                useTransForm={value => {
-                    if ('string' === typeof value) return { qrcode: value };
-                    return {
-                        qrcode: value.map((item: UploadFile) => item?.url).toString(),
-                    };
-                }}
-                setFieldsValue={(fileList: UploadFile[]) => formRef.current?.setFieldsValue({ qrcode: fileList })}
-            />
+            <ProForm.Item name="qrcode" label="二维码" transform={value => (value instanceof Array ? { qrcode: value.at(0) } : { qrcode: value })}>
+                <FileSelect setFieldValue={(fileList: string[]) => formRef.current?.setFieldValue('qrcode', fileList)} />
+            </ProForm.Item>
             <ProFormText
                 hasFeedback
                 label="QQ号码"

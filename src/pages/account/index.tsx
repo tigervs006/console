@@ -3,13 +3,12 @@
 import md5 from 'md5';
 import { useModel } from 'umi';
 import { message } from 'antd';
-import avatar from '@/pages/user/index.less';
+import { extFileFromUrl } from '@/extra/utils';
 import { saveUser } from '@/pages/user/service';
 import { useEffect, useState, useRef } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import type { UploadFile } from 'antd/es/upload/interface';
+import { FileSelect } from '@/pages/components/FileSelect';
 import type { ProFormInstance } from '@ant-design/pro-form';
-import { UploadAdapter } from '@/pages/components/UploadAdapter';
 import ProForm, { ProFormCheckbox, ProFormDependency, ProFormText } from '@ant-design/pro-form';
 
 export default () => {
@@ -29,7 +28,7 @@ export default () => {
                 status: 'done',
                 url: userInfo?.avatar,
                 uid: Math.floor(Math.random() * 100).toString(),
-                name: userInfo?.avatar?.match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)?.[1] ?? '',
+                name: extFileFromUrl(userInfo?.avatar ?? '') ?? '',
             },
         ]);
     }, [setUploadList, userInfo?.avatar]);
@@ -68,24 +67,13 @@ export default () => {
                 initialValues={{ ...userInfo, isCrop: 1 }}
                 onFinish={values => handleFinish(values).then(() => true)}
             >
-                <UploadAdapter
-                    imageWidth={200}
-                    imageHeight={200}
-                    formName={'avatar'}
-                    formTitle={'上传头像'}
-                    className={avatar.avatarUpload}
-                    extraData={{
-                        path: `images/avatar/${userInfo?.name}`,
-                    }}
-                    validateRules={[{ required: true, message: '请为当前用户上传头像' }]}
-                    useTransForm={value => {
-                        if ('string' === typeof value) return { avatar: value };
-                        return {
-                            avatar: value.map((item: UploadFile) => item?.url).toString(),
-                        };
-                    }}
-                    setFieldsValue={(fileList: UploadFile[]) => formRef.current?.setFieldsValue({ avatar: fileList })}
-                />
+                <ProForm.Item
+                    name="avatar"
+                    rules={[{ required: true, message: '请完善当前用户头像' }]}
+                    transform={value => (value instanceof Array ? { avatar: value.at(0) } : { avatar: value })}
+                >
+                    <FileSelect setFieldValue={(fileList: string[]) => formRef.current?.setFieldValue('avatar', fileList)} />
+                </ProForm.Item>
                 <ProFormText
                     name="email"
                     label="邮箱"
