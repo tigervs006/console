@@ -46,10 +46,8 @@ export const sortDesc = (property: string) => {
  * @param url string
  */
 export const extFileFromUrl = (url: string) => {
-    return url
-        .match(/[^/]+/g)
-        ?.filter(item => item)
-        .pop();
+    // prettier-ignore
+    return url.match(/[^/]+/g)?.filter(item => item).pop();
 };
 
 /**
