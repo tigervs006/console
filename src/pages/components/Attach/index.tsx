@@ -1,9 +1,10 @@
 /** @format */
 
-import React from 'react';
+import { useModel } from 'umi';
 import { Row, Col } from 'antd';
 import { Previews } from './Previews';
 import { Directory } from './Directory';
+import React, { useEffect } from 'react';
 import type { Gutter } from 'antd/es/grid/row';
 
 export const Attach: React.FC<{
@@ -14,6 +15,14 @@ export const Attach: React.FC<{
     const gutter = props?.gutter ?? [32, 32];
     const previewSpan = props?.previewSpan ?? 20;
     const directorySpan = props?.directorySpan ?? 4;
+
+    const { run: fetchCate } = useModel('attach', ret => ({
+        run: ret.run,
+    }));
+
+    useEffect(() => {
+        fetchCate!({ pid: 0 });
+    }, [fetchCate]);
 
     return (
         <Row gutter={gutter} style={{ padding: '16px' }}>

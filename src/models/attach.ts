@@ -40,7 +40,8 @@ export default () => {
     const [pagination, setPagination] = useState<{
 		current: number; pageSize: number }>({ current: 1, pageSize: 32 });
     /* 自动获取目录列表 */
-    const { refresh, loading } = useRequest(fetchCate, {
+    const { run, refresh, loading } = useRequest(fetchCate, {
+        manual: true,
         defaultParams: [{ pid: 0 }],
         onSuccess: res => setCateData(defaultCateOptions.concat(res?.list)),
     });
@@ -51,6 +52,7 @@ export default () => {
         onSuccess: res => setCateInfo({ ...res?.info, ...res?.info?.config }),
     });
     return {
+        run,
         limit,
         cateId,
         isModal,
