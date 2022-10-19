@@ -14,6 +14,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
 import { CameraOutlined, CloseOutlined, EyeOutlined } from '@ant-design/icons';
 
+// todo: 后期新增文件拖拽排序
 export const FileSelect: React.FC<{ limit?: number; setFieldValue: (fileList: string[]) => void }> = props => {
     const { Text } = Typography;
     const limit: number = props?.limit ?? 1;
@@ -35,20 +36,29 @@ export const FileSelect: React.FC<{ limit?: number; setFieldValue: (fileList: st
     // prettier-ignore
     const {
 		visible,
+		setLimit,
 		setCateId,
 		setIsModal,
 		setVisible,
+		setMultiple,
 		setPagination,
 		setExpandedKeys
 	} = useModel('attach', ret => ({
         isModal: ret.isModal,
 		visible: ret.visible,
+		setLimit: ret.setLimit,
         setCateId: ret.setCateId,
         setIsModal: ret.setIsModal,
 		setVisible: ret.setVisible,
+		setMultiple: ret.setMultiple,
         setPagination: ret.setPagination,
         setExpandedKeys: ret.setExpandedKeys,
     }));
+
+    useEffect(() => {
+        setLimit(limit); /* 限制文件选择数量 */
+        setMultiple(1 < limit); /* 设置是否多选状态 */
+    }, [limit, setLimit, setMultiple]);
 
     useEffect(() => {
         props.setFieldValue(uploadList?.map(item => item.url as string));

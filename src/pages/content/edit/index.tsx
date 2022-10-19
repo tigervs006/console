@@ -282,7 +282,7 @@ export default () => {
                                         name="litpic"
                                         rules={[
                                             { required: true, message: '请完善文档封面' },
-                                            { type: 'array', max: 1, message: '文档封面只需要一张图片就行了' },
+                                            { type: 'array', max: 1, message: '文档封面只需要1张图片就行了' },
                                         ]}
                                         transform={value => (value instanceof Array ? { litpic: value.at(-1) } : { litpic: value })}
                                     >

@@ -7,12 +7,11 @@ import { useState, useRef } from 'react';
 import { getCate } from '@/pages/channel/service';
 import Ckeditor from '@/pages/components/Ckeditor';
 import { PageContainer } from '@ant-design/pro-layout';
-import type { UploadFile } from 'antd/es/upload/interface';
+import { FileSelect } from '@/pages/components/FileSelect';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import { InputTagList } from '@/pages/components/InputTagList';
 import { saveProduct, getInfo } from '@/pages/product/service';
 import type { productDataItem, channelDataItem } from '../data';
-import { UploadAdapter } from '@/pages/components/UploadAdapter';
 import { CheckCircleOutlined, FormOutlined, UndoOutlined } from '@ant-design/icons';
 import ProForm, { ProFormMoney, ProFormSelect, ProFormText, ProFormTextArea } from '@ant-design/pro-form';
 
@@ -206,22 +205,20 @@ export default () => {
                         tagsList={special}
                         addition={'商品卖点'}
                         tagIcon={<CheckCircleOutlined />}
-                        handleChange={value => formRef.current?.setFieldsValue({ special: value })}
+                        handleChange={value => formRef.current?.setFieldValue('special', value)}
                     />
                 </ProForm.Item>
-                <UploadAdapter
-                    maxUpload={5}
-                    imageWidth={600}
-                    imageHeight={600}
-                    formName={'album'}
-                    formTitle={'Upload'}
-                    formLabel={'商品相册'}
-                    extraData={{ path: 'images/product' }}
-                    formTooltip={'至少上传一张图片作为商品封面'}
-                    validateRules={[{ required: true, type: 'array', min: 1, message: '请至少上传一张图像作为商品封面' }]}
-                    setFieldsValue={(fileList: UploadFile[]) => formRef.current?.setFieldsValue({ album: fileList })}
-                    useTransForm={value => ({ album: 'string' === typeof value ? value : value.map(item => item?.url ?? item) })}
-                />
+                <ProForm.Item
+                    name="album"
+                    label="商品相册"
+                    tooltip="限制为5张图片"
+                    rules={[
+                        { required: true, message: '请完善商品相册' },
+                        { type: 'array', max: 5, message: '商品相册只需要5张图片就行了' },
+                    ]}
+                >
+                    <FileSelect limit={5} setFieldValue={(fileList: string[]) => formRef.current?.setFieldValue('album', fileList)} />
+                </ProForm.Item>
                 <ProForm.Item
                     name="content"
                     label="商品详情"

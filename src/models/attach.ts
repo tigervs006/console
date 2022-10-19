@@ -20,6 +20,8 @@ const defaultCateOptions: cateDataItem[] & { disabled: boolean }[] = [
 ];
 
 export default () => {
+    /* setLimit */
+    const [limit, setLimit] = useState<number>(-1);
     /* 目录详情 */
     const [cateInfo, setCateInfo] = useState<cateDataItem>();
     /* 当前目录 */
@@ -28,6 +30,8 @@ export default () => {
     const [visible, setVisible] = useState<boolean>(false);
     /* 是否模态 */
     const [isModal, setIsModal] = useState<boolean>(false);
+    /* multiple*/
+    const [multiple, setMultiple] = useState<boolean>(false);
     /* 默认展开 */
     const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
     /* 目录列表 */
@@ -47,12 +51,15 @@ export default () => {
         onSuccess: res => setCateInfo({ ...res?.info, ...res?.info?.config }),
     });
     return {
+        limit,
         cateId,
         isModal,
         getInfo,
         visible,
         refresh,
         loading,
+        setLimit,
+        multiple,
         cateInfo,
         cateData,
         setCateId,
@@ -61,6 +68,7 @@ export default () => {
         setIsModal,
         setCateData,
         setCateInfo,
+        setMultiple,
         expandedKeys,
         setPagination,
         setExpandedKeys,

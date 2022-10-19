@@ -44,20 +44,24 @@ export const Previews: React.FC = () => {
     const [checkedItem, setCheckedItem] = useState<attachDataItem[]>([]);
     // prettier-ignore
     const {
+		limit,
 		cateId,
 		isModal,
 		cateData,
 		cateInfo,
+		multiple,
 		setCateId,
 		pagination,
 		setVisible,
 		setPagination,
 		setExpandedKeys
 	} = useModel('attach', ret => ({
+		limit: ret.limit,
         cateId: ret.cateId,
         isModal: ret.isModal,
         cateData: ret.cateData,
         cateInfo: ret.cateInfo,
+		multiple: ret.multiple,
         setCateId: ret.setCateId,
 		setVisible: ret.setVisible,
         pagination: ret.pagination,
@@ -114,7 +118,10 @@ export const Previews: React.FC = () => {
             url: item.static_path,
             uid: item.id.toString(),
         }));
-        setUploadList(fileSelect as UploadFile[]);
+        // prettier-ignore
+        multiple
+			? setUploadList(prev => prev.concat(fileSelect as UploadFile[]).slice(-limit))
+			: setUploadList(fileSelect.slice(-limit) as UploadFile[]);
         setVisible(false); /* close modal */
     };
 
