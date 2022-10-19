@@ -14,8 +14,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
 import { CameraOutlined, CloseOutlined, EyeOutlined } from '@ant-design/icons';
 
-export const FileSelect: React.FC<{ setFieldValue: (fileList: string[]) => void }> = props => {
+export const FileSelect: React.FC<{ limit?: number; setFieldValue: (fileList: string[]) => void }> = props => {
     const { Text } = Typography;
+    const limit: number = props?.limit ?? 1;
     /* previewRef */
     const previewRef: React.ForwardedRef<any> = useRef();
     /* currentIdx */
@@ -114,9 +115,11 @@ export const FileSelect: React.FC<{ setFieldValue: (fileList: string[]) => void 
                           </div>
                       ))
                     : null}
-                <div className="ant-image-select">
-                    <CameraOutlined id="select" onClick={() => handleOpenFolder()} />
-                </div>
+                {limit > uploadList.length && (
+                    <div className="ant-image-select">
+                        <CameraOutlined id="select" onClick={() => handleOpenFolder()} />
+                    </div>
+                )}
             </Space>
             <ImagePreview ref={previewRef} curIdx={curIdx} imgList={uploadList as unknown as attachDataItem[]} />
             <ModalForm
