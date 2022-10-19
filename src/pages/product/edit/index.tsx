@@ -230,7 +230,7 @@ export default () => {
                     }}
                     rules={[{ required: true, message: '商品详情不得为空' }]}
                 >
-                    <Ckeditor content={content} setContent={getContent} uploadPath={'images/product'} />
+                    <Ckeditor content={content} setContent={getContent} uploadPath={'product/content'} />
                 </ProForm.Item>
             </ProForm>
         </PageContainer>
