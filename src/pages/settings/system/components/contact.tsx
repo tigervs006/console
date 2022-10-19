@@ -53,7 +53,12 @@ export const ContactSettings: React.FC<{
             initialValues={{ isCrop: 1 }}
             onFinish={values => props.handleFinish(values)}
         >
-            <ProForm.Item name="qrcode" label="二维码" transform={value => (value instanceof Array ? { qrcode: value.at(0) } : { qrcode: value })}>
+            {/*prettier-ignore*/}
+            <ProForm.Item
+				name="qrcode"
+				label="二维码"
+				transform={value => (value instanceof Array ? { qrcode: value.at(0) } : { qrcode: value })}
+			>
                 <FileSelect setFieldValue={(fileList: string[]) => formRef.current?.setFieldValue('qrcode', fileList)} />
             </ProForm.Item>
             <ProFormText
