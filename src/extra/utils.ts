@@ -54,17 +54,15 @@ export const extFileFromUrl = (url: string) => {
  * 提取文章图片
  * @return array
  * @param content
- * TODO: 表达式有优化空间
+ * @param init string[]
  */
-export const extractImg = (content: string) => {
-    const images: string[] = [];
-    const srcReg = /src=[\'\"]?([^\'\"]*)[\'\"]?/i;
-    const imgArr = content.match(/<img.*?(?:>|\/>)/gi);
+export const extractImg = (content: string, init: string[] = []) => {
+    const imgArr = content.match(/<img.*?(?:>|\/>)/g);
     for (const idx in imgArr) {
-        const src = imgArr[idx].match(srcReg);
-        images.push(src?.[1]);
+        const url = imgArr[idx].match(/src="(\S+)"/i).pop();
+        init.push(url);
     }
-    return images;
+    return init;
 };
 
 /**
@@ -86,14 +84,12 @@ export const file2Base64 = (fileObject: File) => {
  * @param intIp ip地址
  */
 export const _int2ip = (intIp: number): string => {
-    let str = '';
     const tt = [];
     tt[0] = (intIp >>> 24) >>> 0;
     tt[1] = ((intIp << 8) >>> 24) >>> 0;
     tt[2] = (intIp << 16) >>> 24;
     tt[3] = (intIp << 24) >>> 24;
-    str = String(tt[0]) + '.' + String(tt[1]) + '.' + String(tt[2]) + '.' + String(tt[3]);
-    return str;
+    return String(tt[0]) + '.' + String(tt[1]) + '.' + String(tt[2]) + '.' + String(tt[3]);
 };
 
 /**
@@ -102,7 +98,7 @@ export const _int2ip = (intIp: number): string => {
  * @param length 字符串长度
  */
 export const randomString = (length: number): string => {
-    const str = 'abcdefghijklmnopqrstuvwxyz';
+    const str = '0123456789abcdefghijklmnopqrstuvwxyz';
     let result = '';
     for (let i = length; i > 0; --i) result += str[Math.floor(Math.random() * str.length)];
     return result;
