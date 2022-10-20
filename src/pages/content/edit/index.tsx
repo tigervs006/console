@@ -1,5 +1,6 @@
 /** @format */
 
+import './index.less';
 import { history, useModel } from 'umi';
 import { useState, useRef } from 'react';
 import { getCate } from '@/pages/channel/service';
@@ -8,25 +9,25 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { FileSelect } from '../../components/FileSelect';
 import type { articleData, channelDataItem } from '../data';
 import type { ProFormInstance } from '@ant-design/pro-form';
-import { UndoOutlined, FormOutlined } from '@ant-design/icons';
-import { notification, Button, Input, Space, message } from 'antd';
-import { extFileFromUrl, extractImg, waitTime } from '@/extra/utils';
 import { saveContent, getContent as getContents } from '@/pages/content/service';
+import { extFileFromUrl, randomString, extractImg, waitTime } from '@/extra/utils';
+import { CheckCircleOutlined, UndoOutlined, FormOutlined, EyeOutlined } from '@ant-design/icons';
+import { notification, Typography, Button, Modal, Image, Input, Radio, Space, message } from 'antd';
 import ProForm, { ProFormDependency, ProFormCheckbox, ProFormTextArea, ProFormSelect, ProFormText } from '@ant-design/pro-form';
 
 export default () => {
     const formRef = useRef<ProFormInstance>();
-    // 文档内容
+    /* 文档内容 */
     const [content, setContent] = useState<string>(() => {
-        return formRef.current?.getFieldValue('content') || null;
+        return formRef.current?.getFieldValue('content');
     });
 
-    // 文件列表
+    /* 文件列表 */
     const { setUploadList } = useModel('file', ret => ({
         setUploadList: ret.setUploadList,
     }));
 
-    // 新闻栏目
+    /* 新闻栏目 */
     const channel = async () => {
         return await getCate({ nid: 1 }).then(res =>
             res.data?.list.map((item: channelDataItem) => ({
@@ -36,39 +37,71 @@ export default () => {
         );
     };
 
-    // 提取图像
+    /* 提取图像 */
     const adstractImg = () => {
-        // 从正文提取图像
-        if (null === content) {
+        /* 从正文提取图像 */
+        if (!content) {
             return notification.error({
                 message: '正文内容为空',
                 description: '请先完善正文内容并插入图像',
             });
         }
         const imgArr = extractImg(content);
-        if (imgArr.length) {
-            notification.success({
-                message: '提取图像成功',
-                description: imgArr.toString().match(/\/(\w+\.(?:png|jpg|gif|bmp))$/i)?.[1],
-            });
-        } else {
-            notification.error({
-                message: '提取图像失败',
-                description: '正文中不包含图像',
-            });
+        switch (true) {
+            case 1 == imgArr.length:
+                notification.success({
+                    message: '提取图像成功',
+                    description: extFileFromUrl(imgArr.toString()),
+                });
+                formRef.current?.setFieldValue('litpic', imgArr.at(0));
+                break;
+            case 1 < imgArr.length:
+                Modal.confirm({
+                    centered: true,
+                    title: '请选择您要使用的图像',
+                    icon: <CheckCircleOutlined />,
+                    okButtonProps: { shape: 'round' },
+                    cancelButtonProps: { shape: 'round' },
+                    content: (
+                        <Radio.Group defaultValue={imgArr[0]} onChange={e => formRef.current?.setFieldValue('litpic', e.target.value)}>
+                            <Space size="middle" direction="vertical">
+                                {imgArr.map(item => (
+                                    <Radio value={item} key={randomString(3)}>
+                                        <Image
+                                            src={item}
+                                            fallback="/manage/logo.svg"
+                                            preview={{
+                                                mask: (
+                                                    <Typography.Text style={{ color: 'white' }}>
+                                                        <EyeOutlined /> 预览
+                                                    </Typography.Text>
+                                                ),
+                                            }}
+                                        />
+                                    </Radio>
+                                ))}
+                            </Space>
+                        </Radio.Group>
+                    ),
+                });
+                break;
+            default:
+                notification.error({
+                    message: '提取图像失败',
+                    description: '正文中不包含图像',
+                });
         }
-        formRef.current?.setFieldsValue({ litpic: imgArr.toString() });
     };
 
-    // 获取编辑器内容
+    /* 获取编辑器内容 */
     const getContent = (CKcontent: string) => {
-        // 设置useState
+        /* 设置useState
         setContent(CKcontent);
-        // 设置到字段中只是为了rules规则验证
+        /* 设置到字段中只是为了rules规则验证 */
         formRef.current?.setFieldsValue({ content: CKcontent });
     };
 
-    // 处理onFinsh提交
+    /* 处理onFinsh提交 */
     const handleFinsh = async (data: articleData) => {
         await saveContent(
             Object.assign(data, {
@@ -78,20 +111,20 @@ export default () => {
             }),
         ).then(res => {
             res?.success && message.success(res.msg);
-            // 延时跳转到列表页
+            /* 延时跳转到列表页 */
             res?.success && waitTime(2000).then(() => history.push({ pathname: '/content/list' }));
         });
     };
 
-    // 处理request请求
+    /* 处理request请求 */
     const handleRequest = async (params: Record<'id', string>) => {
         if (params?.id) {
-            // 只有在编辑文档时请求网络
+            /* 只有在编辑文档时请求网络 */
             return await getContents({ ...params }).then(res => {
                 const info = res?.data?.info ?? {};
-                // 设置编辑器内容
+                /* 设置编辑器内容 */
                 setContent(info?.content?.content ?? null);
-                // 设置fileList
+                /* 设置fileList */
                 setUploadList([
                     {
                         status: 'done',
@@ -103,9 +136,9 @@ export default () => {
                 return { ...info, content: info?.content?.content ?? null };
             });
         } else {
-            // 清空fileList
+            /* 清空fileList */
             setUploadList([]);
-            return {}; // 不是编辑文档直接返回空对象
+            return {}; /* 不是编辑文档直接返回空对象 */
         }
     };
 
@@ -119,7 +152,7 @@ export default () => {
                     lg: { span: 16 },
                     xl: { span: 8 },
                 }}
-                // 表单默认值
+                /* 表单默认值 */
                 initialValues={{
                     isCrop: 1,
                     is_recom: 1,
@@ -135,13 +168,13 @@ export default () => {
                     resetButtonProps: { shape: 'round', icon: <UndoOutlined /> },
                     submitButtonProps: { type: 'primary', shape: 'round', icon: <FormOutlined /> },
                 }}
-                // 失焦校验数据
+                /* 失焦校验数据 */
                 validateTrigger={['onBlur']}
-                // request参数
+                /* request参数 */
                 params={{ id: history.location.query?.id }}
-                // 提交文档数据
+                /* 提交文档数据 */
                 onFinish={(data: articleData) => handleFinsh(data)}
-                // request请求
+                /* request请求 */
                 request={(params: Record<'id', string>) => handleRequest(params)}
             >
                 <ProFormSelect
@@ -160,7 +193,7 @@ export default () => {
                     name="title"
                     tooltip="限制32个字符"
                     placeholder="请输入文档标题"
-                    // 输入时去除首尾空格
+                    /* 输入时去除首尾空格 */
                     getValueFromEvent={e => e.target.value.trim()}
                     fieldProps={{ maxLength: 32, showCount: true }}
                     rules={[
@@ -191,7 +224,7 @@ export default () => {
                     name="description"
                     tooltip="SEO优化很重要"
                     placeholder="请输入文档简述"
-                    // 输入时去除首尾空格
+                    /* 输入时去除首尾空格 */
                     getValueFromEvent={e => e.target.value.trim()}
                     fieldProps={{
                         allowClear: true,
@@ -227,7 +260,7 @@ export default () => {
                     fieldProps={{
                         allowClear: false,
                         onChange: () => {
-                            // 只在编辑文档时清空fileList及litpic
+                            /* 只在编辑文档时清空fileList及litpic */
                             if (!history.location.query?.id) {
                                 setUploadList([]);
                                 formRef.current?.setFieldsValue({ litpic: [] });
@@ -246,7 +279,7 @@ export default () => {
                                         label="图像网址"
                                         tooltip="直接输入图像网址"
                                         placeholder="请输入输入图片网址"
-                                        // 输入时去除首尾空格
+                                        /* 输入时去除首尾空格 */
                                         getValueFromEvent={e => e.target.value.trim()}
                                         rules={[
                                             { required: true, message: '请输入图像网址或选择上传图像作为文档封面' },
