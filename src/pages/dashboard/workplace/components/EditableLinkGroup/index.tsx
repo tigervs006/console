@@ -1,3 +1,13 @@
+/*
+ * +----------------------------------------------------------------------------------
+ * | https://www.tigervs.com
+ * +----------------------------------------------------------------------------------
+ * | Email: Kevin@tigervs.com
+ * +----------------------------------------------------------------------------------
+ * | Copyright (c) Shenzhen Tiger Technology Co., Ltd. 2018~2022. All rights reserved.
+ * +----------------------------------------------------------------------------------
+ */
+
 import React, { createElement } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { Button } from 'antd';

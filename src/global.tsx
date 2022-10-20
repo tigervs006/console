@@ -1,3 +1,13 @@
+/*
+ * +----------------------------------------------------------------------------------
+ * | https://www.tigervs.com
+ * +----------------------------------------------------------------------------------
+ * | Email: Kevin@tigervs.com
+ * +----------------------------------------------------------------------------------
+ * | Copyright (c) Shenzhen Tiger Technology Co., Ltd. 2018~2022. All rights reserved.
+ * +----------------------------------------------------------------------------------
+ */
+
 import { Button, message, notification } from 'antd';
 import { useIntl } from 'umi';
 import defaultSettings from '../config/defaultSettings';
