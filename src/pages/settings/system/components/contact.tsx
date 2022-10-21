@@ -11,12 +11,12 @@
 /** @format */
 
 import { Space } from 'antd';
-import { extFileFromUrl } from '@/extra/utils';
+import { useModel } from 'umi';
 import React, { useEffect, useRef } from 'react';
-import { useModel } from '@@/plugin-model/useModel';
 import { FileSelect } from '@/pages/components/FileSelect';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import ProForm, { ProFormText } from '@ant-design/pro-form';
+import { extFileFromUrl, randomString } from '@/extra/utils';
 import { FormOutlined, UndoOutlined } from '@ant-design/icons';
 
 export const ContactSettings: React.FC<{
@@ -32,8 +32,8 @@ export const ContactSettings: React.FC<{
         setUploadList([
             {
                 status: 'done',
+                uid: randomString(4),
                 url: props.list.qrcode?.value,
-                uid: Math.floor(Math.random() * 100).toString(),
                 name: extFileFromUrl(props.list.qrcode?.value ?? '') ?? '',
             },
         ]);

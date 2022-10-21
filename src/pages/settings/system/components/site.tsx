@@ -11,8 +11,11 @@
 /** @format */
 
 import { Space } from 'antd';
-import React, { useRef } from 'react';
+import { useModel } from 'umi';
+import React, { useEffect, useRef } from 'react';
+import { FileSelect } from '@/pages/components/FileSelect';
 import type { ProFormInstance } from '@ant-design/pro-form';
+import { extFileFromUrl, randomString } from '@/extra/utils';
 import { FormOutlined, UndoOutlined } from '@ant-design/icons';
 import ProForm, { ProFormText, ProFormTextArea } from '@ant-design/pro-form';
 
@@ -21,6 +24,20 @@ export const SiteSettings: React.FC<{
     handleFinish: (data: Record<string, any>) => Promise<void>;
 }> = props => {
     const formRef = useRef<ProFormInstance>();
+    /* 文件列表 */
+    const { setUploadList } = useModel('file', ret => ({
+        setUploadList: ret.setUploadList,
+    }));
+    useEffect(() => {
+        setUploadList([
+            {
+                status: 'done',
+                uid: randomString(4),
+                url: props.list.logo?.value,
+                name: extFileFromUrl(props.list.logo?.value ?? '') ?? '',
+            },
+        ]);
+    });
     return (
         <ProForm
             formRef={formRef}
@@ -45,6 +62,19 @@ export const SiteSettings: React.FC<{
             validateTrigger={['onBlur']}
             onFinish={values => props.handleFinish(values)}
         >
+            <ProForm.Item
+                name={props.list.logo?.name}
+                label={props.list.logo?.description}
+                initialValue={props.list.logo?.value}
+                tooltip={props.list.logo?.description}
+                rules={[{ required: true, message: '请上传网站logo' }]}
+                // prettier-ignore
+                transform={value =>
+					(value instanceof Array ? { [props.list.logo?.name]: value.at(0) } : { [props.list.logo?.name]: value })
+				}
+            >
+                <FileSelect setFieldValue={(fileList: string[]) => formRef.current?.setFieldValue(props.list.logo?.name, fileList)} />
+            </ProForm.Item>
             <ProFormText
                 hasFeedback
                 name={props.list.sitename?.name}
