@@ -8,8 +8,6 @@
  * +----------------------------------------------------------------------------------
  */
 
-/** @format */
-
 export default {
     'pages.layouts.userLayout.title': '北蓝得（深圳）科技有限公司',
     'pages.login.accountLogin.tab': '账户密码登录',

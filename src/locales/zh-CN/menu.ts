@@ -8,8 +8,6 @@
  * +----------------------------------------------------------------------------------
  */
 
-/** @format */
-
 export default {
     'menu.welcome': '欢迎',
     'menu.more-blocks': '更多区块',
@@ -66,7 +64,7 @@ export default {
     'menu.channel': '栏目管理',
     'menu.channel.list': '栏目列表',
     'menu.channel.module': '模型列表',
-    'menu.settings': '运维管理',
+    'menu.settings': '系统运维',
     'menu.settings.system': '系统配置',
     'menu.settings.region': '行政区域',
     'menu.settings.record': '操作日志',

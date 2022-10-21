@@ -8,8 +8,6 @@
  * +----------------------------------------------------------------------------------
  */
 
-/** @format */
-
 export default {
     'pages.layouts.userLayout.title': 'Brand (ShenZhen) Technology Co., Ltd',
     'pages.login.accountLogin.tab': 'Account Login',
