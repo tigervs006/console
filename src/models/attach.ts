@@ -8,8 +8,6 @@
  * +----------------------------------------------------------------------------------
  */
 
-/** @format */
-
 import type React from 'react';
 import { useState } from 'react';
 import { useRequest } from 'umi';
@@ -30,6 +28,7 @@ const defaultCateOptions: cateDataItem[] & { disabled: boolean }[] = [
 ];
 
 export default () => {
+    const innerWidth: number = window.innerWidth;
     /* setLimit */
     const [limit, setLimit] = useState<number>(-1);
     /* 目录详情 */
@@ -46,9 +45,24 @@ export default () => {
     const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
     /* 目录列表 */
     const [cateData, setCateData] = useState<cateDataItem[]>(defaultCateOptions);
-    // prettier-ignore
-    const [pagination, setPagination] = useState<{
-		current: number; pageSize: number }>({ current: 1, pageSize: 32 });
+    /* 设置span、pageSize */
+    const [span] = useState<{ span: number; pageSize: number }>(() => {
+        switch (true) {
+            case 1920 < innerWidth:
+                return { span: 2, pageSize: 120 };
+            default:
+                return { span: 3, pageSize: 32 };
+        }
+    });
+    /* 动态设置 pageSize */
+    const [pagination, setPagination] = useState<{ current: number; pageSize: number }>(() => {
+        switch (true) {
+            case 1920 < innerWidth:
+                return { current: 1, pageSize: 120 };
+            default:
+                return { current: 1, pageSize: 32 };
+        }
+    });
     /* 自动获取目录列表 */
     const { run, refresh, loading } = useRequest(fetchCate, {
         manual: true,
@@ -64,6 +78,7 @@ export default () => {
     return {
         run,
         open,
+        span,
         limit,
         cateId,
         isModal,

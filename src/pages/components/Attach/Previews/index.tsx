@@ -8,8 +8,6 @@
  * +----------------------------------------------------------------------------------
  */
 
-/** @format */
-
 import { useRequest, useModel } from 'umi';
 import { findParentId } from '@/extra/utils';
 import type { attachDataItem } from '../data';
@@ -52,6 +50,7 @@ export const Previews: React.FC = () => {
     }));
     /* 设置选中的值 */
     const [checkedItem, setCheckedItem] = useState<attachDataItem[]>([]);
+
     // prettier-ignore
     const {
 		limit,
@@ -63,9 +62,11 @@ export const Previews: React.FC = () => {
 		multiple,
 		setCateId,
 		pagination,
+		span: monitor,
 		setPagination,
 		setExpandedKeys
 	} = useModel('attach', ret => ({
+		span: ret.span,
 		limit: ret.limit,
         cateId: ret.cateId,
         isModal: ret.isModal,
@@ -231,7 +232,7 @@ export const Previews: React.FC = () => {
                     >
                         <Row gutter={16}>
                             {fileList?.map((item: Record<string, any>) => (
-                                <Col span={isModal ? 4 : 3} key={item.id}>
+                                <Col span={isModal ? 4 : monitor.span} key={item.id}>
                                     <CheckCard
                                         value={item}
                                         style={{
@@ -283,8 +284,8 @@ export const Previews: React.FC = () => {
                     style={{ float: 'right' }}
                     current={pagination.current}
                     pageSize={pagination.pageSize}
-                    pageSizeOptions={[24, 32, 40, 48]}
-                    defaultPageSize={isModal ? 24 : 32}
+                    pageSizeOptions={[24, 32, 56, 86, 102, 120]}
+                    defaultPageSize={isModal ? 24 : pagination.pageSize}
                     showTotal={(total, range) => `第 ${range[0]}-${range[1]} 条/总共 ${totals} 条`}
                     onChange={(page, pageSize) => setPagination({ current: page, pageSize: pageSize })}
                     onShowSizeChange={(current, size) => setPagination({ current: current, pageSize: size })}

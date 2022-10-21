@@ -8,8 +8,6 @@
  * +----------------------------------------------------------------------------------
  */
 
-/** @format */
-
 import { useLayoutEffect, useState } from 'react';
 
 export default () => {

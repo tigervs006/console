@@ -8,8 +8,6 @@
  * +----------------------------------------------------------------------------------
  */
 
-/** @format */
-
 import './index.less';
 import lodash from 'lodash';
 import { useModel } from 'umi';
@@ -43,6 +41,7 @@ export const FileSelect: React.FC<{ limit?: number; setFieldValue: (fileList: st
         uploadList: ret.uploadList,
         setUploadList: ret.setUploadList,
     }));
+
     // prettier-ignore
     const {
 		open,
@@ -51,10 +50,12 @@ export const FileSelect: React.FC<{ limit?: number; setFieldValue: (fileList: st
 		setCateId,
 		setIsModal,
 		setMultiple,
+		span: monitor,
 		setPagination,
 		setExpandedKeys
 	} = useModel('attach', ret => ({
 		open: ret.open,
+		span: ret.span,
 		setOpen: ret.setOpen,
         isModal: ret.isModal,
 		setLimit: ret.setLimit,
@@ -154,7 +155,7 @@ export const FileSelect: React.FC<{ limit?: number; setFieldValue: (fileList: st
                     afterClose: () => {
                         setCateId([0]);
                         setExpandedKeys([]);
-                        setPagination({ current: 1, pageSize: 32 });
+                        setPagination({ current: 1, pageSize: monitor.pageSize });
                     },
                     onCancel: () => setOpen(false),
                     modalRender: modal => (
