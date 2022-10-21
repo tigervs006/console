@@ -17,8 +17,8 @@ import type { schemaData } from '@/pages/settings/data';
 import type { ProColumns } from '@ant-design/pro-table';
 import { info as schema } from '@/pages/settings/service';
 export const TableSchema: React.FC<{
-    modalVisit: boolean;
-    setModalVisit: (status: boolean) => void;
+    modalOpen: boolean;
+    setModalOpen: (status: boolean) => void;
     record?: { name: string; comment: string };
 }> = props => {
     /* 获取数据列表 */
@@ -64,8 +64,8 @@ export const TableSchema: React.FC<{
                 maskClosable: false,
                 destroyOnClose: true,
             }}
-            visible={props.modalVisit}
-            onVisibleChange={props.setModalVisit}
+            open={props.modalOpen}
+            onOpenChange={props.setModalOpen}
             title={`${props.record?.name} ${props.record?.comment}`}
         >
             <ProTable<schemaData>

@@ -34,10 +34,10 @@ export default () => {
     const [limit, setLimit] = useState<number>(-1);
     /* 目录详情 */
     const [cateInfo, setCateInfo] = useState<cateDataItem>();
+    /* setOpen */
+    const [open, setOpen] = useState<boolean>(false);
     /* 当前目录 */
     const [cateId, setCateId] = useState<number[]>([0]);
-    /* visible */
-    const [visible, setVisible] = useState<boolean>(false);
     /* 是否模态 */
     const [isModal, setIsModal] = useState<boolean>(false);
     /* multiple*/
@@ -63,19 +63,19 @@ export default () => {
     });
     return {
         run,
+        open,
         limit,
         cateId,
         isModal,
         getInfo,
-        visible,
         refresh,
+        setOpen,
         loading,
         setLimit,
         multiple,
         cateInfo,
         cateData,
         setCateId,
-        setVisible,
         pagination,
         setIsModal,
         setCateData,

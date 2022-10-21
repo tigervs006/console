@@ -45,21 +45,21 @@ export const FileSelect: React.FC<{ limit?: number; setFieldValue: (fileList: st
     }));
     // prettier-ignore
     const {
-		visible,
+		open,
+		setOpen,
 		setLimit,
 		setCateId,
 		setIsModal,
-		setVisible,
 		setMultiple,
 		setPagination,
 		setExpandedKeys
 	} = useModel('attach', ret => ({
+		open: ret.open,
+		setOpen: ret.setOpen,
         isModal: ret.isModal,
-		visible: ret.visible,
 		setLimit: ret.setLimit,
         setCateId: ret.setCateId,
         setIsModal: ret.setIsModal,
-		setVisible: ret.setVisible,
 		setMultiple: ret.setMultiple,
         setPagination: ret.setPagination,
         setExpandedKeys: ret.setExpandedKeys,
@@ -109,7 +109,7 @@ export const FileSelect: React.FC<{ limit?: number; setFieldValue: (fileList: st
 
     const handleOpenFolder = () => {
         setCateId([0]);
-        setVisible(true);
+        setOpen(true);
         setExpandedKeys([]);
         setPagination({ current: 1, pageSize: 24 });
     };
@@ -144,9 +144,9 @@ export const FileSelect: React.FC<{ limit?: number; setFieldValue: (fileList: st
             <ImagePreview ref={previewRef} curIdx={curIdx} imgList={uploadList as unknown as attachDataItem[]} />
             <ModalForm
                 width={960}
-                visible={visible}
+                open={open}
                 submitter={false}
-                onVisibleChange={value => setIsModal(value)}
+                onOpenChange={value => setIsModal(value)}
                 modalProps={{
                     centered: true,
                     maskClosable: false,
@@ -156,7 +156,7 @@ export const FileSelect: React.FC<{ limit?: number; setFieldValue: (fileList: st
                         setExpandedKeys([]);
                         setPagination({ current: 1, pageSize: 32 });
                     },
-                    onCancel: () => setVisible(false),
+                    onCancel: () => setOpen(false),
                     modalRender: modal => (
                         <Draggable bounds={bounds} disabled={disabled} onStart={(event, uiData) => onStart(event, uiData)}>
                             <div ref={draggleRef}>{modal}</div>

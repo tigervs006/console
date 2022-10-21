@@ -20,13 +20,13 @@ import type { moduleDataItem, tableDataItem } from '../data';
 import ProForm, { ProFormCascader, ProFormTextArea, ProFormSelect, ProFormText, DrawerForm } from '@ant-design/pro-form';
 
 export const CreateDrawerForm: React.FC<{
-    drawerVisit: boolean;
+    drawerOpen: boolean;
     record: tableDataItem;
     reloadTable: () => void;
     module: moduleDataItem[];
     isCreateChannel: boolean;
     setExpandByClick: (value: boolean) => void;
-    handleSetDrawerVisit: (value: boolean) => void;
+    handleSetDrawerOpen: (value: boolean) => void;
 }> = props => {
     /* 上级栏目 */
     const [pid, setPid] = useState<number>();
@@ -71,9 +71,9 @@ export const CreateDrawerForm: React.FC<{
             formRef={formRef}
             title={drawerTitle}
             submitTimeout={2000}
-            visible={props.drawerVisit}
+            open={props.drawerOpen}
             validateTrigger={['onBlur']}
-            onVisibleChange={props.handleSetDrawerVisit}
+            onOpenChange={props.handleSetDrawerOpen}
             initialValues={{ ...props.record, isCrop: 0 }}
             onFinish={values => handleFinish(values).then(() => true)}
         >

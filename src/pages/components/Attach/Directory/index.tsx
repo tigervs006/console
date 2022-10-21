@@ -27,7 +27,7 @@ export const Directory: React.FC = () => {
     const [path, setPath] = useState<number[]>();
     const childRef: React.ForwardedRef<any> = useRef();
     const [searchValue, setSearchValue] = useState<string>('');
-    const [modalVisit, setModalVisit] = useState<boolean>(false);
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
 
     // prettier-ignore
@@ -90,7 +90,7 @@ export const Directory: React.FC = () => {
             case 'update': /* 编辑目录 */
 				e.domEvent.stopPropagation()
 				getInfo({ id: tKey }).then(res => {
-					res?.info && setModalVisit(true)
+					res?.info && setModalOpen(true)
 				})
                 break;
             // prettier-ignore
@@ -102,10 +102,10 @@ export const Directory: React.FC = () => {
 					getInfo({ id: tKey }).then(res => {
 						// prettier-ignore
 						setPath(res?.info.path.split('-').map(Number).concat(tKey).filter((v: number) => v))
-					}).finally(() => setModalVisit(true))
+					}).finally(() => setModalOpen(true))
                 } else {
                     setPath([0]);
-                    setModalVisit(true);
+                    setModalOpen(true);
                     setCateInfo(undefined);
                 }
                 break;
@@ -282,9 +282,9 @@ export const Directory: React.FC = () => {
             <CreateDirectory
                 path={path}
                 ref={childRef}
-                modalVisit={modalVisit}
-                handleSetModalVisit={(status: boolean) => {
-                    setModalVisit(status);
+                modalOpen={modalOpen}
+                handleSetModalOpen={(status: boolean) => {
+                    setModalOpen(status);
                     !status && setPath(undefined);
                 }}
             />

@@ -21,10 +21,10 @@ import { ProFormDependency, ProFormTextArea, ProFormSelect, ProFormGroup, ProFor
 
 export const CreateClient: React.FC<{
     record: tableDataItem;
-    modalVisit: boolean;
+    modalOpen: boolean;
     isCreateClient: boolean;
     reloadTable: () => void;
-    handleSetModalVisit: (status: boolean) => void;
+    handleSetModalOpen: (status: boolean) => void;
 }> = props => {
     const formRef = useRef<ProFormInstance>();
     /** modal标题 */
@@ -67,10 +67,10 @@ export const CreateClient: React.FC<{
             formRef={formRef}
             title={modalTitle}
             autoFocusFirstInput
-            visible={props.modalVisit}
+            open={props.modalOpen}
             initialValues={props.record}
             validateTrigger={['onBlur']}
-            onVisibleChange={props.handleSetModalVisit}
+            onOpenChange={props.handleSetModalOpen}
             onFinish={values => handleFinish(values).then(() => true)}
         >
             <ProFormText

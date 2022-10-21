@@ -21,11 +21,11 @@ import type { ProFormInstance } from '@ant-design/pro-form';
 import ProForm, { ProFormDependency, ProFormSelect, ProFormText, ModalForm } from '@ant-design/pro-form';
 
 export const CreateUser: React.FC<{
-    modalVisit: boolean;
+    modalOpen: boolean;
     isCreateUser: boolean;
     record: tableDataItem;
     reloadTable: () => void;
-    handleSetModalVisit: (status: boolean) => void;
+    handleSetModalOpen: (status: boolean) => void;
     userGroupItem: { label: string; value: number }[];
 }> = props => {
     const formRef = useRef<ProFormInstance>();
@@ -65,9 +65,9 @@ export const CreateUser: React.FC<{
             autoFocusFirstInput
             title={modalTitle}
             submitTimeout={2000}
-            visible={props.modalVisit}
+            open={props.modalOpen}
             validateTrigger={['onBlur']}
-            onVisibleChange={props.handleSetModalVisit}
+            onOpenChange={props.handleSetModalOpen}
             initialValues={{ ...props.record, isCrop: 1 }}
             onFinish={values => handleFinish(values).then(() => true)}
         >

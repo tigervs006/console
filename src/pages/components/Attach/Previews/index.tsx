@@ -57,23 +57,23 @@ export const Previews: React.FC = () => {
 		limit,
 		cateId,
 		isModal,
+		setOpen,
 		cateData,
 		cateInfo,
 		multiple,
 		setCateId,
 		pagination,
-		setVisible,
 		setPagination,
 		setExpandedKeys
 	} = useModel('attach', ret => ({
 		limit: ret.limit,
         cateId: ret.cateId,
         isModal: ret.isModal,
+		setOpen: ret.setOpen,
         cateData: ret.cateData,
         cateInfo: ret.cateInfo,
 		multiple: ret.multiple,
         setCateId: ret.setCateId,
-		setVisible: ret.setVisible,
         pagination: ret.pagination,
         setPagination: ret.setPagination,
         setExpandedKeys: ret.setExpandedKeys,
@@ -132,7 +132,7 @@ export const Previews: React.FC = () => {
         multiple
 			? setUploadList(prev => prev.concat(fileSelect as UploadFile[]).slice(-limit))
 			: setUploadList(fileSelect.slice(-limit) as UploadFile[]);
-        setVisible(false); /* close modal */
+        setOpen(false); /* close modal */
     };
 
     /* 处理删除事件 */

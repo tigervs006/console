@@ -31,7 +31,7 @@ export default () => {
         resize: ret.resize,
     }));
     /** ModalForm状态 */
-    const [modalVisit, setModalVisit] = useState<boolean>(false);
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
     /** 设置当前展开行 */
     const [expandedRowKey, setExpandedRowKey] = useState<number[]>([]);
     /** ModalForm 默认值 */
@@ -50,13 +50,13 @@ export default () => {
         // 防止点击事件穿透
         e.stopPropagation();
         setClientValues(record);
-        setModalVisit(true);
+        setModalOpen(true);
         setIsCreateClient(false);
     };
     /** 处理新增客户事件 */
     const handleCreate = () => {
         setClientValues({});
-        setModalVisit(true);
+        setModalOpen(true);
         setIsCreateClient(true);
     };
     /** 处理单个/批量删除事件 */
@@ -262,10 +262,10 @@ export default () => {
             />
             <CreateClient
                 record={clientValues}
-                modalVisit={modalVisit}
+                modalOpen={modalOpen}
                 isCreateClient={isCreateClient}
                 reloadTable={() => ref.current?.reload()}
-                handleSetModalVisit={(status: boolean) => setModalVisit(status)}
+                handleSetModalOpen={(status: boolean) => setModalOpen(status)}
             />
         </PageContainer>
     );

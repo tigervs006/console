@@ -46,7 +46,7 @@ export default () => {
     /* 模型列表 */
     const [module, setModule] = useState<moduleDataItem[]>([]);
     /* DrawerForm 状态 */
-    const [drawerVisit, setDrawerVisit] = useState<boolean>(false);
+    const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
     /* 存放子项的id */
     const [expandedIds, setexpandedIds] = useState<number[]>([]);
     /* DrawerForm 标题 */
@@ -69,7 +69,7 @@ export default () => {
     const handleEdit = (record: tableDataItem, e: React.MouseEvent<HTMLElement, MouseEvent> | undefined) => {
         e!.stopPropagation();
         setDrawerlValues(record);
-        setDrawerVisit(true);
+        setDrawerOpen(true);
         setExpandByClick(false);
         setIsCreateChannel(false);
         setUploadList(() => {
@@ -309,7 +309,7 @@ export default () => {
                             icon={<PlusOutlined />}
                             onClick={() => {
                                 setUploadList([]);
-                                setDrawerVisit(true);
+                                setDrawerOpen(true);
                                 setDrawerlValues({});
                                 setIsCreateChannel(true);
                             }}
@@ -337,11 +337,11 @@ export default () => {
             <CreateDrawerForm
                 module={module}
                 record={drawerValues}
-                drawerVisit={drawerVisit}
+                drawerOpen={drawerOpen}
                 isCreateChannel={isCreate}
                 reloadTable={() => ref.current?.reload()}
                 setExpandByClick={(value: boolean) => setExpandByClick(value)}
-                handleSetDrawerVisit={(value: boolean) => setDrawerVisit(value)}
+                handleSetDrawerOpen={(value: boolean) => setDrawerOpen(value)}
             />
         </PageContainer>
     );

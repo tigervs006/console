@@ -39,7 +39,7 @@ export default () => {
         resize: ret.resize,
     }));
     // ModalForm 状态
-    const [modalVisit, setModalVisit] = useState<boolean>(false);
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
     // ModalForm 默认值
     const [userValues, setUserValues] = useState<tableDataItem>({});
     // ModalForm 标题
@@ -86,13 +86,13 @@ export default () => {
     const handleCreate = () => {
         setUploadList([]);
         setUserValues({});
-        setModalVisit(true);
+        setModalOpen(true);
         setIsCreateUser(true);
     };
 
     const handleEdit = (record: tableDataItem) => {
         setUserValues(record);
-        setModalVisit(true);
+        setModalOpen(true);
         setIsCreateUser(false);
         setUploadList([
             {
@@ -295,11 +295,11 @@ export default () => {
             />
             <CreateUser
                 record={userValues}
-                modalVisit={modalVisit}
+                modalOpen={modalOpen}
                 userGroupItem={userGroup}
                 isCreateUser={isCreateUser}
                 reloadTable={() => ref.current?.reload()}
-                handleSetModalVisit={(status: boolean) => setModalVisit(status)}
+                handleSetModalOpen={(status: boolean) => setModalOpen(status)}
             />
         </PageContainer>
     );

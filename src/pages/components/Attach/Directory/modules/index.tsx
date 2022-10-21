@@ -34,9 +34,9 @@ import React, { useImperativeHandle, forwardRef, useState, useRef } from 'react'
 
 export const CreateDirectory: React.FC<{
     path?: number[];
-    modalVisit: boolean;
+    modalOpen: boolean;
     ref: ForwardedRef<any>;
-    handleSetModalVisit: (status: boolean) => void;
+    handleSetModalOpen: (status: boolean) => void;
 }> = forwardRef((props, ref) => {
     /* formRef */
     const formRef = useRef<ProFormInstance>();
@@ -137,9 +137,9 @@ export const CreateDirectory: React.FC<{
             width={400}
             formRef={formRef}
             autoFocusFirstInput
-            visible={props.modalVisit}
+            open={props.modalOpen}
             validateTrigger={['onBlur']}
-            onVisibleChange={props.handleSetModalVisit}
+            onOpenChange={props.handleSetModalOpen}
             onFinish={values => handleOnFinsh(values).then(() => true)}
             initialValues={props?.path ? { path: props.path } : cateInfo}
         >

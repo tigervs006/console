@@ -29,7 +29,7 @@ export default () => {
         resize: ret.resize,
     }));
     /* ModalForm状态 */
-    const [modalVisit, setModalVisit] = useState<boolean>(false);
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
     /* Protable Tab */
     const [activeKey, setActiveKey] = useState<React.Key>('backup');
     /* ModalForm参数 */
@@ -104,7 +104,7 @@ export default () => {
 
     /* 查看表架构 */
     const getSchemaInfo = async (record: databaseDataItem) => {
-        setModalVisit(true);
+        setModalOpen(true);
         setModalData({ name: record.name, comment: record.comment });
     };
 
@@ -280,7 +280,7 @@ export default () => {
                     </Space>
                 )}
             />
-            <TableSchema record={modalData} modalVisit={modalVisit} setModalVisit={(status: boolean) => setModalVisit(status)} />
+            <TableSchema record={modalData} modalOpen={modalOpen} setModalOpen={(status: boolean) => setModalOpen(status)} />
         </PageContainer>
     );
 };
