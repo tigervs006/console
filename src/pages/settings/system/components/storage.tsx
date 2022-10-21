@@ -16,7 +16,7 @@ import type { ProFormInstance } from '@ant-design/pro-form';
 import { FormOutlined, UndoOutlined } from '@ant-design/icons';
 import ProForm, { ProFormDependency, ProFormRadio, ProFormText } from '@ant-design/pro-form';
 
-export const ApiSettings: React.FC<{
+export const StorageSettings: React.FC<{
     list: Record<string, any>;
     handleFinish: (data: Record<string, any>) => Promise<void>;
 }> = props => {
