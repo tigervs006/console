@@ -73,7 +73,7 @@ export const SiteSettings: React.FC<{
 					(value instanceof Array ? { [props.list.logo?.name]: value.at(0) } : { [props.list.logo?.name]: value })
 				}
             >
-                <FileSelect setFieldValue={(fileList: string[]) => formRef.current?.setFieldValue(props.list.logo?.name, fileList)} />
+                <FileSelect setFieldValue={(fileList: string[]) => formRef.current?.setFieldValue(`${props.list.logo?.name}`, fileList)} />
             </ProForm.Item>
             <ProFormText
                 hasFeedback
