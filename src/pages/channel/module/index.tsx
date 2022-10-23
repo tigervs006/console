@@ -122,12 +122,9 @@ export default () => {
             fieldProps: {
                 onBlur: (e: React.FocusEvent<HTMLInputElement>) => {
                     // prettier-ignore
-                    const pinyin: string = zh2Pinyin(e.target.value)
-						.replace(/\s+/g, '')
+                    const rowData: moduleDataItem = formRef.current?.getRowData!(editableKeys.toString());
                     // prettier-ignore
-                    const rowData: moduleDataItem
-						= formRef.current?.getRowData!(editableKeys.toString())
-                    /* 只有rowData的id为字符串时自动设置nid、ctl_name的值 */
+                    const pinyin: string = zh2Pinyin(e.target.value).replace(/\s+/g, '');
                     // prettier-ignore
                     'string' === typeof rowData.id
                         && formRef.current?.setRowData!(editableKeys.toString(), {
@@ -258,7 +255,7 @@ export default () => {
                 }}
                 headerTitle={
                     // @ts-ignore
-                    <Access key="module_create_btn" accessible={access.btnFilter('modue_create_btn')}>
+                    <Access key="module_create_btn" accessible={access.btnFilter('module_create_btn')}>
                         <Button
                             shape="round"
                             type="primary"
@@ -266,7 +263,7 @@ export default () => {
                             icon={<PlusOutlined />}
                             onClick={() => ref.current?.addEditRecord?.(createRecord)}
                         >
-                            新增模型
+                            新建模型
                         </Button>
                     </Access>
                 }
