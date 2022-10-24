@@ -74,7 +74,7 @@ export default () => {
     /* 处理文件下载 */
     const handleDownload = async (record: backupRecordDataItem) => {
         await download({ time: record.time }).then(res => {
-            window.open(`/console/public/download?key=${res.data.key}`, '_blank');
+            res?.data && window.open(`/console/public/download?key=${res.data.key}`);
         });
     };
 
