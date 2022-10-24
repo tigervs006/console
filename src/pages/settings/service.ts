@@ -8,7 +8,6 @@
  * +----------------------------------------------------------------------------------
  */
 
-/** @format */
 import type { regionDataItem } from './data';
 import { getData, postData } from '@/services/ant-design-pro/api';
 
@@ -37,10 +36,7 @@ export const repair = (data: { tables: string | string[] }) => postData('/system
 export const optimize = (data: { tables: string | string[] }) => postData('/system/database/optimize', data);
 
 /** 下载选中数据备份 */
-export const download = (param: { time: number; part?: number }) => getData('/system/database/download', param);
-
-/** 恢复选中数据表 */
-export const revert = (data: { gz?: number; part: number; time?: number; start?: number }) => postData('/system/database/revert', data);
+export const download = (data: { time: number; part?: number }) => postData('/system/database/download', data);
 
 /** 新增/编辑地区 */
 export const saveRegion = (data: regionDataItem) => postData('/region/save', data);
@@ -56,3 +52,6 @@ export const fetchSystemLogs = (params: Record<string, any>) => getData('/system
 
 /** 获取地区列表 */
 export const fetchRegionData = (params: Record<string, any>) => getData('/region/list', params, { useCache: true, ttl: 0 });
+
+/** 恢复选中数据表 */
+export const revert = (data: { gz?: number; part: number; time?: number; start?: number }) => postData('/system/database/revert', data);
