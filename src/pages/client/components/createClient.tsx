@@ -49,6 +49,7 @@ export const CreateClient: React.FC<{
                 centered: true,
                 maskClosable: false,
                 destroyOnClose: true,
+				wrapClassName: 'client-modal'
             }}
             submitter={{
                 searchConfig: {
