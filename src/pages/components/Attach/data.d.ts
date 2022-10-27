@@ -16,14 +16,19 @@ export type cateDataItem = {
     path: string;
     name: string;
     ename: string;
+    option: number;
     dirname: string;
     disabled?: boolean;
     create_time: string;
     config?: {
+        suff?: number;
+        mime?: number;
         size?: number;
         crop?: number;
         limit?: number;
         astrict?: number;
+        fileExt?: string[];
+        fileMime?: string[];
         aspects?: [number, number];
         astricts?: [number, number];
     };
