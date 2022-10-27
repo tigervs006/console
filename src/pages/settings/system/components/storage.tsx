@@ -8,25 +8,34 @@
  * +----------------------------------------------------------------------------------
  */
 
-/** @format */
-
+import { useRequest } from 'umi';
 import { Divider, Space } from 'antd';
-import React, { useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import { FormOutlined, UndoOutlined } from '@ant-design/icons';
-import ProForm, { ProFormDependency, ProFormRadio, ProFormText } from '@ant-design/pro-form';
+import ProForm, { ProFormDependency, ProFormSelect, ProFormDigit, ProFormRadio, ProFormText } from '@ant-design/pro-form';
 
 export const StorageSettings: React.FC<{
     list: Record<string, any>;
     handleFinish: (data: Record<string, any>) => Promise<void>;
 }> = props => {
-    /** 上传类型 */
+    /* 上传类型 */
     const uploadOptions = [
         { label: '本地', value: '1' },
         { label: 'OSS', value: '2' },
         { label: 'COS', value: '3' },
     ];
     const formRef = useRef<ProFormInstance>();
+    const [fileConfig, setFileConfig] = useState<Record<string, any>>();
+    useRequest('/attach/default', {
+        onSuccess: res => {
+            setFileConfig(res?.list);
+        },
+    });
+    const [addonAfter, setAddonAfter] = useState<string>('byte');
+    /* 解决initialValue时dom没有更新的问题 */
+    useEffect(() => formRef.current?.resetFields(['fileExt', 'fileMime']));
+
     return (
         <ProForm
             formRef={formRef}
@@ -65,7 +74,7 @@ export const StorageSettings: React.FC<{
                             return (
                                 <>
                                     <ProForm.Item>
-                                        <Divider orientation="left">阿里云OSS</Divider>
+                                        <Divider orientation="left">OSS</Divider>
                                     </ProForm.Item>
                                     <ProFormText
                                         hasFeedback
@@ -105,7 +114,7 @@ export const StorageSettings: React.FC<{
                             return (
                                 <>
                                     <ProForm.Item>
-                                        <Divider orientation="left">腾讯云COS</Divider>
+                                        <Divider orientation="left">COS</Divider>
                                     </ProForm.Item>
                                     <ProFormText
                                         hasFeedback
@@ -147,15 +156,69 @@ export const StorageSettings: React.FC<{
                 }}
             </ProFormDependency>
             <ProForm.Item>
-                <Divider orientation="left">CDN配置</Divider>
+                <Divider orientation="left">上传配置</Divider>
             </ProForm.Item>
+            <ProFormDigit
+                min={1}
+                width={160}
+                label="最大上传"
+                max={1073741824}
+                name={props.list.filesize?.name}
+                initialValue={props.list.filesize?.value}
+                fieldProps={{
+                    precision: 0,
+                    addonAfter: addonAfter,
+                    onBlur: e => {
+                        setAddonAfter('byte');
+                        formRef.current?.setFieldValue('filesize', (e.target.value as unknown as number) * 1024 * 1024);
+                    },
+                    onFocus: e => {
+                        setAddonAfter('MB');
+                        formRef.current?.setFieldValue('filesize', (e.target.value as unknown as number) / 1024 / 1024);
+                    },
+                }}
+            />
             <ProFormText
                 hasFeedback
-                label="CDN地址"
+                label="上传地址"
                 name={props.list.uploadUrl?.name}
                 initialValue={props.list.uploadUrl?.value}
                 tooltip={props.list.uploadUrl?.description}
                 getValueFromEvent={e => e.target.value.trim()}
+            />
+            <ProFormSelect
+                name="fileExt"
+                label="文件后缀"
+                tooltip="允许上传的文件后缀"
+                convertValue={value => eval(value)}
+                initialValue={props.list.fileExt?.value}
+                transform={value => {
+                    return { fileExt: 'string' === typeof value ? value : JSON.stringify(value) };
+                }}
+                fieldProps={{
+                    mode: 'tags',
+                    options: fileConfig?.fileExt?.map((item: Record<string, any>) => ({
+                        label: item,
+                        value: item,
+                    })),
+                }}
+            />
+            <ProFormSelect
+                name="fileMime"
+                label="文件类型"
+                tooltip="允许上传的文件类型"
+                convertValue={value => eval(value)}
+                initialValue={props.list.fileMime?.value}
+                transform={value => {
+                    return { fileMime: 'string' === typeof value ? value : JSON.stringify(value) };
+                }}
+                fieldProps={{
+                    mode: 'tags',
+                    options: fileConfig?.fileMime?.map((item: Record<string, any>) => ({
+                        label: item,
+                        value: item,
+                    })),
+                }}
             />
         </ProForm>
     );

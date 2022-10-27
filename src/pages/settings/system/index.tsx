@@ -8,8 +8,6 @@
  * +----------------------------------------------------------------------------------
  */
 
-/** @format */
-
 import { message, Tabs } from 'antd';
 import { list, saveConfig } from '../service';
 import { SiteSettings } from './components/site';
