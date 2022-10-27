@@ -8,8 +8,6 @@
  * +----------------------------------------------------------------------------------
  */
 
-/** @format */
-
 declare namespace API {
     type CurrentUser = {
         id?: string;
@@ -127,18 +125,20 @@ declare namespace API {
         status: number;
     };
 
+    type TablePaginationPosition = 'topLeft' | 'topCenter' | 'topRight' | 'bottomLeft' | 'bottomCenter' | 'bottomRight';
+
     type uploadComponents = {
         size?: number;
         formName: string;
         formTitle: string;
+        fileExt?: string[];
         maxUpload?: number;
         formLabel?: string;
         className?: string;
         multiple?: boolean;
         uploadUrl?: string;
         imageWidth?: number;
-        acceptFile?: string;
-        fileType?: string[];
+        fileMime?: string[];
         formTooltip?: string;
         imageHeight?: number;
         listType?: UploadListType;
@@ -146,6 +146,4 @@ declare namespace API {
         extraData: { pid: number; path: string };
         useTransForm?: (value: string | UploadFile[]) => Record<string, any>;
     };
-
-    type TablePaginationPosition = 'topLeft' | 'topCenter' | 'topRight' | 'bottomLeft' | 'bottomCenter' | 'bottomRight';
 }
