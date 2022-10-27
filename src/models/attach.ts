@@ -19,6 +19,7 @@ const defaultCateOptions: cateDataItem[] & { disabled: boolean }[] = [
         id: 0,
         pid: 0,
         path: '0',
+        option: 0,
         name: '根目录',
         ename: 'root',
         disabled: true,
