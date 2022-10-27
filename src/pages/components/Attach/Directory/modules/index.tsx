@@ -8,46 +8,40 @@
  * +----------------------------------------------------------------------------------
  */
 
-/** @format */
-
 import lodash from 'lodash';
 import { message } from 'antd';
-import { useModel } from 'umi';
 import { save } from '../../services';
-import Draggable from 'react-draggable';
 import type { ForwardedRef } from 'react';
 import { zh2Pinyin } from '@/extra/utils';
+import { useRequest, useModel } from 'umi';
 import type { cateDataItem } from '../../data';
 import type { ProFormInstance } from '@ant-design/pro-form';
-import type { DraggableData, DraggableEvent } from 'react-draggable';
 import {
     ProFormDependency,
     ProFormDigitRange,
     ProFormCascader,
     ProFormCheckbox,
+    ProFormSelect,
     ProFormGroup,
+    ProFormRadio,
     ProFormDigit,
     ProFormText,
-    ModalForm,
+    DrawerForm,
 } from '@ant-design/pro-form';
 import React, { useImperativeHandle, forwardRef, useState, useRef } from 'react';
 
 export const CreateDirectory: React.FC<{
     path?: number[];
-    modalOpen: boolean;
+    drawerOpen: boolean;
     ref: ForwardedRef<any>;
-    handleSetModalOpen: (status: boolean) => void;
+    handleSetDrawerOpen: (status: boolean) => void;
 }> = forwardRef((props, ref) => {
     /* formRef */
     const formRef = useRef<ProFormInstance>();
     /* parent */
     const [parent, setParent] = useState<number>();
-    /* draggleRef */
-    const draggleRef = useRef<HTMLDivElement>(null);
-    /* setDisabled */
-    const [disabled, setDisabled] = useState<boolean>(false);
-    /* setBounds */
-    const [bounds, setBounds] = useState({ left: 0, top: 0, bottom: 0, right: 0 });
+    /* defaultConfig */
+    const { data: datas } = useRequest('/attach/default');
 
     /* caetInfo */
     const { refresh, cateInfo, cateData } = useModel('attach', ret => ({
@@ -55,13 +49,6 @@ export const CreateDirectory: React.FC<{
         cateInfo: ret.cateInfo,
         cateData: lodash.cloneDeep(ret.cateData),
     }));
-
-    /* requires */
-    const [requires, setRequires] = useState<{
-        cropRequire: boolean;
-        limitRequire: boolean;
-        astrictRequire: boolean;
-    }>({ cropRequire: false, limitRequire: false, astrictRequire: false });
 
     /* useImperative */
     useImperativeHandle(ref, () => ({ setPid: (pid: number) => setParent(pid) }));
@@ -78,49 +65,24 @@ export const CreateDirectory: React.FC<{
             }).finally(() => refresh());
     };
 
-    /* Modal位置 */
-    const onStart = (_event: DraggableEvent, uiData: DraggableData) => {
-        const targetRect = draggleRef.current?.getBoundingClientRect();
-        const { clientWidth, clientHeight } = window.document.documentElement;
-        if (!targetRect) {
-            return;
-        }
-        setBounds({
-            top: -targetRect.top + uiData.y,
-            left: -targetRect.left + uiData.x,
-            right: clientWidth - (targetRect.right - uiData.x),
-            bottom: clientHeight - (targetRect.bottom - uiData.y),
-        });
-    };
+    /* requires */
+    const [requires, setRequires] = useState<{
+        cropRequire: boolean;
+        limitRequire: boolean;
+        fileExtRequire: boolean;
+        astrictRequire: boolean;
+        fileMimeRequire: boolean;
+    }>({ cropRequire: false, limitRequire: false, astrictRequire: false, fileExtRequire: false, fileMimeRequire: false });
 
     return (
-        <ModalForm<cateDataItem>
-            modalProps={{
-                centered: true,
+        <DrawerForm<cateDataItem>
+            drawerProps={{
+                width: 520,
                 maskClosable: false,
                 destroyOnClose: true,
-                modalRender: modal => (
-                    <Draggable bounds={bounds} disabled={disabled} onStart={(event, uiData) => onStart(event, uiData)}>
-                        <div ref={draggleRef}>{modal}</div>
-                    </Draggable>
-                ),
+                className: 'create-drawer',
             }}
-            title={
-                <div
-                    style={{
-                        width: '100%',
-                        cursor: 'move',
-                    }}
-                    onMouseOut={() => {
-                        setDisabled(true);
-                    }}
-                    onMouseOver={() => {
-                        disabled && setDisabled(false);
-                    }}
-                >
-                    {cateInfo?.id ? '编辑目录' : '新增目录'}
-                </div>
-            }
+            title={cateInfo?.id ? '编辑目录' : '新增目录'}
             submitter={{
                 searchConfig: {
                     resetText: '重置',
@@ -134,12 +96,11 @@ export const CreateDirectory: React.FC<{
                     onClick: () => formRef.current?.resetFields(),
                 },
             }}
-            width={400}
             formRef={formRef}
             autoFocusFirstInput
-            open={props.modalOpen}
+            open={props.drawerOpen}
             validateTrigger={['onBlur']}
-            onOpenChange={props.handleSetModalOpen}
+            onOpenChange={props.handleSetDrawerOpen}
             onFinish={values => handleOnFinsh(values).then(() => true)}
             initialValues={props?.path ? { path: props.path } : cateInfo}
         >
@@ -200,125 +161,215 @@ export const CreateDirectory: React.FC<{
                     { type: 'string', pattern: /^\w+$/, message: '目录别名只能是字母、数字和下划线的组合' },
                 ]}
             />
-            <ProFormGroup size={3} label="上传配置">
-                <ProFormCheckbox
-                    name="limit"
-                    fieldProps={{
-                        onChange: e => {
-                            setRequires(prev => ({ ...prev, limitRequire: e.target.checked }));
-                            !e.target.checked && formRef.current?.setFieldValue('size', undefined);
-                        },
-                    }}
-                >
-                    限制大小
-                </ProFormCheckbox>
-                <ProFormCheckbox
-                    name="astrict"
-                    fieldProps={{
-                        onChange: e => {
-                            setRequires(prev => ({ ...prev, astrictRequire: e.target.checked }));
-                            !e.target.checked && formRef.current?.setFieldValue('astricts', undefined);
-                        },
-                    }}
-                >
-                    限制宽高
-                </ProFormCheckbox>
-                <ProFormCheckbox
-                    name="crop"
-                    fieldProps={{
-                        onChange: e => {
-                            setRequires(prev => ({ ...prev, cropRequire: e.target.checked }));
-                            !e.target.checked && formRef.current?.setFieldValue('aspects', undefined);
-                        },
-                    }}
-                >
-                    启用裁剪
-                </ProFormCheckbox>
-            </ProFormGroup>
-            <ProFormDependency name={['limit']}>
-                {({ limit }) => {
-                    if (limit) {
-                        return (
-                            <ProFormDigit
-                                max={512}
-                                key="size"
-                                width={150}
-                                name="size"
-                                label="文件大小"
-                                tooltip="上传文件的大小"
-                                fieldProps={{
-                                    precision: 0,
-                                    addonAfter: 'MB',
-                                }}
-                                rules={[{ required: requires.limitRequire, message: '请设置文件大小值' }]}
-                            />
-                        );
-                    } else {
-                        return null;
-                    }
-                }}
-            </ProFormDependency>
-            <ProFormDependency name={['astrict']}>
-                {({ astrict }) => {
-                    if (astrict) {
+            <ProFormRadio.Group
+                name="option"
+                label="上传配置"
+                options={[
+                    { label: '默认配置', value: 0 },
+                    { label: '自定义配置', value: 1 },
+                ]}
+            />
+            <ProFormDependency name={['option']}>
+                {({ option }) => {
+                    if (option) {
                         return [
-                            <ProFormDigitRange
-                                key="astricts"
-                                name="astricts"
-                                label="限制宽高"
-                                tooltip="默认单位为px"
-                                fieldProps={{
-                                    precision: 0,
-                                    addonAfter: 'PX',
-                                    onBlur: e => e.stopPropagation(),
-                                }}
-                                rules={[
-                                    () => ({
-                                        validator(_, value) {
-                                            // prettier-ignore
-                                            return value instanceof Array && 2 == value.filter(item => typeof item === 'number').length
-												? Promise.resolve()
-												: Promise.reject('请完善图像宽高参数')
+                            <ProFormGroup size={3} key="options" label="配置选项">
+                                <ProFormCheckbox
+                                    name="limit"
+                                    fieldProps={{
+                                        onChange: e => {
+                                            setRequires(prev => ({ ...prev, limitRequire: e.target.checked }));
+                                            !e.target.checked && formRef.current?.setFieldValue('size', undefined);
                                         },
-                                    }),
-                                ]}
-                            />,
+                                    }}
+                                >
+                                    文件大小
+                                </ProFormCheckbox>
+                                <ProFormCheckbox
+                                    name="astrict"
+                                    fieldProps={{
+                                        onChange: e => {
+                                            setRequires(prev => ({ ...prev, astrictRequire: e.target.checked }));
+                                            !e.target.checked && formRef.current?.setFieldValue('astricts', undefined);
+                                        },
+                                    }}
+                                >
+                                    限制宽高
+                                </ProFormCheckbox>
+                                <ProFormCheckbox
+                                    name="crop"
+                                    fieldProps={{
+                                        onChange: e => {
+                                            setRequires(prev => ({ ...prev, cropRequire: e.target.checked }));
+                                            !e.target.checked && formRef.current?.setFieldValue('aspects', undefined);
+                                        },
+                                    }}
+                                >
+                                    启用裁剪
+                                </ProFormCheckbox>
+                                <ProFormCheckbox
+                                    name="suff"
+                                    fieldProps={{
+                                        onChange: e => {
+                                            setRequires(prev => ({ ...prev, fileExtRequire: e.target.checked }));
+                                            !e.target.checked && formRef.current?.setFieldValue('fileExt', undefined);
+                                        },
+                                    }}
+                                >
+                                    文件后缀
+                                </ProFormCheckbox>
+                                <ProFormCheckbox
+                                    name="mime"
+                                    fieldProps={{
+                                        onChange: e => {
+                                            setRequires(prev => ({ ...prev, fileMimeRequire: e.target.checked }));
+                                            !e.target.checked && formRef.current?.setFieldValue('fileMime', undefined);
+                                        },
+                                    }}
+                                >
+                                    文件类型
+                                </ProFormCheckbox>
+                            </ProFormGroup>,
+                            <ProFormDependency key="limit" name={['limit']}>
+                                {({ limit }) => {
+                                    if (limit) {
+                                        return (
+                                            <ProFormDigit
+                                                max={512}
+                                                key="size"
+                                                width={150}
+                                                name="size"
+                                                label="文件大小"
+                                                tooltip="上传文件的大小"
+                                                fieldProps={{
+                                                    precision: 0,
+                                                    addonAfter: 'MB',
+                                                }}
+                                                rules={[{ required: requires.limitRequire, message: '请设置文件大小值' }]}
+                                            />
+                                        );
+                                    } else {
+                                        return undefined;
+                                    }
+                                }}
+                            </ProFormDependency>,
+                            <ProFormDependency key="astrict" name={['astrict']}>
+                                {({ astrict }) => {
+                                    if (astrict) {
+                                        return [
+                                            <ProFormDigitRange
+                                                key="astricts"
+                                                name="astricts"
+                                                label="限制宽高"
+                                                tooltip="限制图像最小宽高"
+                                                fieldProps={{
+                                                    precision: 0,
+                                                    addonAfter: 'PX',
+                                                    onBlur: e => e.stopPropagation(),
+                                                }}
+                                                rules={[
+                                                    () => ({
+                                                        validator(_, value) {
+                                                            // prettier-ignore
+                                                            return value instanceof Array && 2 == value.filter(item => typeof item === 'number').length
+															? Promise.resolve()
+															: Promise.reject('请完善图像宽高参数')
+                                                        },
+                                                    }),
+                                                ]}
+                                            />,
+                                        ];
+                                    } else {
+                                        return undefined;
+                                    }
+                                }}
+                            </ProFormDependency>,
+                            <ProFormDependency key="crop" name={['crop']}>
+                                {({ crop }) => {
+                                    if (crop) {
+                                        return [
+                                            <ProFormDigitRange
+                                                key="aspects"
+                                                name="aspects"
+                                                label="裁剪比例"
+                                                tooltip="需为正整数"
+                                                fieldProps={{
+                                                    precision: 0,
+                                                    onBlur: e => e.stopPropagation(),
+                                                }}
+                                                rules={[
+                                                    () => ({
+                                                        validator(_, value) {
+                                                            // prettier-ignore
+                                                            return value instanceof Array && 2 == value.filter(item => typeof item === 'number').length
+															? Promise.resolve()
+															: Promise.reject('请完善裁剪比例参数')
+                                                        },
+                                                    }),
+                                                ]}
+                                            />,
+                                        ];
+                                    } else {
+                                        return undefined;
+                                    }
+                                }}
+                            </ProFormDependency>,
+                            <ProFormDependency key="suff" name={['suff']}>
+                                {({ suff }) => {
+                                    if (suff) {
+                                        return [
+                                            <ProFormSelect
+                                                key="fileExt"
+                                                name="fileExt"
+                                                label="文件后缀"
+                                                tooltip="限制上传的文件后缀"
+                                                fieldProps={{
+                                                    mode: 'tags',
+                                                    maxTagCount: 13,
+                                                    options: datas?.list.fileExt?.map((item: Record<string, any>) => ({
+                                                        label: item,
+                                                        value: item,
+                                                    })),
+                                                }}
+                                                rules={[{ required: requires.fileExtRequire, message: '请设置文件后缀' }]}
+                                            />,
+                                        ];
+                                    } else {
+                                        return undefined;
+                                    }
+                                }}
+                            </ProFormDependency>,
+                            <ProFormDependency key="mime" name={['mime']}>
+                                {({ mime }) => {
+                                    if (mime) {
+                                        return [
+                                            <ProFormSelect
+                                                key="fileMime"
+                                                name="fileMime"
+                                                label="文件类型"
+                                                tooltip="限制上传的文件类型"
+                                                fieldProps={{
+                                                    mode: 'tags',
+                                                    maxTagCount: 10,
+                                                    options: datas?.list.fileMime?.map((item: Record<string, any>) => ({
+                                                        label: item,
+                                                        value: item,
+                                                    })),
+                                                }}
+                                                rules={[{ required: requires.fileMimeRequire, message: '请设置文件类型' }]}
+                                            />,
+                                        ];
+                                    } else {
+                                        return undefined;
+                                    }
+                                }}
+                            </ProFormDependency>,
                         ];
                     } else {
-                        return null;
+                        return undefined;
                     }
                 }}
             </ProFormDependency>
-            <ProFormDependency name={['crop']}>
-                {({ crop }) => {
-                    if (crop) {
-                        return [
-                            <ProFormDigitRange
-                                key="aspects"
-                                name="aspects"
-                                label="裁剪比例"
-                                tooltip="需为正整数"
-                                fieldProps={{
-                                    precision: 0,
-                                    onBlur: e => e.stopPropagation(),
-                                }}
-                                rules={[
-                                    () => ({
-                                        validator(_, value) {
-                                            // prettier-ignore
-                                            return value instanceof Array && 2 == value.filter(item => typeof item === 'number').length
-												? Promise.resolve()
-												: Promise.reject('请完善裁剪比例参数')
-                                        },
-                                    }),
-                                ]}
-                            />,
-                        ];
-                    } else {
-                        return null;
-                    }
-                }}
-            </ProFormDependency>
-        </ModalForm>
+        </DrawerForm>
     );
 });

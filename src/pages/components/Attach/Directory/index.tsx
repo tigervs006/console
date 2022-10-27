@@ -8,11 +8,10 @@
  * +----------------------------------------------------------------------------------
  */
 
-/** @format */
-
 import '../index.less';
 import { useModel } from 'umi';
 import { remove } from '../services';
+import { waitTime } from '@/extra/utils';
 import { CreateDirectory } from './modules';
 import type { cateDataItem } from '../data';
 import type { DataNode } from 'antd/es/tree';
@@ -27,7 +26,7 @@ export const Directory: React.FC = () => {
     const [path, setPath] = useState<number[]>();
     const childRef: React.ForwardedRef<any> = useRef();
     const [searchValue, setSearchValue] = useState<string>('');
-    const [modalOpen, setModalOpen] = useState<boolean>(false);
+    const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
     const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
 
     // prettier-ignore
@@ -89,8 +88,9 @@ export const Directory: React.FC = () => {
             // prettier-ignore
             case 'update': /* 编辑目录 */
 				e.domEvent.stopPropagation()
-				getInfo({ id: tKey }).then(res => {
-					res?.info && setModalOpen(true)
+				getInfo({ id: tKey }).then(() => {
+					/* 需设延时，否则无法及时更新drawer dom */
+					waitTime().then(() => setDrawerOpen(true));
 				})
                 break;
             // prettier-ignore
@@ -102,10 +102,10 @@ export const Directory: React.FC = () => {
 					getInfo({ id: tKey }).then(res => {
 						// prettier-ignore
 						setPath(res?.info.path.split('-').map(Number).concat(tKey).filter((v: number) => v))
-					}).finally(() => setModalOpen(true))
+					}).finally(() => setDrawerOpen(true))
                 } else {
                     setPath([0]);
-                    setModalOpen(true);
+					setDrawerOpen(true);
                     setCateInfo(undefined);
                 }
                 break;
@@ -272,8 +272,9 @@ export const Directory: React.FC = () => {
                     onSelect={(key, event) => {
                         const { selected } = event;
                         selected && setCateId(key as number[]);
+                        selected && !key.at(0) && setCateInfo(undefined);
                         /* 切换目录时且key非根目录时刷新目录信息 */
-                        selected && key[0] && getInfo({ id: key[0] as number });
+                        selected && key.at(0) && getInfo({ id: key.at(0) as number });
                         /* 切换目录时重置页码及使用默认pageSize */
                         selected && setPagination(prev => ({ current: 1, pageSize: prev.pageSize }));
                     }}
@@ -282,9 +283,9 @@ export const Directory: React.FC = () => {
             <CreateDirectory
                 path={path}
                 ref={childRef}
-                modalOpen={modalOpen}
-                handleSetModalOpen={(status: boolean) => {
-                    setModalOpen(status);
+                drawerOpen={drawerOpen}
+                handleSetDrawerOpen={(status: boolean) => {
+                    setDrawerOpen(status);
                     !status && setPath(undefined);
                 }}
             />
