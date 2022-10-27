@@ -42,6 +42,8 @@ export const Previews: React.FC = () => {
     const [totals, setTotal] = useState<number>(0);
     /* 默认文件列表 */
     const [fileList, setFileList] = useState<attachDataItem[]>();
+    /* 过滤图像列表 */
+    const [imageList, setImageList] = useState<attachDataItem[]>();
     /* 设置预览索引 */
     const [currentId, setCurrentId] = useState<number>(0);
     /* 设置文件列表 */
@@ -108,18 +110,26 @@ export const Previews: React.FC = () => {
         });
     };
 
-    /* 处理图像预览 */
-    const handlePreivew = (e: any, id: number | string) => {
-        e.stopPropagation();
-        fileList?.forEach((item: attachDataItem, idx: number) => {
-            id == item.id && setCurrentId(idx);
+    /* 过滤图像列表 */
+    useEffect(() => {
+        setImageList(() => {
+            return fileList?.filter(item => 0 <= item?.type.indexOf('image'));
         });
-        previewRef.current?.imagePreview(true);
-    };
+    }, [fileList]);
 
     useEffect(() => {
         fetchList!({ id: cateId.at(0), ...pagination });
     }, [cateId, fetchList, pagination]);
+
+    /* 处理图像预览 */
+    const handlePreivew = (e: any, id: number | string) => {
+        e.stopPropagation();
+        /* 过滤非图像文件 */
+        imageList?.forEach((item: attachDataItem, idx: number) => {
+            id == item.id && setCurrentId(idx);
+        });
+        previewRef.current?.imagePreview(true);
+    };
 
     /* 使用选中按钮 */
     const handleUseSelect = () => {
@@ -242,19 +252,27 @@ export const Previews: React.FC = () => {
                                         }}
                                         cover={
                                             <div className="ant-image">
-                                                <img
-                                                    alt={item.name}
-                                                    className="ant-image-img"
-                                                    src={`${item.real_path}${imageProcess[item.storage]}`}
-                                                />
+                                                {/*prettier-ignore*/}
+                                                {0 <= item?.type.indexOf('image') ? (
+                                                    <img
+                                                        alt={item.name}
+                                                        className="ant-image-img"
+                                                        src={`${item.real_path}${imageProcess[item.storage]}`}
+                                                    />
+                                                ) : (
+                                                    <img alt="unknow" style={{ width: 'unset' }} src="/manage/unknow.svg" />
+                                                )}
                                                 <div className="ant-image-mask">
                                                     <Space className="ant-image-mask-info">
-                                                        <Text className="anticon" onClick={e => handlePreivew(e, item.id)}>
-                                                            <p>
-                                                                <EyeOutlined />
-                                                                {!isModal && '预览'}
-                                                            </p>
-                                                        </Text>
+                                                        {/*prettier-ignore*/}
+                                                        {0 <= item?.type.indexOf('image') && (
+                                                            <Text className="anticon" onClick={e => handlePreivew(e, item.id)}>
+                                                                <p>
+                                                                    <EyeOutlined />
+                                                                    {!isModal && '预览'}
+                                                                </p>
+                                                            </Text>
+                                                        )}
                                                         <Text className="anticon" onClick={e => handleDelete(e, item as attachDataItem)}>
                                                             <p>
                                                                 <DeleteOutlined />
@@ -273,7 +291,7 @@ export const Previews: React.FC = () => {
                 </Spin>
             </Col>
             <Col span={24}>
-                <ImagePreview curIdx={currentId} ref={previewRef} imgList={fileList ?? []} />
+                <ImagePreview curIdx={currentId} ref={previewRef} imgList={imageList ?? []} />
             </Col>
             <Col span={24}>
                 <Pagination
