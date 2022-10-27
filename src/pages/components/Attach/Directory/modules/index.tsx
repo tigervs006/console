@@ -102,7 +102,7 @@ export const CreateDirectory: React.FC<{
             validateTrigger={['onBlur']}
             onOpenChange={props.handleSetDrawerOpen}
             onFinish={values => handleOnFinsh(values).then(() => true)}
-            initialValues={props?.path ? { path: props.path } : cateInfo}
+            initialValues={props?.path ? { path: props.path, option: 0 } : cateInfo}
         >
             <ProFormCascader
                 name="path"
