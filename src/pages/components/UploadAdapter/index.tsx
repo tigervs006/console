@@ -8,14 +8,12 @@
  * +----------------------------------------------------------------------------------
  */
 
-/** @format */
-
 import 'antd/es/slider/style';
 import { useModel } from 'umi';
 import ImgCrop from 'antd-img-crop';
 import React, { useState } from 'react';
 import { removeFile } from '@/services/ant-design-pro/api';
-import { notification, message, Upload, Button, Modal } from 'antd';
+import { notification, message, Button, Upload, Modal } from 'antd';
 import type { UploadListType, UploadFile } from 'antd/es/upload/interface';
 import type { UploadChangeParam, UploadProps, RcFile } from 'antd/es/upload';
 import { QuestionCircleOutlined, CloudUploadOutlined, LoadingOutlined } from '@ant-design/icons';
@@ -52,8 +50,6 @@ export const UploadAdapter: React.FC<
     const imageHeight: number = props?.astricts ? props.astricts[1] : 0;
     /* 上传路径 */
     const uploadUrl: string = props?.uploadUrl ?? '/console/attach/upload';
-    /* 文件后缀 */
-    const acceptFile: string = props?.acceptFile ?? '.png, .jpg, .jpeg, .gif';
     /* 文件列表 */
     const { uploadList, setUploadList } = useModel('file', ret => ({
         uploadList: ret.uploadList,
@@ -61,8 +57,10 @@ export const UploadAdapter: React.FC<
     }));
     /* 裁剪比例 */
     const aspect: number = props?.aspects ? props.aspects[0] / props.aspects[1] : 1;
-    /* 文件格式 */
-    const fileType: string[] = props?.fileType ?? ['image/png', 'image/jpeg', 'image/gif'];
+    /* 文件后缀 */
+    const acceptFile: string | undefined = props?.fileExt?.map(item => `.${item}`).join(',');
+    /* 默认类型 */
+    const fileMime: string[] = props?.fileMime ?? ['image/gif', 'image/png', 'image/jpeg', 'image/x-icon', 'image/vnd.microsoft.icon'];
 
     /* 处理文件删除状态 */
     const handleRemove: UploadProps['onRemove'] = (file: UploadFile) => {
@@ -140,10 +138,10 @@ export const UploadAdapter: React.FC<
         }
     };
 
-    /* 处理上传前的文件 */
+    /* 处理上传前的图像 */
     const handleBeforeUpload = (file: RcFile) => {
         const UNIT = 1024 * 1024;
-        const curType = file.type;
+        const fileType = file.type;
         return new Promise<boolean>((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file as Blob);
@@ -152,10 +150,10 @@ export const UploadAdapter: React.FC<
                 const image = document.createElement('img');
                 image.src = 'string' === typeof base64 ? base64 : (undefined as unknown as string);
                 image.onload = function () {
-                    if (!fileType.includes(curType)) {
+                    if (!fileMime.includes(fileType)) {
                         notification.error({
                             message: '文件类型错误',
-                            description: `请上传格式为 ${fileType} 的文件`,
+                            description: `请上传格式为 ${fileMime} 的文件`,
                         });
                         reject();
                     } else if (fileSize && file.size > fileSize * UNIT) {
@@ -201,8 +199,12 @@ export const UploadAdapter: React.FC<
         },
         className: props?.className,
         headers: { Authorization: localStorage.getItem('access_token') || '' },
-        // prettier-ignore
-        beforeUpload: (file: RcFile) => handleBeforeUpload(file).then((res: boolean) => res).catch(() => false),
+        beforeUpload: (file: RcFile) => {
+            // prettier-ignore
+            return 0 > file?.type.indexOf('image')
+				? new Promise<boolean>(resolve => resolve(true))
+				: handleBeforeUpload(file).then((res: boolean) => res).catch(() => false)
+        },
     };
 
     return (
