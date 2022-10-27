@@ -57,6 +57,7 @@ export default {
     'pages.settings.clear_log': 'Clear Log',
     'pages.settings.attach.upload': 'Upload File',
     'pages.settings.attach.delete': 'Delete File',
+    'pages.settings.attach.default': 'Default Config',
     'pages.settings.attach.list': 'File List',
     'pages.settings.attach.cate': 'Directory',
     'pages.settings.attach.move': 'Move Directory',

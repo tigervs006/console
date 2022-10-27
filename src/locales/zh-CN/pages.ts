@@ -57,6 +57,7 @@ export default {
     'pages.settings.clear_log': '清除日志',
     'pages.settings.attach.upload': '上传文件',
     'pages.settings.attach.delete': '删除文件',
+    'pages.settings.attach.default': '默认配置',
     'pages.settings.attach.list': '文件列表',
     'pages.settings.attach.cate': '目录列表',
     'pages.settings.attach.move': '移动目录',
