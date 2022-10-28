@@ -8,16 +8,14 @@
  * +----------------------------------------------------------------------------------
  */
 
-/** @format */
-
 import './index.less';
 import React from 'react';
 import { request } from 'umi';
-import { Space, message, Typography } from 'antd';
-import type { stateData, parentProps } from './data';
+import { Typography, message, Space } from 'antd';
+import type { parentProps, stateData } from './data';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { EditOutlined, LoadingOutlined } from '@ant-design/icons';
+import { LoadingOutlined, EditOutlined } from '@ant-design/icons';
 
 export default class Ckeditor extends React.Component<parentProps, stateData> {
     constructor(props: parentProps) {
@@ -33,28 +31,28 @@ export default class Ckeditor extends React.Component<parentProps, stateData> {
 
     render() {
         const { Text } = Typography;
-        // 自动保存
+        /* 自动保存 */
         const saveData = (data: any) => {
             console.log('自动保存：', data);
             message.success!('自动保存成功');
         };
-        // 自定义配置
+        /* 自定义配置 */
         const customConfig = {
             autosave: {
-                // 每分钟自动保存
+                /* 每分钟自动保存 */
                 waitingTime: 60000,
                 save(editor: any) {
                     return saveData(editor.getData());
                 },
             },
         };
-        // 编辑器初始化
+        /* 编辑器初始化 */
         const handleOnReady = (editor: any) => {
-            // 字数统计
+            /* 字数统计 */
             const wordCountPlugin = editor.plugins.get('WordCount');
             const wordCountWrapper = document.getElementById('word-count');
             wordCountWrapper?.appendChild(wordCountPlugin.wordCountContainer);
-            // 自动保存设置
+            /* 自动保存设置 */
             const pendingActions = editor.plugins.get('PendingActions');
             pendingActions.on('change:hasAny', (evt: any, propertyName: any, newValue: boolean) => {
                 if (newValue) {
@@ -101,7 +99,7 @@ export default class Ckeditor extends React.Component<parentProps, stateData> {
                     editor={ClassicEditor}
                     data={this.state.content}
                     onReady={(editor: any) => handleOnReady(editor)}
-                    // 数据改变时保存
+                    /* 数据改变时保存 */
                     onChange={(event: any, editor: any) => {
                         this.setState({ content: editor.getData() }, () => this.props.setContent(editor.getData()));
                     }}
