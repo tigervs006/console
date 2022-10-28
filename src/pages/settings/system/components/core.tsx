@@ -104,7 +104,7 @@ export const CoreSettings: React.FC<{
                 </Col>
                 <Col xs={12} sm={12} lg={6}>
                     <ProFormSwitch
-                        label="Token认证"
+                        label="令牌认证"
                         name={props.list.access_token_check?.name}
                         tooltip={props.list.access_token_check?.description}
                         transform={value => ({ access_token_check: value ? 1 : 0 })}
