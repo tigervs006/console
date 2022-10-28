@@ -8,10 +8,6 @@
  * +----------------------------------------------------------------------------------
  */
 
-/**
- * @format
- * @see https://umijs.org/zh-CN/plugins/plugin-access
- */
 import { history } from 'umi';
 import type { MenuDataItem } from '@ant-design/pro-layout';
 
@@ -23,7 +19,7 @@ import type { MenuDataItem } from '@ant-design/pro-layout';
 const checkPermission = (route: string, menuData?: MenuDataItem[]) => {
     /* 扁平化菜单 */
     const filterData = (menuDatas: MenuDataItem[], init: string[] = []) => {
-        menuDatas?.filter(item => {
+        menuDatas?.forEach(item => {
             init.push(item.path as string);
             item?.children && filterData(item.children, init);
         });
