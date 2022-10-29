@@ -241,7 +241,7 @@ export const Previews: React.FC = () => {
                         onChange={values => setCheckedItem(values as unknown as attachDataItem[])}
                     >
                         <Row gutter={16}>
-                            {fileList?.map((item: Record<string, any>) => (
+                            {fileList?.map((item: attachDataItem) => (
                                 <Col span={isModal ? 4 : monitor.span} key={item.id}>
                                     <CheckCard
                                         value={item}
