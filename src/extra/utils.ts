@@ -8,8 +8,6 @@
  * +----------------------------------------------------------------------------------
  */
 
-/** @format */
-
 import { pinyin } from 'pinyin-pro';
 
 /**
@@ -100,6 +98,37 @@ export const _int2ip = (intIp: number): string => {
     tt[2] = (intIp << 16) >>> 24;
     tt[3] = (intIp << 24) >>> 24;
     return String(tt[0]) + '.' + String(tt[1]) + '.' + String(tt[2]) + '.' + String(tt[3]);
+};
+
+/**
+ * 汉字转unicode
+ * @param chineseStr
+ */
+export const toUnicodeStr = (chineseStr: string) => {
+    if (chineseStr == '') {
+        return 'Please input Chinese Characters';
+    }
+    let unicodeStr = '';
+    for (let i = 0, iLength = chineseStr.length; i < iLength; i++) {
+        unicodeStr += '\\u' + chineseStr.charCodeAt(i).toString(16);
+    }
+    return unicodeStr;
+};
+
+/**
+ * unicode转汉字
+ * @param unicodeStr
+ */
+export const toChineseStr = (unicodeStr: string) => {
+    if (unicodeStr == '') {
+        return 'Please input hexadecimal Unicode';
+    }
+    const unicodeArr = unicodeStr.split('\\u');
+    let chineseStr = '';
+    for (let i = 0, iLength = unicodeArr.length; i < iLength; i++) {
+        chineseStr += String.fromCharCode(parseInt(unicodeArr[i], 16));
+    }
+    return chineseStr;
 };
 
 /**
