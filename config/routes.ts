@@ -8,8 +8,6 @@
  * +----------------------------------------------------------------------------------
  */
 
-/** @format */
-
 export default [
     {
         name: 'dashboard',
@@ -137,6 +135,32 @@ export default [
         path: '/account',
         access: 'authFilter',
         component: './account',
+    },
+    {
+        name: 'develop',
+        path: '/develop',
+        routes: [
+            {
+                path: '/develop',
+                redirect: '/develop/group',
+            },
+            {
+                path: '/develop/group',
+                component: './develop/group',
+            },
+            {
+                path: '/develop/config',
+                component: './develop/config',
+            },
+            {
+                path: '/develop/group/list',
+                component: './develop/group/list',
+            },
+            {
+                path: '/develop/config/list',
+                component: './develop/config/list',
+            },
+        ],
     },
     {
         name: 'settings',
