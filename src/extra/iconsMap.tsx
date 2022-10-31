@@ -8,9 +8,8 @@
  * +----------------------------------------------------------------------------------
  */
 
-/** @format */
-
 import {
+    DeploymentUnitOutlined,
     UnorderedListOutlined,
     UserSwitchOutlined,
     AlignLeftOutlined,
@@ -30,6 +29,7 @@ export const IconMap = {
     setting: <SettingOutlined />,
     product: <AppstoreOutlined />,
     dashboard: <DashboardOutlined />,
+    develop: <DeploymentUnitOutlined />,
     'align-left': <AlignLeftOutlined />,
     'user-switch': <UserSwitchOutlined />,
     'unordered-list': <UnorderedListOutlined />,
