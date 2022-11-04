@@ -1,4 +1,4 @@
-/**
+/*
  * +----------------------------------------------------------------------------------
  * | https://www.tigervs.com
  * +----------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ export default () => {
 
     /* 获取编辑器内容 */
     const getContent = (CKcontent: string) => {
-        /* 设置useState
+        /* 设置useState */
         setContent(CKcontent);
         /* 设置到字段中只是为了rules规则验证 */
         formRef.current?.setFieldsValue({ content: CKcontent });
