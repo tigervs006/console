@@ -66,6 +66,8 @@ export default () => {
                 formRef.current?.setFieldValue('litpic', imgArr.at(0));
                 break;
             case 1 < imgArr.length:
+                /* 自动设置第一张图像为封面 */
+                !formRef.current?.getFieldValue('litpic') && formRef.current?.setFieldValue('litpic', imgArr.at(0));
                 Modal.confirm({
                     centered: true,
                     title: '请选择您要使用的图像',
