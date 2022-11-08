@@ -24,6 +24,14 @@ body,
     min-height: 100vh;
 }
 
+.ant-drawer-body {
+    overflow-y: auto;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
 .ant-modal-content {
     overflow: hidden;
     border-radius: 0.5rem !important;
