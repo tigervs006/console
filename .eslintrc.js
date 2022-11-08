@@ -1,3 +1,13 @@
+/*
+ * +----------------------------------------------------------------------------------
+ * | https://www.tigervs.com
+ * +----------------------------------------------------------------------------------
+ * | Email: Kevin@tigervs.com
+ * +----------------------------------------------------------------------------------
+ * | Copyright (c) Shenzhen Tiger Technology Co., Ltd. 2018~2022. All rights reserved.
+ * +----------------------------------------------------------------------------------
+ */
+
 /** @format */
 
 module.exports = {
@@ -16,7 +26,7 @@ module.exports = {
 		// 算术运算符空格
 		'space-infix-ops': 1,
 		// 提示使用单引号
-		'quotes': [1, 'single'],
+		quotes: [1, 'single'],
 		// 可优化的三元表达式
 		'no-unneeded-ternary': 1,
 		// Switch语句冒号间距
@@ -39,12 +49,14 @@ module.exports = {
 		'object-curly-spacing': [1, 'always'],
 		// 对象键值冒号后面需带空格
 		'key-spacing': [1, { afterColon: true }],
+		// 启用forin遍历数组或对象
+		'@typescript-eslint/no-for-in-array': [0],
 		// 每行允许的最大执行语句数
 		'max-statements-per-line': [1, { max: 2 }],
 		// 参数的逗号后面用空格分隔
 		'comma-spacing': [1, { before: false, after: true }],
 		// 必须以关键字开头声明函数
-		'func-style': [2, 'expression', { 'allowArrowFunctions': true }],
+		'func-style': [2, 'expression', { allowArrowFunctions: true }],
 		// 数组或数组对象前后的空格
 		'array-bracket-spacing': [1, 'never', { objectsInArrays: false }],
 		// 强制类或方法的括号内的参数带空格间距
