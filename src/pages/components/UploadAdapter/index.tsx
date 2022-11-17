@@ -155,19 +155,19 @@ export const UploadAdapter: React.FC<
                             message: '文件类型错误',
                             description: `请上传格式为 ${fileMime} 的文件`,
                         });
-                        reject();
+                        reject(false);
                     } else if (fileSize && file.size > fileSize * UNIT) {
                         notification.error({
                             message: '文件大小不符合要求',
                             description: `单个文件不得超过 ${fileSize}M`,
                         });
-                        reject();
-                    } else if (imageWidth > image.width || imageHeight > image.height) {
+                        reject(false);
+                    } else if ((0 < file?.type.indexOf('image') && imageWidth > image.width) || imageHeight > image.height) {
                         notification.error({
                             message: '图像尺寸不符合要求',
                             description: `请上传宽高大于或等于 ${imageWidth}X${imageHeight} 的图像`,
                         });
-                        reject();
+                        reject(false);
                     } else {
                         resolve(true);
                     }
@@ -200,10 +200,9 @@ export const UploadAdapter: React.FC<
         className: props?.className,
         headers: { Authorization: localStorage.getItem('access_token') || '' },
         beforeUpload: (file: RcFile) => {
-            // prettier-ignore
-            return 0 > file?.type.indexOf('image')
-				? new Promise<boolean>(resolve => resolve(true))
-				: handleBeforeUpload(file).then((res: boolean) => res).catch(() => false)
+            return handleBeforeUpload(file)
+                .then((res: boolean) => res)
+                .catch((err: boolean) => err);
         },
     };
 
