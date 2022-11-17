@@ -200,9 +200,8 @@ export const UploadAdapter: React.FC<
         className: props?.className,
         headers: { Authorization: localStorage.getItem('access_token') || '' },
         beforeUpload: (file: RcFile) => {
-            return handleBeforeUpload(file)
-                .then((res: boolean) => res)
-                .catch((err: boolean) => err);
+            // prettier-ignore
+            return handleBeforeUpload(file).then((res: boolean) => res).catch((err: boolean) => err);
         },
     };
 
