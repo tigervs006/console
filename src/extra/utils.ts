@@ -51,6 +51,7 @@ export const sortDesc = (property: string) => {
 
 /**
  * 从网址中提取文件名
+ * @return string
  * @param url string
  */
 export const extFileFromUrl = (url: string) => {
@@ -75,6 +76,7 @@ export const extractImg = (content: string, init: string[] = []) => {
 
 /**
  * 文件转换为Base64
+ * @return Promise<File>
  * @param fileObject 文件
  */
 export const file2Base64 = (fileObject: File) => {
@@ -101,7 +103,38 @@ export const _int2ip = (intIp: number): string => {
 };
 
 /**
+ * 字符串转数组
+ * @return Object
+ * @param str string
+ * @param object Record<string, any>
+ */
+export const strToObject = (str: string, object: Record<string, any> = {}) => {
+    if (!str) return undefined;
+    const strArr = str.split('\n');
+    strArr.forEach(item => {
+        const arr = item.split('=>');
+        object[arr[0]] = { text: arr[1] };
+    });
+    return object;
+};
+
+/**
+ * 数组转字符串
+ * @return string
+ * @param obj array
+ * @param strArr string[]
+ */
+export const objToString = (obj: Record<string, any>, strArr: string[] = []) => {
+    if (!obj) return '';
+    for (const i in obj) {
+        strArr.push(`${i}=>${obj[i].text}`);
+    }
+    return strArr.join('\n');
+};
+
+/**
  * 汉字转unicode
+ * @return string
  * @param chineseStr
  */
 export const toUnicodeStr = (chineseStr: string) => {
@@ -117,6 +150,7 @@ export const toUnicodeStr = (chineseStr: string) => {
 
 /**
  * unicode转汉字
+ * @return string
  * @param unicodeStr
  */
 export const toChineseStr = (unicodeStr: string) => {
