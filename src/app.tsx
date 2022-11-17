@@ -8,16 +8,14 @@
  * +----------------------------------------------------------------------------------
  */
 
-/** @format */
-
 import Footer from '@/components/Footer';
 import { sortDesc } from '@/extra/utils';
 import { message, Button, Result } from 'antd';
 import { loopMenuItem } from './extra/iconsMap';
-import { request as umiRequest, history } from 'umi';
 import RightContent from '@/components/RightContent';
 import type { RequestOptionsInit } from 'umi-request';
 import defaultSettings from '../config/defaultSettings';
+import { request as umiRequest, history, Link } from 'umi';
 import type { MenuDataItem } from '@ant-design/pro-layout';
 import type { RequestConfig, RunTimeLayoutConfig } from 'umi';
 import { PageLoading, SettingDrawer } from '@ant-design/pro-layout';
@@ -69,6 +67,18 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
             if (!initialState?.currentUser && loginPath !== location.pathname) {
                 history.push(loginPath);
             }
+        },
+        breadcrumbProps: {
+            itemRender: route => {
+                const current = history.location.pathname;
+                // prettier-ignore
+                return current === route.path
+					? route.breadcrumbName
+					: <Link to={route.path}>{route.breadcrumbName}</Link>
+            },
+        },
+        breadcrumbRender: routers => {
+            return [{ breadcrumbName: '首页', path: '/' }].concat(routers ?? []);
         },
         menuDataRender: () => loopMenuItem(initialState?.userMenuItem ?? []),
         /* 自定义 403 页面 */
