@@ -142,7 +142,7 @@ export default [
         routes: [
             {
                 path: '/develop',
-                redirect: '/develop/group',
+                redirect: '/develop/config',
             },
             {
                 path: '/develop/group',
