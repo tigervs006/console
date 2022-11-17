@@ -59,8 +59,20 @@ export const UploadAdapter: React.FC<
     const aspect: number = props?.aspects ? props.aspects[0] / props.aspects[1] : 1;
     /* 文件后缀 */
     const acceptFile: string | undefined = props?.fileExt?.map(item => `.${item}`).join(',');
-    /* 默认类型 */
-    const fileMime: string[] = props?.fileMime ?? ['image/gif', 'image/png', 'image/jpeg', 'image/x-icon', 'image/vnd.microsoft.icon'];
+    /* fileMime */
+    const fileMime: string[] = props?.fileMime ?? [
+        'video/mp4',
+        'image/png',
+        'image/gif',
+        'image/jpeg',
+        'audio/mpeg',
+        'image/x-icon',
+        'application/vnd.ms-works',
+        'application/vnd.ms-excel',
+        'image/vnd.microsoft.icon',
+        'application/octet-stream',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ];
 
     /* 处理文件删除状态 */
     const handleRemove: UploadProps['onRemove'] = (file: UploadFile) => {
@@ -143,36 +155,38 @@ export const UploadAdapter: React.FC<
         const UNIT = 1024 * 1024;
         const fileType = file.type;
         return new Promise<boolean>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file as Blob);
-            reader.onload = function (e) {
-                const base64: string | ArrayBuffer | null | undefined = e.target?.result;
-                const image = document.createElement('img');
-                image.src = 'string' === typeof base64 ? base64 : (undefined as unknown as string);
-                image.onload = function () {
-                    if (!fileMime.includes(fileType)) {
-                        notification.error({
-                            message: '文件类型错误',
-                            description: `请上传格式为 ${fileMime} 的文件`,
-                        });
-                        reject(false);
-                    } else if (fileSize && file.size > fileSize * UNIT) {
-                        notification.error({
-                            message: '文件大小不符合要求',
-                            description: `单个文件不得超过 ${fileSize}M`,
-                        });
-                        reject(false);
-                    } else if ((0 < file?.type.indexOf('image') && imageWidth > image.width) || imageHeight > image.height) {
-                        notification.error({
-                            message: '图像尺寸不符合要求',
-                            description: `请上传宽高大于或等于 ${imageWidth}X${imageHeight} 的图像`,
-                        });
-                        reject(false);
-                    } else {
-                        resolve(true);
-                    }
+            if (!fileMime.includes(fileType)) {
+                notification.error({
+                    message: '文件类型错误',
+                    description: `请上传格式为 ${fileMime} 的文件`,
+                });
+                reject(false);
+            } else if (fileSize && file.size > fileSize * UNIT) {
+                notification.error({
+                    message: '文件大小不符合要求',
+                    description: `单个文件不得超过 ${fileSize}M`,
+                });
+                reject(false);
+            } else if (0 < file?.type.indexOf('image')) {
+                const reader = new FileReader();
+                reader.readAsDataURL(file as Blob);
+                reader.onload = function (e) {
+                    const base64: string | ArrayBuffer | null | undefined = e.target?.result;
+                    const image = document.createElement('img');
+                    image.src = 'string' === typeof base64 ? base64 : (undefined as unknown as string);
+                    image.onload = function () {
+                        if (imageWidth > image.width || imageHeight > image.height) {
+                            notification.error({
+                                message: '图像尺寸不符合要求',
+                                description: `请上传宽高大于或等于 ${imageWidth}X${imageHeight} 的图像`,
+                            });
+                            reject(false);
+                        }
+                    };
                 };
-            };
+            } else {
+                resolve(true);
+            }
         });
     };
 
@@ -198,10 +212,10 @@ export const UploadAdapter: React.FC<
             showInfo: false,
         },
         className: props?.className,
-        headers: { Authorization: localStorage.getItem('access_token') || '' },
+        headers: { Authorization: localStorage?.getItem('access_token') ?? '' },
         beforeUpload: (file: RcFile) => {
             // prettier-ignore
-            return handleBeforeUpload(file).then((res: boolean) => res).catch((err: boolean) => err);
+            return handleBeforeUpload(file).then((res: boolean) => res).catch((err: boolean) => err)
         },
     };
 
