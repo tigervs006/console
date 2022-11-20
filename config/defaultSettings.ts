@@ -8,8 +8,6 @@
  * +----------------------------------------------------------------------------------
  */
 
-/** @format */
-
 import { Settings as LayoutSettings } from '@ant-design/pro-layout';
 
 const Settings: LayoutSettings & {
@@ -24,8 +22,8 @@ const Settings: LayoutSettings & {
     fixedHeader: false,
     contentWidth: 'Fluid',
     primaryColor: '#1890ff',
+    logo: '/manage/logo.svg',
     menuHeaderRender: undefined,
-    logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
 };
 
 export default Settings;

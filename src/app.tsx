@@ -55,6 +55,7 @@ export async function getInitialState(): Promise<{
 /* 设置全局layout */
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
     return {
+        name: 'Tiger System',
         ...initialState?.settings,
         footerRender: () => <Footer />,
         rightContentRender: () => <RightContent />,

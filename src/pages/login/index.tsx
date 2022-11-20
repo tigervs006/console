@@ -8,8 +8,6 @@
  * +----------------------------------------------------------------------------------
  */
 
-/** @format */
-
 import md5 from 'md5';
 import styles from './index.less';
 import React, { useState } from 'react';
@@ -110,11 +108,11 @@ export default () => {
                 </div>
                 <div className={styles.content}>
                     <LoginForm
-                        title="Ant Design"
+                        title="Tiger System"
                         initialValues={{
                             autoLogin: true,
                         }}
-                        logo={<img alt="logo" src="/manage/logo.svg" />}
+                        logo={<img alt="logo" src="/manage/logo.png" />}
                         onFinish={async values => {
                             await handleSubmit(values as API.LoginParams);
                         }}
