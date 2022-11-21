@@ -229,7 +229,7 @@ export const StepForm: React.FC<{
                     fieldProps={{
                         onBlur: (e: React.FocusEvent<HTMLInputElement>) => {
                             // prettier-ignore
-                            infoRef.current?.setFieldValue('fname',
+                            !props?.record && infoRef.current?.setFieldValue('fname',
 								zh2Pinyin(e.target.value).replace(/\s+/g, ''));
                         },
                     }}
