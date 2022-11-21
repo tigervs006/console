@@ -134,6 +134,7 @@ export default {
     'pages.develop.config_data.save': 'Config List Save',
     'pages.develop.config_data.delete': 'Config List Delete',
     'pages.develop.config_data.status': 'Config List Status',
+    'pages.develop.config_data.update': 'Config List Update',
     'pages.develop.group.list': 'Merge Data Cate List',
     'pages.develop.group.info': 'Merge Data Cate Info',
     'pages.develop.group.save': 'Merge Data Cate Save',

@@ -66,7 +66,7 @@ export default {
     'menu.channel.module': '模型列表',
     'menu.develop': '开发配置',
     'menu.develop.config': '配置分类',
-    'menu.develop.config.list': '分类列表',
+    'menu.develop.config.list': '配置列表',
     'menu.develop.group': '组合数据',
     'menu.develop.group.list': '数据列表',
     'menu.settings': '系统运维',

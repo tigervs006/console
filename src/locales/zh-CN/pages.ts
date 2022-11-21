@@ -134,6 +134,7 @@ export default {
     'pages.develop.config_data.save': '保存配置列表',
     'pages.develop.config_data.delete': '删除配置列表',
     'pages.develop.config_data.status': '配置列表状态',
+    'pages.develop.config_data.update': '更新配置列表',
     'pages.develop.group.list': '组合数据分类列表',
     'pages.develop.group.info': '组合数据分类信息',
     'pages.develop.group.save': '保存组合数据分类',
