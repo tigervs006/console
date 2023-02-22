@@ -4,11 +4,10 @@
  * +----------------------------------------------------------------------------------
  * | Email: Kevin@tigervs.com
  * +----------------------------------------------------------------------------------
- * | Copyright (c) Shenzhen Tiger Technology Co., Ltd. 2018~2022. All rights reserved.
+ * | Copyright (c) Shenzhen Tiger Technology Co., Ltd. 2018~2023. All rights reserved.
  * +----------------------------------------------------------------------------------
  */
 
-/** @format */
 import type { linkDataItem } from './data';
 import React, { useRef, useState } from 'react';
 import { useAccess, useModel, Access } from 'umi';
@@ -40,6 +39,8 @@ export default () => {
     const { resize } = useModel('resize', ret => ({
         resize: ret.resize,
     }));
+    /* 当前页数 */
+    const [currentPageSize, setCurrentPageSize] = useState<number | undefined>();
     /* editableKeys */
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
     /* ActionType */
@@ -266,6 +267,8 @@ export default () => {
                 editableFormRef={formRef}
                 recordCreatorProps={false}
                 scroll={resize.tableScroll}
+                // @ts-ignore
+                onChange={page => setCurrentPageSize(page.pageSize)}
                 editable={{
                     editableKeys,
                     type: 'multiple',
@@ -273,7 +276,7 @@ export default () => {
                     onSave: (_, data) => handleOnSave(data),
                     actionRender: (row, config, dom) => [dom.save, dom.cancel],
                 }}
-                pagination={{ pageSize: resize.pageSize, hideOnSinglePage: true }}
+                pagination={{ pageSize: currentPageSize ?? resize.pageSize, hideOnSinglePage: true }}
                 rowSelection={{
                     checkStrictly: false,
                     selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT, Table.SELECTION_NONE],

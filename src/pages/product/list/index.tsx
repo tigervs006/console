@@ -4,11 +4,9 @@
  * +----------------------------------------------------------------------------------
  * | Email: Kevin@tigervs.com
  * +----------------------------------------------------------------------------------
- * | Copyright (c) Shenzhen Tiger Technology Co., Ltd. 2018~2022. All rights reserved.
+ * | Copyright (c) Shenzhen Tiger Technology Co., Ltd. 2018~2023. All rights reserved.
  * +----------------------------------------------------------------------------------
  */
-
-/** @format */
 
 import moment from 'moment';
 import { useModel, history } from 'umi';
@@ -26,13 +24,20 @@ import { Typography, InputNumber, message, Button, Space, Table, Image, Modal, T
 import { QuestionCircleOutlined, CheckCircleOutlined, DeleteOutlined, SearchOutlined, EditOutlined } from '@ant-design/icons';
 
 const ImagePreview: React.FC<{ album: string[] }> = props => {
+    const { REACT_APP_PUBLIC_PATH } = process.env;
     const [visible, setVisible] = useState(false);
     const renderGroup = () => {
         return props.album.map(item => <Image src={item} key={randomString(4)} />);
     };
     return (
         <>
-            <Image width={50} src={props?.album[0]} fallback="/manage/logo.svg" preview={{ visible: false }} onClick={() => setVisible(true)} />
+            <Image
+                width={50}
+                src={props?.album[0]}
+                preview={{ visible: false }}
+                onClick={() => setVisible(true)}
+                fallback={`${REACT_APP_PUBLIC_PATH}logo.svg`}
+            />
             <div style={{ display: 'none' }}>
                 <Image.PreviewGroup preview={{ visible, onVisibleChange: vis => setVisible(vis) }}>{renderGroup()}</Image.PreviewGroup>
             </div>
@@ -49,6 +54,8 @@ export default () => {
     }));
     /** loading */
     const [loading, setLoading] = useState<boolean>(false);
+    /** 当前页数 */
+    const [currentPageSize, setCurrentPageSize] = useState<number | undefined>();
     /** 商品分类 */
     const [productCate, setProductCate] = useState<channelCate[]>([]);
     /** ActionType */
@@ -310,6 +317,7 @@ export default () => {
                 columns={columns}
                 request={tableData}
                 scroll={resize.tableScroll}
+                onChange={page => setCurrentPageSize(page.pageSize)}
                 search={{
                     labelWidth: 'auto',
                     defaultCollapsed: false,
@@ -334,7 +342,14 @@ export default () => {
                 rowSelection={{
                     selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
                 }}
-                pagination={{ pageSize: resize.pageSize, hideOnSinglePage: true }}
+                tableAlertOptionRender={({ selectedRows }) => {
+                    return (
+                        <Space size={16}>
+                            <a onClick={() => handleDelete(selectedRows)}>批量删除</a>
+                        </Space>
+                    );
+                }}
+                pagination={{ pageSize: currentPageSize ?? resize.pageSize, hideOnSinglePage: true }}
                 tableAlertRender={({ selectedRowKeys, selectedRows, onCleanSelected }) => (
                     <Space size={24}>
                         <span>
@@ -348,13 +363,6 @@ export default () => {
                         </span>
                     </Space>
                 )}
-                tableAlertOptionRender={({ selectedRows }) => {
-                    return (
-                        <Space size={16}>
-                            <a onClick={() => handleDelete(selectedRows)}>批量删除</a>
-                        </Space>
-                    );
-                }}
             />
         </PageContainer>
     );

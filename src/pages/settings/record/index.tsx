@@ -4,11 +4,9 @@
  * +----------------------------------------------------------------------------------
  * | Email: Kevin@tigervs.com
  * +----------------------------------------------------------------------------------
- * | Copyright (c) Shenzhen Tiger Technology Co., Ltd. 2018~2022. All rights reserved.
+ * | Copyright (c) Shenzhen Tiger Technology Co., Ltd. 2018~2023. All rights reserved.
  * +----------------------------------------------------------------------------------
  */
-
-/** @format */
 
 import { _int2ip } from '@/extra/utils';
 import { useRequest, useModel } from 'umi';
@@ -42,11 +40,12 @@ export default () => {
     const { resize } = useModel('resize', ret => ({
         resize: ret.resize,
     }));
-
     /* 文档作者 */
     const [user, setUser] = useState<Record<number, string>>({});
     /* 用户组 */
     const [group, setGroup] = useState<Record<number, string>>({});
+    /* 当前页数 */
+    const [currentPageSize, setCurrentPageSize] = useState<number | undefined>();
     /* ref ActionType */
     const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
 
@@ -157,8 +156,9 @@ export default () => {
                 columns={columns}
                 request={tableData}
                 search={{ filterType: 'light' }}
-                pagination={{ pageSize: resize.pageSize, hideOnSinglePage: true }}
+                onChange={page => setCurrentPageSize(page.pageSize)}
                 scroll={1920 < window.innerWidth ? resize.tableScroll : undefined}
+                pagination={{ pageSize: currentPageSize ?? resize.pageSize, hideOnSinglePage: true }}
             />
         </PageContainer>
     );
