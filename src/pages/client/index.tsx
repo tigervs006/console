@@ -4,11 +4,9 @@
  * +----------------------------------------------------------------------------------
  * | Email: Kevin@tigervs.com
  * +----------------------------------------------------------------------------------
- * | Copyright (c) Shenzhen Tiger Technology Co., Ltd. 2018~2022. All rights reserved.
+ * | Copyright (c) Shenzhen Tiger Technology Co., Ltd. 2018~2023. All rights reserved.
  * +----------------------------------------------------------------------------------
  */
-
-/** @format */
 
 import type { tableDataItem } from './data';
 import ProTable from '@ant-design/pro-table';
@@ -30,8 +28,10 @@ export default () => {
     const { resize } = useModel('resize', ret => ({
         resize: ret.resize,
     }));
-    /** ModalForm状态 */
+    /** ModalForm */
     const [modalOpen, setModalOpen] = useState<boolean>(false);
+    /** 当前页容量 */
+    const [currentPageSize, setCurrentPageSize] = useState<number | undefined>();
     /** 设置当前展开行 */
     const [expandedRowKey, setExpandedRowKey] = useState<number[]>([]);
     /** ModalForm 默认值 */
@@ -223,10 +223,11 @@ export default () => {
                 }}
                 scroll={resize.tableScroll}
                 rowKey={record => record.id as number}
+                onChange={page => setCurrentPageSize(page.pageSize)}
                 rowSelection={{
                     selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
                 }}
-                pagination={{ pageSize: resize.pageSize, hideOnSinglePage: true }}
+                pagination={{ pageSize: currentPageSize ?? resize.pageSize, hideOnSinglePage: true }}
                 headerTitle={
                     // @ts-ignore
                     <Access accessible={access.btnFilter('client_create_btn')}>

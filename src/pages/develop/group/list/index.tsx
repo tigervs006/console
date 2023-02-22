@@ -4,7 +4,7 @@
  * +----------------------------------------------------------------------------------
  * | Email: Kevin@tigervs.com
  * +----------------------------------------------------------------------------------
- * | Copyright (c) Shenzhen Tiger Technology Co., Ltd. 2018~2022. All rights reserved.
+ * | Copyright (c) Shenzhen Tiger Technology Co., Ltd. 2018~2023. All rights reserved.
  * +----------------------------------------------------------------------------------
  */
 
@@ -33,6 +33,8 @@ export default () => {
     const [records, setRecords] = useState<groupDataItem>();
     /* create */
     const [create, setCreate] = useState<boolean>(false);
+    /* 当前页数 */
+    const [currentPageSize, setCurrentPageSize] = useState<number | undefined>();
     /* tableColumns */
     const [tableColumns, setTableColumns] = useState<ProColumns<groupDataItem>[]>();
     /* ref ActionType */
@@ -228,10 +230,11 @@ export default () => {
                 }}
                 scroll={resize.tableScroll}
                 rowKey={record => record.id as number}
+                onChange={page => setCurrentPageSize(page.pageSize)}
                 rowSelection={{
                     selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
                 }}
-                pagination={{ pageSize: resize.pageSize, hideOnSinglePage: true }}
+                pagination={{ pageSize: currentPageSize ?? resize.pageSize, hideOnSinglePage: true }}
                 headerTitle={
                     <Button shape="round" type="primary" key="clientCreate" icon={<PlusOutlined />} onClick={() => handleCreate()}>
                         新增记录
