@@ -4,11 +4,9 @@
  * +----------------------------------------------------------------------------------
  * | Email: Kevin@tigervs.com
  * +----------------------------------------------------------------------------------
- * | Copyright (c) Shenzhen Tiger Technology Co., Ltd. 2018~2022. All rights reserved.
+ * | Copyright (c) Shenzhen Tiger Technology Co., Ltd. 2018~2023. All rights reserved.
  * +----------------------------------------------------------------------------------
  */
-
-/** @format */
 
 import moment from 'moment';
 import ProTable from '@ant-design/pro-table';
@@ -35,7 +33,9 @@ export default () => {
     const [authorEnum, setAuthorEnum] = useState<valueEnumData>();
     /** loading */
     const [loading, setLoading] = useState<boolean>(false);
-    /** 商品分类 */
+    /** 当前页数 */
+    const [currentPageSize, setCurrentPageSize] = useState<number | undefined>();
+    /** 文档分类 */
     const [articleCate, setArticleCate] = useState<channelCate[]>([]);
     /** ActionType */
     const ref: React.MutableRefObject<ActionType | undefined> = useRef<ActionType>();
@@ -50,6 +50,7 @@ export default () => {
             }));
         });
     };
+
     /** 获取文档作者 */
     useRequest(getAuthor, {
         onSuccess: (res: { list: authorData[] }) => {
@@ -324,6 +325,7 @@ export default () => {
                 columns={columns}
                 request={tableData}
                 scroll={resize.tableScroll}
+                onChange={page => setCurrentPageSize(page.pageSize)}
                 search={{
                     labelWidth: 'auto',
                     defaultCollapsed: false,
@@ -348,7 +350,14 @@ export default () => {
                 rowSelection={{
                     selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
                 }}
-                pagination={{ pageSize: resize.pageSize, hideOnSinglePage: true }}
+                tableAlertOptionRender={({ selectedRows }) => {
+                    return (
+                        <Space size={16}>
+                            <a onClick={() => handleDelete(selectedRows)}>批量删除</a>
+                        </Space>
+                    );
+                }}
+                pagination={{ pageSize: currentPageSize ?? resize.pageSize, hideOnSinglePage: true }}
                 tableAlertRender={({ selectedRowKeys, selectedRows, onCleanSelected }) => (
                     <Space size={24}>
                         <span>
@@ -362,13 +371,6 @@ export default () => {
                         </span>
                     </Space>
                 )}
-                tableAlertOptionRender={({ selectedRows }) => {
-                    return (
-                        <Space size={16}>
-                            <a onClick={() => handleDelete(selectedRows)}>批量删除</a>
-                        </Space>
-                    );
-                }}
             />
         </PageContainer>
     );
